@@ -1,0 +1,18 @@
+{
+  "id": "settings",
+  "languageToggle": true,
+  "themeToggle": true,
+  "cookiesEnabled": true,
+  "pageLoadingCursor": false,
+  "whatsapp": {
+    "enabled": false,
+    "number": "",
+    "message": ""
+  },
+  "aiAssistant": {
+    "enabled": false,
+    "provider": "",
+    "widgetCode": "",
+    "show": "all"
+  }
+}

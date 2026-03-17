@@ -1,0 +1,34 @@
+{
+  "home": {
+    "changes": []
+  },
+  "about": {
+    "changes": []
+  },
+  "services": {
+    "changes": []
+  },
+  "cases": {
+    "changes": []
+  },
+  "news": {
+    "changes": []
+  },
+  "header": {
+    "changes": []
+  },
+  "footer": {
+    "changes": [
+      {
+        "selector": "span",
+        "type": "text",
+        "value": "Khaled Omer Maritime Consultancy - All rights reserved @ 2026 - Design by DevOps"
+      },
+      {
+        "selector": "div.mt-8.border-t",
+        "type": "text",
+        "value": "Khaled Omer Maritime Consultancy - All rights reserved @ 2026 - Designed by DevOps\nPrivacy Policy\nTerms of Service\nLegal Disclaimer"
+      }
+    ]
+  }
+}
