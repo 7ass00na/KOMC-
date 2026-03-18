@@ -259,6 +259,13 @@ export default function Header() {
                 <button
                   role="menuitem"
                   onClick={() => {
+                    if (typeof document !== "undefined") {
+                      const prev = document.body.style.cursor;
+                      document.body.style.cursor = "progress";
+                      setTimeout(() => {
+                        document.body.style.cursor = prev || "";
+                      }, 900);
+                    }
                     setLang("en");
                     setLangOpen(false);
                   }}
@@ -276,6 +283,13 @@ export default function Header() {
                 <button
                   role="menuitem"
                   onClick={() => {
+                    if (typeof document !== "undefined") {
+                      const prev = document.body.style.cursor;
+                      document.body.style.cursor = "progress";
+                      setTimeout(() => {
+                        document.body.style.cursor = prev || "";
+                      }, 900);
+                    }
                     setLang("ar");
                     setLangOpen(false);
                   }}
