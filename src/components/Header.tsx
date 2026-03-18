@@ -142,7 +142,9 @@ export default function Header() {
         >
           {/* EN: Brand mark and name */}
           {/* AR: علامة الشعار واسم العلامة */}
-          <div className="h-8 w-8 rounded-full brand-gradient" />
+          <div className="h-8 w-8 rounded-md bg-[var(--brand-accent)] text-black flex items-center justify-center font-extrabold leading-none">
+            KO
+          </div>
           {(header?.published_logo || header?.logo) ? (
             <Image src={(header?.published_logo || header?.logo) as string} alt="Logo" width={28} height={28} className="rounded-full object-contain" />
           ) : null}
@@ -158,8 +160,8 @@ export default function Header() {
           }>
             <span data-edit-key="brand-name">
             {lang === "ar"
-              ? ((header?.published_siteName_ar || header?.siteName_ar) ?? t("brandName"))
-              : ((header?.published_siteName_en || header?.siteName_en) ?? t("brandName"))}
+              ? ("خالد عمر للأستشارات البحرية")
+              : ("Khaled Omer Maritime Consultancy")}
             </span>
           </div>
         </motion.div>
@@ -259,13 +261,6 @@ export default function Header() {
                 <button
                   role="menuitem"
                   onClick={() => {
-                    if (typeof document !== "undefined") {
-                      const prev = document.body.style.cursor;
-                      document.body.style.cursor = "progress";
-                      setTimeout(() => {
-                        document.body.style.cursor = prev || "";
-                      }, 900);
-                    }
                     setLang("en");
                     setLangOpen(false);
                   }}
@@ -283,13 +278,6 @@ export default function Header() {
                 <button
                   role="menuitem"
                   onClick={() => {
-                    if (typeof document !== "undefined") {
-                      const prev = document.body.style.cursor;
-                      document.body.style.cursor = "progress";
-                      setTimeout(() => {
-                        document.body.style.cursor = prev || "";
-                      }, 900);
-                    }
                     setLang("ar");
                     setLangOpen(false);
                   }}

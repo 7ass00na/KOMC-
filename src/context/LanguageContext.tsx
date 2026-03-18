@@ -241,6 +241,9 @@ export function LanguageProvider({
 
   const setLang = useCallback((next: Lang) => {
     setLangState(next);
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new Event("site-loading-short"));
+    }
     if (pathname === "/Demo.tsx") return;
     const segments = pathname?.split("/") ?? [];
     if (segments.length > 1 && (segments[1] === "en" || segments[1] === "ar")) {

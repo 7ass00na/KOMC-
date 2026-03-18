@@ -14,23 +14,26 @@ const thumbBaseName = (cat: string) => {
   return "default";
 };
 
-function ThumbImage({ cat, alt, sizes }: { cat: string; alt: string; sizes: string }) {
+function ThumbImage({ cat, alt, sizes, src: provided }: { cat: string; alt: string; sizes: string; src?: string }) {
   const v = process.env.NEXT_PUBLIC_ASSET_VERSION;
   const base = "/images/services";
   const name = thumbBaseName(cat);
-  const withV = (p: string) => (v ? `${p}?v=${v}` : p);
-  const [src, setSrc] = useState(withV(`${base}/${name}.webp`));
+  const withV = (p: string) => (v && p.startsWith("/") ? `${p}?v=${v}` : p);
+  const initialRemote = !!provided;
+  const [src, setSrc] = useState(provided ?? withV(`${base}/${name}.webp`));
   const [step, setStep] = useState<0 | 1 | 2 | 3>(0);
   const [loaded, setLoaded] = useState(false);
   const onError = () => {
-    if (step === 0) {
+    if (initialRemote && step === 0) {
       setStep(1);
-      setSrc(withV(`${base}/${name}.jpg`));
+      setSrc(withV(`${base}/${name}.webp`));
     } else if (step === 1) {
       setStep(2);
+      setSrc(withV(`${base}/${name}.jpg`));
+    } else if (step === 2) {
+      setStep(3);
       setSrc(withV(`${base}/${name}.png`));
     } else {
-      setStep(3);
       setSrc(withV(`${base}/default.webp`));
     }
   };
@@ -47,13 +50,27 @@ function ThumbImage({ cat, alt, sizes }: { cat: string; alt: string; sizes: stri
     />
   );
 }
-type Item = { title: string; desc: string; cat: string };
+type Item = { title: string; desc: string; cat: string; img?: string };
 type Testimonial = { text: string; initials: string; role: string };
 type Props = { variant?: "home" | "page" };
 
 export default function ServicesOverview({ variant = "home" }: Props) {
   const { lang } = useLanguage();
   const searchParams = useSearchParams();
+  const detailLines = (title: string, cat: string): string[] => {
+    if (lang === "ar") {
+      return [
+        `نطاق واضح ومحدد لخدمة “${title}” ضمن مجال ${cat}.`,
+        "منهجية قائمة على الأدلة ومتوافقة مع القوانين والإجراءات ذات الصلة في الإمارات.",
+        "إدارة الوثائق والمواعيد والأطراف لضمان نتائج عملية وحاسمة.",
+      ];
+    }
+    return [
+      `Clear, tailored scope for “${title}” within ${cat}.`,
+      "Evidence‑led strategy aligned with UAE law and applicable rules.",
+      "Document, timeline, and counterpart management for decisive outcomes.",
+    ];
+  };
   const stepsFor = (cat: string) => {
     if (lang === "ar") {
       if (cat === "البحري") return ["الإخطار", "تثبيت الضمان", "التحقيق", "الاستراتيجية", "الإجراء", "الإغلاق"];
@@ -126,67 +143,114 @@ export default function ServicesOverview({ variant = "home" }: Props) {
       : "Integrated legal services & consultancy";
   const subhead =
     lang === "ar"
-      ? "دعم متكامل عبر البحري والتجارة والتأمين والنزاعات — بما يخدم أهدافك الأساسية."
-      : "Integrated support across maritime, trade, insurance, and disputes — aligned with your core objectives.";
-  const categories = lang === "ar"
-    ? ["البحري", "التأمين", "التجارة", "النزاعات"]
-    : ["Maritime", "Insurance", "Trade", "Disputes"];
+      ? "دعم قانوني شامل في مجالات النقل البحري، التجارة، التأمين، المنازعات — ومجالات أخرى بما يتسق مع أهدافك الأساسية. إليك جزءاً من ممارستنا."
+      : "Comprehensive legal support in the areas of maritime transport, trade, insurance, disputes — and other areas in line with your core objectives. Here is a part of our practice.";
+  const categoriesAll = lang === "ar"
+    ? ["البحري", "التأمين", "التجارة", "النزاعات", "الأسرة", "العمل", "جنائي", "الجرائم الإلكترونية"]
+    : ["Maritime", "Insurance", "Trade", "Disputes", "Family", "Labour", "Criminal", "E‑Crime"];
+  const categoriesHome = lang === "ar"
+    ? ["البحري", "التجارة", "العمل", "النزاعات"]
+    : ["Maritime", "Trade", "Labour", "Disputes"];
+  const categories = variant === "home" ? categoriesHome : categoriesAll;
   const slugToLabel = useMemo(
     () =>
       lang === "ar"
-        ? { maritime: "البحري", insurance: "التأمين", trade: "التجارة", disputes: "النزاعات" }
-        : { maritime: "Maritime", insurance: "Insurance", trade: "Trade", disputes: "Disputes" },
+        ? { maritime: "البحري", insurance: "التأمين", trade: "التجارة", disputes: "النزاعات", family: "الأسرة", labour: "العمل", criminal: "جنائي", ecrime: "الجرائم الإلكترونية" }
+        : { maritime: "Maritime", insurance: "Insurance", trade: "Trade", disputes: "Disputes", family: "Family", labour: "Labour", criminal: "Criminal", ecrime: "E‑Crime" },
     [lang]
   );
   const paramLabel = useMemo(() => {
     const v = (searchParams?.get("cat") || "").toLowerCase();
     return (slugToLabel as Record<string, string>)[v] ?? null;
   }, [searchParams, slugToLabel]);
+  const chipJustify = useMemo(() => {
+    return lang === "ar" ? "justify-center md:justify-end" : "justify-center md:justify-start";
+  }, [lang]);
   const [active, setActive] = useState(paramLabel ?? categories[0]);
   const tiles = useMemo(
     () =>
-      lang === "ar"
+          lang === "ar"
         ? [
-            { title: "حوادث وأميرالية", desc: "تصادم، إنقاذ، معدل عام، استجابة للأزمات.", cat: "البحري" },
-            { title: "حجز السفن", desc: "حجز، امتيازات، وترتيبات ضمان.", cat: "البحري" },
-            { title: "عقود الإيجار والتأخير", desc: "صياغة العقود ومعالجة التأخير والمطالبات.", cat: "البحري" },
-            { title: "رقابة دولة الميناء", desc: "تفتيش، احتجاز، والتعامل مع المخالفات.", cat: "البحري" },
+            { title: "حوادث وأميرالية", desc: "تصادم، إنقاذ، معدل عام، استجابة للأزمات.", cat: "البحري", img: "/images/Services/Maritime.jpg" },
+            { title: "حجز السفن", desc: "حجز، امتيازات، وترتيبات ضمان.", cat: "البحري", img: "/images/Services/cargoArrest.jpg" },
+            { title: "عقود الإيجار والتأخير", desc: "صياغة العقود ومعالجة التأخير والمطالبات.", cat: "البحري", img: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80" },
+            { title: "رقابة دولة الميناء", desc: "تفتيش، احتجاز، والتعامل مع المخالفات.", cat: "البحري", img: "https://images.unsplash.com/photo-1518081461904-9aceda1c7283?auto=format&fit=crop&w=1200&q=80" },
 
-            { title: "تأمين بحري", desc: "تغطية، رجوع، ونوادي الحماية.", cat: "التأمين" },
-            { title: "إدارة المطالبات", desc: "استلام المطالبة وتقييمها والتفاوض عليها.", cat: "التأمين" },
-            { title: "استشارات التغطية", desc: "نطاق الوثيقة والاستثناءات والمسؤوليات.", cat: "التأمين" },
-            { title: "الرجوع والتحصيل", desc: "استرداد المدفوعات من الأطراف المسؤولة.", cat: "التأمين" },
+            { title: "تأمين بحري", desc: "تغطية، رجوع، ونوادي الحماية.", cat: "التأمين", img: "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=1200&q=80" },
+            { title: "إدارة المطالبات", desc: "استلام المطالبة وتقييمها والتفاوض عليها.", cat: "التأمين", img: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80" },
+            { title: "استشارات التغطية", desc: "نطاق الوثيقة والاستثناءات والمسؤوليات.", cat: "التأمين", img: "https://images.unsplash.com/photo-1504639725590-34d0984388bd?auto=format&fit=crop&w=1200&q=80" },
+            { title: "الرجوع والتحصيل", desc: "استرداد المدفوعات من الأطراف المسؤولة.", cat: "التأمين", img: "https://images.unsplash.com/photo-1581094794329-c31d44a0b4a4?auto=format&fit=crop&w=1200&q=80" },
 
-            { title: "مطالبات بضائع", desc: "فقدان وتلف وسوء تسليم وتغطية.", cat: "التجارة" },
-            { title: "التجارة والعقوبات", desc: "عقوبات، امتثال، وفحص الأطراف.", cat: "التجارة" },
-            { title: "خطابات الاعتماد وبيع البضائع", desc: "الاعتمادات المستندية والعقود وسلاسل التوريد.", cat: "التجارة" },
-            { title: "الجمارك والامتثال", desc: "إفراجات، تصنيف، وتدقيقات.", cat: "التجارة" },
+            { title: "مطالبات بضائع", desc: "فقدان وتلف وسوء تسليم وتغطية.", cat: "التجارة", img: "https://images.unsplash.com/photo-1497032205916-ac775f0649ae?auto=format&fit=crop&w=1200&q=80" },
+            { title: "التجارة والعقوبات", desc: "عقوبات، امتثال، وفحص الأطراف.", cat: "التجارة", img: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80" },
+            { title: "خطابات الاعتماد وبيع البضائع", desc: "الاعتمادات المستندية والعقود وسلاسل التوريد.", cat: "التجارة", img: "https://images.unsplash.com/photo-1554224154-22dec7ec8818?auto=format&fit=crop&w=1200&q=80" },
+            { title: "الجمارك والامتثال", desc: "إفراجات، تصنيف، وتدقيقات.", cat: "التجارة", img: "https://images.unsplash.com/photo-1506619216599-9d16d0903dfd?auto=format&fit=crop&w=1200&q=80" },
 
-            { title: "تحكيم وتقاضي", desc: "مرافعات محلية وتحكيم مؤسسي.", cat: "النزاعات" },
-            { title: "وساطة وتسويات", desc: "حل نزاعات سريع وفعال.", cat: "النزاعات" },
-            { title: "تنفيذ وأوامر ضمان", desc: "حجز أصول وضمانات قضائية.", cat: "النزاعات" },
-            { title: "الأدلة والخبرة الفنية", desc: "تقارير خبراء وشهادة فنية.", cat: "النزاعات" },
+            { title: "تحكيم وتقاضي", desc: "مرافعات محلية وتحكيم مؤسسي.", cat: "النزاعات", img: "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=1200&q=80" },
+            { title: "وساطة وتسويات", desc: "حل نزاعات سريع وفعال.", cat: "النزاعات", img: "https://images.unsplash.com/photo-1529070538774-1843cb3265df?auto=format&fit=crop&w=1200&q=80" },
+            { title: "تنفيذ وأوامر ضمان", desc: "حجز أصول وضمانات قضائية.", cat: "النزاعات", img: "https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&w=1200&q=80" },
+            { title: "الأدلة والخبرة الفنية", desc: "تقارير خبراء وشهادة فنية.", cat: "النزاعات", img: "https://images.unsplash.com/photo-1518081461904-9aceda1c7283?auto=format&fit=crop&w=1200&q=80" },
+
+            { title: "طلاق وحضانة", desc: "إجراءات الطلاق وترتيبات الحضانة والنفقة.", cat: "الأسرة", img: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80" },
+            { title: "إرث ووصايا", desc: "صياغة الوصايا وتوزيع التركات وإثباتها.", cat: "الأسرة", img: "https://images.unsplash.com/photo-1518972559570-7cc1309f3229?auto=format&fit=crop&w=1200&q=80" },
+            { title: "عقود زواج", desc: "عقود الزواج والاتفاقات السابقة للزواج.", cat: "الأسرة", img: "https://images.unsplash.com/photo-1521033719794-41049d18b8d3?auto=format&fit=crop&w=1200&q=80" },
+            { title: "نزاعات أسرية", desc: "تسويات ودية وإجراءات محكمة الأسرة.", cat: "الأسرة", img: "https://images.unsplash.com/photo-1528747008803-c8edbac3f90d?auto=format&fit=crop&w=1200&q=80" },
+
+            { title: "عقود العمل", desc: "صياغة العقود وسياسات الموارد البشرية.", cat: "العمل", img: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80" },
+            { title: "الفصل والشكاوى", desc: "إجراءات الفصل العادل وتسوية الشكاوى.", cat: "العمل", img: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1200&q=80" },
+            { title: "الأجور والعمل الإضافي", desc: "مطالبات الأجور وساعات العمل.", cat: "العمل", img: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=1200&q=80" },
+            { title: "الامتثال العمالي", desc: "لوائح العمل وسياسات أماكن العمل.", cat: "العمل", img: "https://images.unsplash.com/photo-1554774853-b415df9eeb92?auto=format&fit=crop&w=1200&q=80" },
+
+            { title: "دفاع جنائي", desc: "قضايا جنائية وجرائم أموال.", cat: "جنائي", img: "https://images.unsplash.com/photo-1523246191318-7f2d7d4b4d78?auto=format&fit=crop&w=1200&q=80" },
+            { title: "تحقيقات الشرطة", desc: "تمثيل أثناء التحقيق والاستجواب.", cat: "جنائي", img: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=1200&q=80" },
+            { title: "الكفالة والاحتجاز", desc: "طلبات الإفراج والضمان.", cat: "جنائي", img: "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?auto=format&fit=crop&w=1200&q=80" },
+            { title: "طعون وتخفيف", desc: "استئناف الأحكام وإجراءات التخفيف.", cat: "جنائي", img: "https://images.unsplash.com/photo-1528747008803-c8edbac3f90d?auto=format&fit=crop&w=1200&q=80" },
+
+            { title: "احتيال إلكتروني", desc: "الاختراق والجرائم المالية الرقمية.", cat: "الجرائم الإلكترونية", img: "https://images.unsplash.com/photo-1510511459019-5dda7724fd87?auto=format&fit=crop&w=1200&q=80" },
+            { title: "حوادث حماية البيانات", desc: "خروقات البيانات وإخطار الجهات.", cat: "الجرائم الإلكترونية", img: "https://images.unsplash.com/photo-1512427691650-1f4b2a1c2d48?auto=format&fit=crop&w=1200&q=80" },
+            { title: "تشهير إلكتروني", desc: "قضايا المحتوى والإساءة عبر الإنترنت.", cat: "الجرائم الإلكترونية", img: "https://images.unsplash.com/photo-1494883759339-0b042055a4ee?auto=format&fit=crop&w=1200&q=80" },
+            { title: "أدلة رقمية", desc: "طب شرعي رقمي وأدلة إلكترونية.", cat: "الجرائم الإلكترونية", img: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80" },
           ]
         : [
-            { title: "Admiralty & Casualty", desc: "Collisions, salvage, GA, crisis response.", cat: "Maritime" },
-            { title: "Vessel Arrests", desc: "Arrest, liens, security arrangements.", cat: "Maritime" },
-            { title: "Charterparty & Demurrage", desc: "Drafting, delays, claims management.", cat: "Maritime" },
-            { title: "Port State Control", desc: "Inspections, detentions, compliance.", cat: "Maritime" },
+            { title: "Admiralty & Casualty", desc: "Collisions, salvage, GA, crisis response.", cat: "Maritime", img: "/images/Services/Maritime.jpg" },
+            { title: "Vessel Arrests", desc: "Arrest, liens, security arrangements.", cat: "Maritime", img: "/images/Services/cargoArrest.jpg" },
+            { title: "Charterparty & Demurrage", desc: "Drafting, delays, claims management.", cat: "Maritime", img: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80" },
+            { title: "Port State Control", desc: "Inspections, detentions, compliance.", cat: "Maritime", img: "https://images.unsplash.com/photo-1518081461904-9aceda1c7283?auto=format&fit=crop&w=1200&q=80" },
 
-            { title: "Marine Insurance", desc: "Coverage, subrogation, P&I clubs.", cat: "Insurance" },
-            { title: "Claims Handling", desc: "Intake, evaluation, negotiation.", cat: "Insurance" },
-            { title: "Coverage Counsel", desc: "Policy scope, exclusions, liabilities.", cat: "Insurance" },
-            { title: "Subrogation & Recoveries", desc: "Recovery from liable parties.", cat: "Insurance" },
+            { title: "Marine Insurance", desc: "Coverage, subrogation, P&I clubs.", cat: "Insurance", img: "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=1200&q=80" },
+            { title: "Claims Handling", desc: "Intake, evaluation, negotiation.", cat: "Insurance", img: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80" },
+            { title: "Coverage Counsel", desc: "Policy scope, exclusions, liabilities.", cat: "Insurance", img: "https://images.unsplash.com/photo-1504639725590-34d0984388bd?auto=format&fit=crop&w=1200&q=80" },
+            { title: "Subrogation & Recoveries", desc: "Recovery from liable parties.", cat: "Insurance", img: "https://images.unsplash.com/photo-1581094794329-c31d44a0b4a4?auto=format&fit=crop&w=1200&q=80" },
 
-            { title: "Cargo Claims", desc: "Loss, damage, misdelivery, recoveries.", cat: "Trade" },
-            { title: "Trade & Sanctions", desc: "Sanctions, compliance, party screening.", cat: "Trade" },
-            { title: "LCs & Sale of Goods", desc: "Letters of credit and contracts.", cat: "Trade" },
-            { title: "Customs & Compliance", desc: "Clearance, classification, audits.", cat: "Trade" },
+            { title: "Cargo Claims", desc: "Loss, damage, misdelivery, recoveries.", cat: "Trade", img: "https://images.unsplash.com/photo-1497032205916-ac775f0649ae?auto=format&fit=crop&w=1200&q=80" },
+            { title: "Trade & Sanctions", desc: "Sanctions, compliance, party screening.", cat: "Trade", img: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80" },
+            { title: "LCs & Sale of Goods", desc: "Letters of credit and contracts.", cat: "Trade", img: "https://images.unsplash.com/photo-1554224154-22dec7ec8818?auto=format&fit=crop&w=1200&q=80" },
+            { title: "Customs & Compliance", desc: "Clearance, classification, audits.", cat: "Trade", img: "https://images.unsplash.com/photo-1506619216599-9d16d0903dfd?auto=format&fit=crop&w=1200&q=80" },
 
-            { title: "Arbitration & Litigation", desc: "Courts and institutional arbitration.", cat: "Disputes" },
-            { title: "Mediation & Settlements", desc: "Fast and efficient dispute resolution.", cat: "Disputes" },
-            { title: "Enforcement & Security", desc: "Asset freezes and security orders.", cat: "Disputes" },
-            { title: "Expert Evidence", desc: "Expert reports and testimony.", cat: "Disputes" },
+            { title: "Arbitration & Litigation", desc: "Courts and institutional arbitration.", cat: "Disputes", img: "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=1200&q=80" },
+            { title: "Mediation & Settlements", desc: "Fast and efficient dispute resolution.", cat: "Disputes", img: "https://images.unsplash.com/photo-1529070538774-1843cb3265df?auto=format&fit=crop&w=1200&q=80" },
+            { title: "Enforcement & Security", desc: "Asset freezes and security orders.", cat: "Disputes", img: "https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&w=1200&q=80" },
+            { title: "Expert Evidence", desc: "Expert reports and testimony.", cat: "Disputes", img: "https://images.unsplash.com/photo-1518081461904-9aceda1c7283?auto=format&fit=crop&w=1200&q=80" },
+
+            { title: "Divorce & Guardianship", desc: "Separation, custody, and support orders.", cat: "Family", img: "https://images.unsplash.com/photo-1518972559570-7cc1309f3229?auto=format&fit=crop&w=1200&q=80" },
+            { title: "Inheritance & Wills", desc: "Wills, probate, and estate distribution.", cat: "Family", img: "https://images.unsplash.com/photo-1512427691650-1f4b2a1c2d48?auto=format&fit=crop&w=1200&q=80" },
+            { title: "Marriage Contracts", desc: "Prenuptials and marital agreements.", cat: "Family", img: "https://images.unsplash.com/photo-1521033719794-41049d18b8d3?auto=format&fit=crop&w=1200&q=80" },
+            { title: "Family Settlements", desc: "Mediation and family court strategy.", cat: "Family", img: "https://images.unsplash.com/photo-1528747008803-c8edbac3f90d?auto=format&fit=crop&w=1200&q=80" },
+
+            { title: "Employment Contracts", desc: "Hiring terms and HR policies.", cat: "Labour", img: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80" },
+            { title: "Termination & Grievances", desc: "Fair dismissal and dispute handling.", cat: "Labour", img: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1200&q=80" },
+            { title: "Wage & Overtime Claims", desc: "Recovery of unpaid dues.", cat: "Labour", img: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=1200&q=80" },
+            { title: "Workplace Compliance", desc: "Labour regulations and SOPs.", cat: "Labour", img: "https://images.unsplash.com/photo-1554774853-b415df9eeb92?auto=format&fit=crop&w=1200&q=80" },
+
+            { title: "White‑Collar Defense", desc: "Fraud and financial crimes.", cat: "Criminal", img: "https://images.unsplash.com/photo-1523246191318-7f2d7d4b4d78?auto=format&fit=crop&w=1200&q=80" },
+            { title: "Police Investigations", desc: "Representation during questioning.", cat: "Criminal", img: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=1200&q=80" },
+            { title: "Bail & Remand", desc: "Release applications and surety.", cat: "Criminal", img: "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?auto=format&fit=crop&w=1200&q=80" },
+            { title: "Appeals & Mitigation", desc: "Post‑conviction advocacy.", cat: "Criminal", img: "https://images.unsplash.com/photo-1528747008803-c8edbac3f90d?auto=format&fit=crop&w=1200&q=80" },
+
+            { title: "Cyber Fraud & Hacking", desc: "Intrusions and digital theft.", cat: "E‑Crime", img: "https://images.unsplash.com/photo-1510511459019-5dda7724fd87?auto=format&fit=crop&w=1200&q=80" },
+            { title: "Data Incidents", desc: "Breach response and notifications.", cat: "E‑Crime", img: "https://images.unsplash.com/photo-1512427691650-1f4b2a1c2d48?auto=format&fit=crop&w=1200&q=80" },
+            { title: "Online Defamation", desc: "Content takedown and redress.", cat: "E‑Crime", img: "https://images.unsplash.com/photo-1494883759339-0b042055a4ee?auto=format&fit=crop&w=1200&q=80" },
+            { title: "Digital Evidence", desc: "Forensics and chain of custody.", cat: "E‑Crime", img: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80" },
           ],
     [lang]
   );
@@ -300,7 +364,7 @@ export default function ServicesOverview({ variant = "home" }: Props) {
           {headline}
         </h2>
         <p className={`mt-3 text-zinc-300 ${lang === "ar" ? "text-right" : "text-left"}`}>{subhead}</p>
-        <div className={`mt-6 flex flex-wrap items-center justify-center gap-2 ${lang === "ar" ? "lg:justify-end" : "lg:justify-end"}`}>
+        <div className={`mt-6 flex flex-wrap items-center ${chipJustify} gap-2`}>
           {categories.map((c) => {
             const activeMatch = c === active;
             return (
@@ -352,6 +416,7 @@ export default function ServicesOverview({ variant = "home" }: Props) {
                   cat={c.cat}
                   alt={typeof c.cat === "string" ? c.cat : "service"}
                   sizes="(max-width: 1024px) 50vw, 20vw"
+                  src={c.img}
                 />
               </div>
               <div className="font-semibold text-white" data-edit-key={`services-card-title-${String(c.title).toLowerCase().replace(/[^a-zA-Z0-9]+/g,"-")}`}>{c.title}</div>
@@ -388,7 +453,14 @@ export default function ServicesOverview({ variant = "home" }: Props) {
                   <div className="flex-1">
                     <div className="text-xs tracking-widest uppercase text-[var(--brand-accent)] font-semibold" data-edit-key="services-details-label">{detailsTitle}</div>
                     <h3 className="mt-2 text-2xl font-bold text-white" data-edit-key="services-details-title">{selected.title}</h3>
-                    <p className="mt-3 text-zinc-300" data-edit-key="services-details-desc">{selected.desc}</p>
+                    <p className="mt-3 text-zinc-300" data-edit-key="services-details-desc">
+                      {detailLines(selected.title, selected.cat).map((l, i) => (
+                        <span key={i}>
+                          {l}
+                          {i < 2 ? <><br/></> : null}
+                        </span>
+                      ))}
+                    </p>
                     <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-zinc-300">
                       <div className="rounded-lg surface p-3">
                         <div className="font-semibold text-white">{lang === "ar" ? "نطاق العمل" : "Scope"}</div>

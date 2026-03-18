@@ -78,12 +78,18 @@ export default function GlobalLoadingOverlay() {
       showShort();
     };
 
+    const onCustomShort = () => {
+      showShort();
+    };
+
     document.addEventListener('click', onClick, true);
     window.addEventListener('popstate', onPopState);
+    window.addEventListener('site-loading-short' as any, onCustomShort as any);
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
       document.removeEventListener('click', onClick, true);
       window.removeEventListener('popstate', onPopState);
+      window.removeEventListener('site-loading-short' as any, onCustomShort as any);
       document.body.style.cursor = prevCursor || '';
     };
   }, [enabled, reduce]);

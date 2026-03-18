@@ -74,6 +74,10 @@ export default function CasesOverview({ variant = "home" }: { variant?: "home" |
       month: "short",
       day: "numeric",
     }).format(new Date(iso));
+  const chipRowJustify = lang === "ar" ? "justify-center md:justify-center lg:justify-end" : "justify-center md:justify-center lg:justify-start";
+  const chipInnerJustify = lang === "ar" ? "justify-center md:justify-center lg:justify-end" : "justify-center md:justify-center lg:justify-start";
+  const chipOffsetClass = lang === "ar" ? "lg:ml-auto" : "lg:mr-auto";
+  const chipDirection = lang === "ar" ? "lg:flex-row-reverse" : "lg:flex-row";
   const details =
     lang === "ar"
       ? {
@@ -180,7 +184,7 @@ export default function CasesOverview({ variant = "home" }: { variant?: "home" |
   const selectedItem = selected ? items.find((i) => i.id === selected) : undefined;
   const selectedDetails = selected ? details[selected as keyof typeof details] : undefined;
   const imageFor = (id: string) => {
-    if (id === "arrest") return "/images/Case/Vessel arrest.jpg";
+    if (id === "arrest") return "/images/Services/cargoArrest.jpg";
     if (id === "charter") return "/images/Case/shiping cont.jpg";
     if (id === "compliance") return "/images/Case/Supply Ch.jpg";
     if (id === "recovery") return "/images/Case/Vessel arrest.jpg";
@@ -287,10 +291,22 @@ export default function CasesOverview({ variant = "home" }: { variant?: "home" |
             {lang === "ar" ? "دراسات حالة" : "Case Studies"}
           </h1>
           <p className={`mt-2 text-zinc-300 ${lang === "ar" ? "text-right" : "text-left"}`} data-edit-key="cases-hero-subtitle">
-            {lang === "ar" ? "أمثلة عملية على نجاحات حديثة عبر ممارستنا." : "Practical examples of recent successes across our practice."}
+            {lang === "ar" ? (
+              <>
+                دراسات حالة قانونية ممثِّلة تُبرز الإستراتيجية والإجراءات عبر مجالاتنا.
+                <br />
+                كل دراسة تلخص الوقائع والمنهج والنتيجة لتقديم فهم عملي.
+              </>
+            ) : (
+              <>
+                Representative legal case studies showing strategy and procedure across our practice.
+                <br />
+                Each summary distills facts, approach, and outcome for practical insight.
+              </>
+            )}
           </p>
-          <div className={`mt-4 -mx-5 px-5 overflow-x-auto flex ${variant === "page" ? "justify-center" : lang === "ar" ? "justify-end" : "justify-start"}`}>
-            <div className="inline-flex gap-2 pb-1 whitespace-nowrap">
+          <div className={`mt-4 -mx-5 px-5 overflow-visible flex w-full ${chipRowJustify}`}>
+            <div className={`w-full flex flex-wrap gap-2 pb-1 ${chipInnerJustify} ${chipOffsetClass} ${chipDirection}`}>
               <button
                 onClick={() => handleTagChange(null)}
                 className={`case-filter-chip rounded-lg border px-3 py-1 text-xs ${

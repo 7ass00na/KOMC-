@@ -157,10 +157,51 @@ h1, h2, h3 {
   font-family: var(--content-font-ar, var(--font-ar)), "Tajawal", Arial, Helvetica, sans-serif;
 }
 .site-content h1 {
-  font-size: var(--heading-size, inherit) !important;
+  font-size: 30px !important;
 }
 .site-content h2 {
   font-size: var(--subheading-size, inherit) !important;
+}
+
+@media (min-width: 768px) {
+  .site-content h1 {
+    font-size: 40px !important;
+  }
+}
+@media (min-width: 1024px) {
+  .site-content h1 {
+    font-size: 48px !important;
+  }
+}
+
+.section h1 {
+  font-size: 32px !important;
+}
+@media (min-width: 768px) {
+  .section h1 {
+    font-size: 40px !important;
+  }
+}
+@media (min-width: 1024px) {
+  .section h1 {
+    font-size: 48px !important;
+  }
+}
+
+/* Home page: force specific section headings to 30px */
+.home #services h2,
+.home #cases h2,
+.home #team h2,
+.home #news h2 {
+  font-size: 30px !important;
+  line-height: 1.15 !important;
+}
+
+/* Services page: force hero and overview headings to 30px */
+.site-content .about-hero-scope h1,
+.site-content #services h2 {
+  font-size: 30px !important;
+  line-height: 1.15 !important;
 }
 
 /* About pages — text intensity adjustments */
@@ -397,6 +438,14 @@ html:not(.dark) #services .svc-chip[aria-pressed="false"] {
   border-color: var(--panel-border) !important;
   color: var(--text-on-dark) !important;
   font-weight: 700;
+}
+
+/* Mobile: reduce vertical spacing between sections slightly */
+@media (max-width: 640px) {
+  .section {
+    padding-top: 3rem !important;   /* tighten from large defaults (e.g., py-20) */
+    padding-bottom: 3rem !important;
+  }
 }
 .dark #cases .chip.active,
 .dark #cases .chip[aria-selected="true"],

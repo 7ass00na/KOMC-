@@ -445,17 +445,12 @@ export default function Footer() {
         {/* AR: شريط قانوني سفلي — حقوق النشر والسياسات */}
         <div className="mt-8 border-t border-[var(--panel-border)] dark:border-white/15 pt-4 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-[var(--text-secondary)] dark:text-[color-mix(in_oklab,var(--text-on-dark),transparent_30%)] legal-bar">
           <div className="text-center md:text-left">
-            {lang === "ar" ? (
-              <span>
-                <Link href={`${base}/login`} className="hover:underline font-semibold">خالد عمر للاستشارات البحرية</Link>
-                {" . جميع الحقوق محفوظة @ 2026 - تصميم وتطوير بواسطة 7assona"}
-              </span>
-            ) : (
-              <span>
-                <Link href={`${base}/login`} className="hover:underline font-semibold">Khaled Omer Maritime Consultancy</Link>
-                {" - All rights reserved @ 2026 - Create & Dev by 7assona"}
-              </span>
-            )}
+            <span>
+              Khaled Omer Maritime Consultancy{" "}
+              <Link href={`${base}/login`} className="hover:underline font-semibold">( KOMC )</Link>
+              {" - All rights reserved @ 2026 - Create & Dev by "}
+              <a href="mailto:ahmedhussan068@gmail.com" className="hover:underline font-semibold">DevOps</a>
+            </span>
           </div>
           <div className="flex items-center gap-4">
             <Link

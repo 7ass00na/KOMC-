@@ -273,7 +273,7 @@ export default function HomeHero({
         </motion.div>
       </AnimatePresence>
 
-      <div className="relative z-10 h-full px-6 pt-10 md:px-12 md:pt-14 lg:px-24">
+      <div className="relative z-10 h-full px-6 pt-3 md:px-12 md:pt-8 lg:px-24">
         <div className="grid h-full grid-cols-1 items-center pb-36 md:grid-cols-12 md:pb-44">
           <div className={["md:col-span-5 lg:col-span-5", isAr ? "text-right md:col-start-8 md:text-right ml-auto" : "text-left md:col-start-1 md:text-left"].join(" ")}>
             <AnimatePresence mode="wait" initial={false}>
