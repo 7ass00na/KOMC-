@@ -73,6 +73,7 @@ export default function CasesOverview({ variant = "home" }: { variant?: "home" |
       year: "numeric",
       month: "short",
       day: "numeric",
+      timeZone: "UTC",
     }).format(new Date(iso));
   const chipRowJustify = lang === "ar" ? "justify-center md:justify-center lg:justify-end" : "justify-center md:justify-center lg:justify-start";
   const chipInnerJustify = lang === "ar" ? "justify-center md:justify-center lg:justify-end" : "justify-center md:justify-center lg:justify-start";
@@ -313,6 +314,7 @@ export default function CasesOverview({ variant = "home" }: { variant?: "home" |
                   !selectedTag ? "active border-[var(--brand-accent)] text-[var(--brand-accent)]" : "border-zinc-600 text-zinc-300 hover:border-zinc-500"
                 }`}
                 aria-pressed={!selectedTag ? "true" : "false"}
+                data-icon="filter"
               >
                 {lang === "ar" ? "الكل" : "All"}
               </button>
@@ -326,6 +328,19 @@ export default function CasesOverview({ variant = "home" }: { variant?: "home" |
                       : "border-zinc-600 text-zinc-300 hover:border-zinc-500"
                   }`}
                   aria-pressed={selectedTag === tag ? "true" : "false"}
+                  data-icon={
+                    (() => {
+                      const t = String(tag).toLowerCase();
+                      if (t.includes("maritime")) return "anchor";
+                      if (t.includes("enforcement")) return "lock";
+                      if (t.includes("arbitration") || t.includes("litigation")) return "gavel";
+                      if (t.includes("compliance")) return "shieldcheck";
+                      if (t.includes("trade")) return "box";
+                      if (t.includes("claims")) return "doc";
+                      if (t.includes("collision")) return "warn";
+                      return "category";
+                    })()
+                  }
                 >
                   {tagLabels[tag] ?? tag}
                 </button>
@@ -694,15 +709,17 @@ export default function CasesOverview({ variant = "home" }: { variant?: "home" |
                       <div className={`flex flex-wrap gap-2 ${lang === "ar" ? "mr-auto justify-start" : "ml-auto justify-end"}`}>
                         <Link
                           href={`/${lang}/cases`}
-                          className="inline-flex items-center rounded-lg bg-[var(--brand-accent)] text-black px-3 py-1.5 text-xs font-semibold transition-transform duration-200 will-change-transform hover:-translate-y-0.5 active:scale-95 shadow lg:px-4 lg:py-2 lg:text-sm"
+                          className="inline-flex items-center gap-2 rounded-lg bg-[var(--brand-accent)] text-black px-3 py-1.5 text-xs font-semibold transition-transform duration-200 will-change-transform hover:-translate-y-0.5 active:scale-95 shadow lg:px-4 lg:py-2 lg:text-sm"
                         >
-                          {lang === "ar" ? "اقرأ الدراسة كاملة" : "Read full case"}
+                          <span>{lang === "ar" ? "اقرأ الدراسة كاملة" : "Read full case"}</span>
+                          <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M7 4h10v2H7zM7 9h10v2H7zM7 14h7v2H7z"/></svg>
                         </Link>
                         <Link
                           href={`/${lang}/contact`}
-                          className="inline-flex items-center rounded-lg bg-[var(--brand-accent)] text-black px-3 py-1.5 text-xs font-semibold transition-transform duration-200 will-change-transform hover:-translate-y-0.5 active:scale-95 shadow lg:px-4 lg:py-2 lg:text-sm"
+                          className="inline-flex items-center gap-2 rounded-lg bg-[var(--brand-accent)] text-black px-3 py-1.5 text-xs font-semibold transition-transform duration-200 will-change-transform hover:-translate-y-0.5 active:scale-95 shadow lg:px-4 lg:py-2 lg:text-sm"
                         >
-                          {lang === "ar" ? "اطلب استشارة" : "Request consultation"}
+                          <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M4 6h16a1 1 0 011 1v.3l-9 5.7-9-5.7V7a1 1 0 011-1zm16 3.8V18a1 1 0 01-1 1H5a1 1 0 01-1-1V9.8l8.4 5.3a1 1 0 001.2 0L20 9.8z"/></svg>
+                          <span>{lang === "ar" ? "اطلب استشارة" : "Request consultation"}</span>
                         </Link>
                       </div>
                     </div>
@@ -719,9 +736,10 @@ export default function CasesOverview({ variant = "home" }: { variant?: "home" |
                       <div className={`${lang === "ar" ? "mr-auto justify-start" : "ml-auto justify-end"} flex items-center`}>
                         <Link
                           href={`/${lang}/contact?subject=${encodeURIComponent((lang === "ar" ? "قضية: " : "Case: ") + selected)}`}
-                          className="inline-flex items-center rounded-lg bg-[var(--brand-accent)] text-black px-3 py-1.5 text-xs font-semibold hover:opacity-95 lg:px-4 lg:text-sm"
+                          className="inline-flex items-center gap-2 rounded-lg bg-[var(--brand-accent)] text-black px-3 py-1.5 text-xs font-semibold hover:opacity-95 lg:px-4 lg:text-sm"
                         >
-                          {lang === "ar" ? "احجز استشارة" : "Book consultation"}
+                          <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M4 6h16a1 1 0 011 1v.3l-9 5.7-9-5.7V7a1 1 0 011-1zm16 3.8V18a1 1 0 01-1 1H5a1 1 0 01-1-1V9.8l8.4 5.3a1 1 0 001.2 0L20 9.8z"/></svg>
+                          <span>{lang === "ar" ? "احجز استشارة" : "Book consultation"}</span>
                         </Link>
                       </div>
                     </div>

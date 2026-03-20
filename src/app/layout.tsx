@@ -3,6 +3,7 @@ import { Inter, Tajawal } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
+import WhatsAppFloatingButton from "@/components/WhatsAppFloatingButton";
 import GlobalLoadingOverlay from "@/components/GlobalLoadingOverlay";
 import CookieConsent from "@/components/CookieConsent";
 
@@ -20,7 +21,7 @@ const tajawal = Tajawal({
 });
 
 export const metadata: Metadata = {
-  title: "Khaled Omer Maritime Consultancy | Legal & Maritime Consultation UAE",
+  title: "KOMC | Legal & Maitime Consultation UAE",
   description:
     "Trusted maritime law and legal consulting in the UAE. Admiralty, shipping, contracts, disputes, compliance. Bilingual Arabic & English.",
   keywords: [
@@ -42,20 +43,25 @@ export const metadata: Metadata = {
       "ar": "/ar",
     },
   },
+  icons: {
+    icon: "/icon.svg",
+    shortcut: ["/icon.svg"],
+    apple: "/icon.svg",
+  },
   openGraph: {
     title:
-      "Khaled Omer Maritime Consultancy | Legal & Maritime Consultation UAE",
+      "KOMC | Legal & Maitime Consultation UAE",
     description:
       "Specialized in Admiralty, Commercial Shipping, Contracts, Disputes, and Compliance across the UAE & GCC.",
     url: "https://www.example.com/en",
-    siteName: "Khaled Omer Maritime Consultancy",
+    siteName: "KOMC",
     locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title:
-      "Khaled Omer Maritime Consultancy | Legal & Maritime Consultation UAE",
+      "KOMC | Legal & Maitime Consultation UAE",
     description:
       "Trusted maritime & legal expertise in the UAE. Bilingual Arabic & English.",
   },
@@ -83,6 +89,7 @@ export default async function RootLayout({
           <GlobalLoadingOverlay />
           <CookieConsent />
           {children}
+          <WhatsAppFloatingButton />
           <ScrollToTopButton />
         </Providers>
       </body>

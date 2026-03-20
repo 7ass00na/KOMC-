@@ -57,8 +57,11 @@ export default function AboutTrustBand({
         </div>
         <Link
           href={tCtaHref}
-          className={`${isRTL ? "md:order-3" : "md:order-4"} rounded-lg bg-[var(--brand-accent)] text-black px-4 py-2 text-sm font-semibold transition ring-1 ring-[var(--brand-accent)]/40 hover:bg-[color-mix(in oklab,var(--brand-accent),black_12%)] active:bg-[color-mix(in oklab,var(--brand-accent),black_22%)] active:translate-y-[1px]`}
+          className={`${isRTL ? "md:order-3" : "md:order-4"} inline-flex items-center gap-2 rounded-lg bg-[var(--brand-accent)] text-black px-4 py-2 text-sm font-semibold transition ring-1 ring-[var(--brand-accent)]/40 hover:-translate-y-0.5 hover:bg-[color-mix(in oklab,var(--brand-accent),black_12%)] active:scale-[0.98]`}
         >
+          <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+            <path d="M19 8h-3V6a2 2 0 00-2-2h-4a2 2 0 00-2 2v2H5a2 2 0 00-2 2v8h18v-8a2 2 0 00-2-2zm-5-2v2H10V6h4z"/>
+          </svg>
           <span data-edit-key="about-trustband-cta-label">{tCtaLabel}</span>
         </Link>
       </div>

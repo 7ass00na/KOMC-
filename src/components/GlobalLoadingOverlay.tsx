@@ -116,14 +116,15 @@ export default function GlobalLoadingOverlay() {
             >
               <motion.div
                 className="absolute inset-0 rounded-full border-2 border-[var(--brand-accent)] border-t-transparent"
+                data-global-cursor-line
                 animate={reduce ? {} : { rotate: -360 }}
                 transition={{ repeat: Infinity, duration: 2.2, ease: 'linear' }}
               />
-              <div className="absolute inset-0 flex items-center justify-center text-[var(--brand-accent)]">
+              <div className="absolute inset-0 flex items-center justify-center text-[var(--brand-accent)]" data-global-cursor-icon>
                 <ScalesIcon />
               </div>
             </motion.div>
-            <div className="mt-5 text-sm:3xl tracking-widest uppercase text-zinc-300">
+            <div className="mt-5 text-sm:3xl tracking-widest uppercase text-white" data-global-cursor-text>
               {lang === 'ar' ? 'جارٍ تهيئة تجربتك' : 'Preparing your experience'}
             </div>
           </div>

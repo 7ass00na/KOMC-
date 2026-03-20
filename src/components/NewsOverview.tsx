@@ -63,7 +63,7 @@ export default function NewsOverview() {
   const item = { hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } };
   const fmt = (iso?: string) =>
     iso
-      ? new Intl.DateTimeFormat(lang === "ar" ? "ar" : "en", { year: "numeric", month: "short", day: "numeric" }).format(new Date(iso))
+      ? new Intl.DateTimeFormat(lang === "ar" ? "ar" : "en", { year: "numeric", month: "short", day: "numeric", timeZone: "UTC" }).format(new Date(iso))
       : null;
   const title = lang === "ar" ? "معرفة قانونية وتحديثات" : "Legal Knowledge & Updates";
   const subtitle =
@@ -91,8 +91,8 @@ export default function NewsOverview() {
                 href={newsHref}
                 className="inline-flex items-center gap-2 rounded-lg bg-[var(--brand-accent)] text-black px-5 py-2.5 font-semibold hover:opacity-90 transition-transform duration-200 will-change-transform hover:-translate-y-0.5 active:scale-95 shadow-md"
               >
-                {viewAll}
-                <span>→</span>
+                <span>{viewAll}</span>
+                <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
               </Link>
             </motion.div>
           </div>

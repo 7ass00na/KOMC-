@@ -164,9 +164,23 @@ export default function ServicesOverview({ variant = "home" }: Props) {
     return (slugToLabel as Record<string, string>)[v] ?? null;
   }, [searchParams, slugToLabel]);
   const chipJustify = useMemo(() => {
-    return lang === "ar" ? "justify-center md:justify-end" : "justify-center md:justify-start";
+    return lang === "ar"
+      ? "justify-center md:justify-center lg:justify-end"
+      : "justify-center md:justify-center lg:justify-start";
   }, [lang]);
   const [active, setActive] = useState(paramLabel ?? categories[0]);
+  const iconForCategory = (label: string) => {
+    const l = String(label).toLowerCase();
+    if (/(maritime|بحر)/.test(l)) return "anchor";
+    if (/(insur|تأمين)/.test(l)) return "shield";
+    if (/(trade|تجار)/.test(l)) return "box";
+    if (/(dispute|نزاع)/.test(l)) return "gavel";
+    if (/(family|أسرة)/.test(l)) return "family";
+    if (/(labou|عمل)/.test(l)) return "briefcase";
+    if (/(criminal|جنائ)/.test(l)) return "gavel";
+    if (/(crime|إلكترون)/.test(l)) return "cyber";
+    return "category";
+  };
   const tiles = useMemo(
     () =>
           lang === "ar"
@@ -174,7 +188,7 @@ export default function ServicesOverview({ variant = "home" }: Props) {
             { title: "حوادث وأميرالية", desc: "تصادم، إنقاذ، معدل عام، استجابة للأزمات.", cat: "البحري", img: "/images/Services/Maritime.jpg" },
             { title: "حجز السفن", desc: "حجز، امتيازات، وترتيبات ضمان.", cat: "البحري", img: "/images/Services/cargoArrest.jpg" },
             { title: "عقود الإيجار والتأخير", desc: "صياغة العقود ومعالجة التأخير والمطالبات.", cat: "البحري", img: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80" },
-            { title: "رقابة دولة الميناء", desc: "تفتيش، احتجاز، والتعامل مع المخالفات.", cat: "البحري", img: "https://images.unsplash.com/photo-1518081461904-9aceda1c7283?auto=format&fit=crop&w=1200&q=80" },
+            { title: "رقابة دولة الميناء", desc: "تفتيش، احتجاز، والتعامل مع المخالفات.", cat: "البحري", img: "/images/Services/Maritime.jpg" },
 
             { title: "تأمين بحري", desc: "تغطية، رجوع، ونوادي الحماية.", cat: "التأمين", img: "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=1200&q=80" },
             { title: "إدارة المطالبات", desc: "استلام المطالبة وتقييمها والتفاوض عليها.", cat: "التأمين", img: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80" },
@@ -189,7 +203,7 @@ export default function ServicesOverview({ variant = "home" }: Props) {
             { title: "تحكيم وتقاضي", desc: "مرافعات محلية وتحكيم مؤسسي.", cat: "النزاعات", img: "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=1200&q=80" },
             { title: "وساطة وتسويات", desc: "حل نزاعات سريع وفعال.", cat: "النزاعات", img: "https://images.unsplash.com/photo-1529070538774-1843cb3265df?auto=format&fit=crop&w=1200&q=80" },
             { title: "تنفيذ وأوامر ضمان", desc: "حجز أصول وضمانات قضائية.", cat: "النزاعات", img: "https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&w=1200&q=80" },
-            { title: "الأدلة والخبرة الفنية", desc: "تقارير خبراء وشهادة فنية.", cat: "النزاعات", img: "https://images.unsplash.com/photo-1518081461904-9aceda1c7283?auto=format&fit=crop&w=1200&q=80" },
+            { title: "الأدلة والخبرة الفنية", desc: "تقارير خبراء وشهادة فنية.", cat: "النزاعات", img: "/images/Services/Maritime.jpg" },
 
             { title: "طلاق وحضانة", desc: "إجراءات الطلاق وترتيبات الحضانة والنفقة.", cat: "الأسرة", img: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80" },
             { title: "إرث ووصايا", desc: "صياغة الوصايا وتوزيع التركات وإثباتها.", cat: "الأسرة", img: "https://images.unsplash.com/photo-1518972559570-7cc1309f3229?auto=format&fit=crop&w=1200&q=80" },
@@ -215,7 +229,7 @@ export default function ServicesOverview({ variant = "home" }: Props) {
             { title: "Admiralty & Casualty", desc: "Collisions, salvage, GA, crisis response.", cat: "Maritime", img: "/images/Services/Maritime.jpg" },
             { title: "Vessel Arrests", desc: "Arrest, liens, security arrangements.", cat: "Maritime", img: "/images/Services/cargoArrest.jpg" },
             { title: "Charterparty & Demurrage", desc: "Drafting, delays, claims management.", cat: "Maritime", img: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80" },
-            { title: "Port State Control", desc: "Inspections, detentions, compliance.", cat: "Maritime", img: "https://images.unsplash.com/photo-1518081461904-9aceda1c7283?auto=format&fit=crop&w=1200&q=80" },
+            { title: "Port State Control", desc: "Inspections, detentions, compliance.", cat: "Maritime", img: "/images/Services/Maritime.jpg" },
 
             { title: "Marine Insurance", desc: "Coverage, subrogation, P&I clubs.", cat: "Insurance", img: "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=1200&q=80" },
             { title: "Claims Handling", desc: "Intake, evaluation, negotiation.", cat: "Insurance", img: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80" },
@@ -230,7 +244,7 @@ export default function ServicesOverview({ variant = "home" }: Props) {
             { title: "Arbitration & Litigation", desc: "Courts and institutional arbitration.", cat: "Disputes", img: "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=1200&q=80" },
             { title: "Mediation & Settlements", desc: "Fast and efficient dispute resolution.", cat: "Disputes", img: "https://images.unsplash.com/photo-1529070538774-1843cb3265df?auto=format&fit=crop&w=1200&q=80" },
             { title: "Enforcement & Security", desc: "Asset freezes and security orders.", cat: "Disputes", img: "https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&w=1200&q=80" },
-            { title: "Expert Evidence", desc: "Expert reports and testimony.", cat: "Disputes", img: "https://images.unsplash.com/photo-1518081461904-9aceda1c7283?auto=format&fit=crop&w=1200&q=80" },
+            { title: "Expert Evidence", desc: "Expert reports and testimony.", cat: "Disputes", img: "/images/Services/Maritime.jpg" },
 
             { title: "Divorce & Guardianship", desc: "Separation, custody, and support orders.", cat: "Family", img: "https://images.unsplash.com/photo-1518972559570-7cc1309f3229?auto=format&fit=crop&w=1200&q=80" },
             { title: "Inheritance & Wills", desc: "Wills, probate, and estate distribution.", cat: "Family", img: "https://images.unsplash.com/photo-1512427691650-1f4b2a1c2d48?auto=format&fit=crop&w=1200&q=80" },
@@ -378,6 +392,7 @@ export default function ServicesOverview({ variant = "home" }: Props) {
                     ? "bg-[var(--brand-accent)] text-white border-[color-mix(in_oklab,var(--brand-accent),black_8%)]"
                     : "bg-[var(--panel-bg)] text-[var(--brand-accent)] border-[var(--panel-border)] hover:bg-[color-mix(in_oklab,var(--panel-bg),white_8%)] dark:bg-[color-mix(in_oklab,var(--brand-primary),white_8%)] dark:text-zinc-300 dark:border-white/20 dark:hover:bg-[color-mix(in_oklab,var(--brand-primary),white_14%)]")
                 }
+                data-icon={iconForCategory(String(c))}
               >
                 {c}
               </button>
@@ -697,11 +712,13 @@ export default function ServicesOverview({ variant = "home" }: Props) {
               </div>
             </div>
             <div className="flex gap-2">
-              <Link href={contactHref} className="inline-flex items-center rounded-lg bg-[var(--brand-accent)] text-black px-4 py-2 text-sm font-semibold transition-transform duration-200 will-change-transform hover:-translate-y-0.5 active:scale-95 shadow">
-                {contactLabel}
+              <Link href={contactHref} className="inline-flex items-center gap-2 rounded-lg bg-[var(--brand-accent)] text-black px-4 py-2 text-sm font-semibold transition-transform duration-200 will-change-transform hover:-translate-y-0.5 active:scale-95 shadow">
+                <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M4 6h16a1 1 0 011 1v.3l-9 5.7-9-5.7V7a1 1 0 011-1zm16 3.8V18a1 1 0 01-1 1H5a1 1 0 01-1-1V9.8l8.4 5.3a1 1 0 001.2 0L20 9.8z"/></svg>
+                <span>{contactLabel}</span>
               </Link>
-              <Link href={`/${lang}/cases`} className="inline-flex items-center rounded-lg border border-zinc-700/40 px-4 py-2 text-sm font-semibold text-zinc-200 hover:bg-white/5 transition-transform duration-200 will-change-transform hover:-translate-y-0.5 active:scale-95">
-                {lang === "ar" ? "اطلع على النجاحات" : "See case results"}
+              <Link href={`/${lang}/cases`} className="inline-flex items-center gap-2 rounded-lg border border-zinc-700/40 px-4 py-2 text-sm font-semibold text-zinc-200 hover:bg-white/5 transition-transform duration-200 will-change-transform hover:-translate-y-0.5 active:scale-95">
+                <span>{lang === "ar" ? "اطلع على النجاحات" : "See case results"}</span>
+                <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
               </Link>
             </div>
           </div>

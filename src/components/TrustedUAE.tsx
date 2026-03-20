@@ -12,6 +12,15 @@ export default function TrustedUAE() {
   const { lang } = useLanguage();
   const cities = lang === "ar" ? citiesAr : citiesEn;
   const sectors = lang === "ar" ? sectorsAr : sectorsEn;
+  const iconForSector = (label: string) => {
+    const l = String(label).toLowerCase();
+    if (/(ship|سفن|مالك)/.test(l)) return "anchor";
+    if (/(insur|تأمين|p&i|حماي|تعويض)/.test(l)) return "shield";
+    if (/(logistic|لوجست)/.test(l)) return "box";
+    if (/(trader|تجار)/.test(l)) return "box";
+    if (/(port|موان)/.test(l)) return "anchor";
+    return "category";
+  };
   const testimonials =
     lang === "ar"
       ? [
@@ -128,6 +137,7 @@ export default function TrustedUAE() {
             <div
               key={s}
               className="flex items-center justify-center rounded-lg chip px-3 py-2 text-xs text-zinc-200 hover:opacity-90 transition-colors"
+              data-icon={iconForSector(s)}
                 data-edit-key={`uae-sector-${String(s).toLowerCase().replace(/[^a-zA-Z0-9]+/g,"-")}`}
             >
               {s}

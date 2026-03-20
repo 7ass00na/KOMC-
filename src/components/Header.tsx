@@ -3,6 +3,7 @@
 // AR: رأس الموقع — العلامة التجارية، الملاحة، اختيار اللغة، تبديل السمة، زر الدعوة
 import { useLanguage } from "@/context/LanguageContext";
 import { useTheme } from "@/context/ThemeContext";
+import { Home as HomeIcon, Info, Scale, Gavel, Newspaper, Mail } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useEffect, useMemo, useState, useRef } from "react";
@@ -90,6 +91,17 @@ export default function Header() {
     };
   }, [mobileOpen]);
 
+  function Icon({ id }: { id: string }) {
+    const common = "h-5 w-5 shrink-0";
+    if (id === "home") return <HomeIcon className={common} aria-hidden="true" />;
+    if (id === "about") return <Info className={common} aria-hidden="true" />;
+    if (id === "services") return <Scale className={common} aria-hidden="true" />;
+    if (id === "cases") return <Gavel className={common} aria-hidden="true" />;
+    if (id === "news") return <Newspaper className={common} aria-hidden="true" />;
+    if (id === "contact") return <Mail className={common} aria-hidden="true" />;
+    return <span className={common} />;
+  }
+
   // EN: Build bilingual nav items based on active language
   // AR: إنشاء عناصر الملاحة ثنائية اللغة حسب اللغة الحالية
   const navItems = useMemo(
@@ -142,12 +154,9 @@ export default function Header() {
         >
           {/* EN: Brand mark and name */}
           {/* AR: علامة الشعار واسم العلامة */}
-          <div className="h-8 w-8 rounded-md bg-[var(--brand-accent)] text-black flex items-center justify-center font-extrabold leading-none">
-            KO
+          <div className="h-8 w-8 rounded-md bg-[var(--brand-accent)] text-black flex items-center justify-center">
+            <Scale className="h-5 w-5" aria-hidden="true" />
           </div>
-          {(header?.published_logo || header?.logo) ? (
-            <Image src={(header?.published_logo || header?.logo) as string} alt="Logo" width={28} height={28} className="rounded-full object-contain" />
-          ) : null}
           <div className={
             "text-[13px] md:text-sm font-bold " +
             (dark
@@ -158,10 +167,11 @@ export default function Header() {
                   ? "text-transparent bg-clip-text bg-gradient-to-r from-white/60 via-white to-white/60 bg-center"
                   : "text-transparent bg-clip-text bg-gradient-to-r from-[#132437] via-[color-mix(in_oklab,#132437,white_18%)] to-[#132437] bg-center"))
           }>
-            <span data-edit-key="brand-name">
-            {lang === "ar"
-              ? ("خالد عمر للأستشارات البحرية")
-              : ("Khaled Omer Maritime Consultancy")}
+            <span className="md:hidden" data-edit-key="brand-name-mobile">
+              {lang === "ar" ? "خـالـد عـمـر" : "KOMC"}
+            </span>
+            <span className="hidden md:inline" data-edit-key="brand-name-desktop">
+              {lang === "ar" ? "خالد عمر للأستشارات البحرية" : "Khaled Omer Maritime Consultancy"}
             </span>
           </div>
         </motion.div>
@@ -223,7 +233,8 @@ export default function Header() {
           <div className="relative" ref={langMenuRef}>
             {(() => {
               const activeLangLabel = lang === "ar" ? "عربي" : "Eng";
-              const colorClass = dark ? (scrolled ? "text-white" : "text-[var(--brand-accent)]") : "text-[#ffffff]";
+              const labelClass = dark ? "text-black" : "text-white";
+              const iconClass = dark ? "text-black" : "text-white";
               return (
             <button
               aria-label="Language"
@@ -232,15 +243,21 @@ export default function Header() {
               onClick={() => setLangOpen((o) => !o)}
               className={
                "h-9 rounded-lg border inline-flex items-center gap-1.5 px-2.5 transition " +
-               (dark ? "border-white/10 bg-white/10 hover:bg-white/15" : (scrolled ? "border-transparent bg-[var(--brand-accent)] hover:bg-[var(--brand-accent)]" : "border-black/10 bg-black/5 hover:bg-black/10"))
+               (
+                 dark
+                   ? "border-transparent bg-[var(--brand-accent)] hover:bg-[var(--accent-hover)]"
+                   : "border-transparent bg-[var(--brand-accent)] hover:bg-[var(--accent-hover)]"
+               )
               }
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true" className={colorClass}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true" className={iconClass}>
                 <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" />
                 <path d="M3 12h18M12 3c2.5 2.6 3.8 5.3 3.8 9S14.5 20.4 12 21M12 3C9.5 5.6 8.2 8.3 8.2 12S9.5 18.4 12 21" stroke="currentColor" strokeWidth="1.5" />
               </svg>
-              <span className={"text-xs font-semibold " + colorClass}>{activeLangLabel}</span>
-              <svg width="12" height="12" viewBox="0 0 20 20" fill="none" aria-hidden="true" className={colorClass}>
+              <span className={"text-xs font-semibold " + labelClass} style={!dark ? { color: "#ffffff" } : undefined}>
+                {activeLangLabel}
+              </span>
+              <svg width="12" height="12" viewBox="0 0 20 20" fill="none" aria-hidden="true" className={iconClass}>
                 <path d="M6 8l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </button>
@@ -271,7 +288,7 @@ export default function Header() {
                   ].join(" ")}
                 >
                   <span>English</span>
-                  <span className="text-xs px-1.5 py-0.5 rounded bg-[var(--brand-accent)] text-[var(--brand-primary)]/90">EN</span>
+                  <span className={"text-xs px-1.5 py-0.5 rounded bg-[var(--brand-accent)] " + (lang === "en" ? "text-white" : "text-[var(--brand-primary)]/90")}>EN</span>
                 </button>
                 {/* EN: Arabic option */}
                 {/* AR: خيار اللغة العربية */}
@@ -288,7 +305,7 @@ export default function Header() {
                   ].join(" ")}
                 >
                   <span>العربية</span>
-                  <span className="text-xs px-1.5 py-0.5 rounded bg-[var(--brand-accent)] text-[var(--brand-primary)]/90">AR</span>
+                  <span className={"text-xs px-1.5 py-0.5 rounded bg-[var(--brand-accent)] " + (lang === "ar" ? "text-white" : "text-[var(--brand-primary)]/90")}>AR</span>
                 </button>
               </div>
             )}
@@ -303,10 +320,15 @@ export default function Header() {
               "rounded-lg px-3 py-1.5 text-sm hidden sm:inline transition-transform duration-200 will-change-transform hover:-translate-y-0.5 active:scale-95 shadow pointer-events-auto",
               dark
                 ? "bg-[var(--brand-accent)] text-[var(--brand-primary)] font-semibold hover:bg-[var(--accent-hover)]"
-                : "bg-[var(--brand-accent)] text-white font-bold hover:opacity-95"
+                : "bg-[var(--brand-accent)] text-black font-bold hover:opacity-95"
             ].join(" ")}
           >
-            {t("ctaConsult")}
+            <span className="inline-flex items-center gap-2">
+              <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+                <path d="M4 6h16a1 1 0 011 1v.3l-9 5.7-9-5.7V7a1 1 0 011-1zm16 3.8V18a1 1 0 01-1 1H5a1 1 0 01-1-1V9.8l8.4 5.3a1 1 0 001.2 0L20 9.8z"/>
+              </svg>
+              <span>{t("ctaConsult")}</span>
+            </span>
           </Link>
           <button
             aria-label="Menu"
@@ -356,26 +378,68 @@ export default function Header() {
                   onClick={() => setMobileOpen(false)}
                   aria-current={isActive ? "page" : undefined}
                   className={
-                    "text-sm py-2 rounded " +
+                    "text-sm py-2 rounded flex items-center gap-3 px-2 " +
                     (isActive
-                      ? "bg-[var(--brand-accent)] text-[var(--brand-primary)] font-semibold"
+                      ? "bg-[var(--brand-accent)] text-[var(--brand-primary)] font-semibold ring-1 ring-[var(--brand-accent)]/50"
                       : "hover:bg-[color-mix(in oklab,var(--brand-primary),white 10%)]")
                   }
                 >
+                  <span className={isActive ? "text-[var(--brand-primary)]" : "text-[var(--ink-primary)] opacity-90"}>
+                    <Icon id={item.id} />
+                  </span>
                   <span data-edit-key={`nav-${item.id}-mobile`}>{item.label}</span>
+                  <svg className="ml-auto h-4 w-4 opacity-60" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
                 </Link>
               );
             })}
+            <motion.div
+              className="my-2 h-[2px] rounded-full"
+              style={{
+                background: "linear-gradient(90deg, transparent, var(--brand-accent), transparent)",
+                backgroundSize: "200% 100%",
+              }}
+              animate={{ backgroundPosition: ["0% 0%", "200% 0%"] }}
+              transition={{ duration: 2.2, repeat: Infinity, ease: "linear" }}
+            />
+            <div className="flex items-center justify-center gap-2 py-1 text-[11px] uppercase tracking-widest text-zinc-500">
+              <span>{lang === "ar" ? "تابعنا" : "Follow us"}</span>
+            </div>
+            <div className="flex items-center justify-center gap-3">
+              <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook" data-social="facebook" className="p-2 rounded-lg ring-1 ring-black/10 dark:ring-white/10 hover:bg-[#1877F2]/90 hover:text-white">
+                <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M13.5 9H15V6h-1.5C11.6 6 11 7.4 11 9v1.5H9V14h2v6h3v-6h2l.5-3.5h-2.5V9c0-.4.1-1 .5-1h1V6h-1c-2 0-2.5 1.6-2.5 3v1.5z"/></svg>
+              </a>
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="Twitter" data-social="twitter" className="p-2 rounded-lg ring-1 ring-black/10 dark:ring-white/10 hover:bg-[#1DA1F2]/90 hover:text-white">
+                <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M22 5.8c-.7.3-1.5.6-2.3.7.8-.5 1.4-1.3 1.7-2.2-.8.5-1.7.9-2.6 1.1A3.9 3.9 0 0012 8.5c0 .3 0 .6.1.8-3.2-.2-6-1.7-7.9-4.1-.4.6-.6 1.3-.6 2.1 0 1.4.7 2.6 1.8 3.3-.6 0-1.2-.2-1.7-.5v.1c0 2 1.4 3.7 3.3 4.1-.3.1-.7.1-1 .1-.2 0-.5 0-.7-.1.5 1.7 2.1 3 4 3A7.9 7.9 0 014 19.6a11 11 0 006 1.8c7.2 0 11.2-6 11.2-11.2v-.5c.8-.5 1.4-1.2 1.9-1.9-.7.3-1.4.5-2.1.6z"/></svg>
+              </a>
+              <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram" data-social="instagram" className="p-2 rounded-lg ring-1 ring-black/10 dark:ring-white/10 hover:bg-[#E1306C]/90 hover:text-white">
+                <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M7 2h10a5 5 0 015 5v10a5 5 0 01-5 5H7a5 5 0 01-5-5V7a5 5 0 015-5zm0 2a3 3 0 00-3 3v10a3 3 0 003 3h10a3 3 0 003-3V7a3 3 0 00-3-3H7zm5 3.5a5.5 5.5 0 110 11 5.5 5.5 0 010-11zm0 2a3.5 3.5 0 100 7 3.5 3.5 0 000-7zm5-2.3a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z"/></svg>
+              </a>
+              <a href="https://www.tiktok.com" target="_blank" rel="noopener noreferrer" aria-label="TikTok" data-social="tiktok" className="p-2 rounded-lg ring-1 ring-black/10 dark:ring-white/10 hover:bg-[#000000]/90 hover:text-white">
+                <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M20 8.5c-2 0-3.8-1-4.8-2.6v9.3a5.2 5.2 0 11-5.2-5.2c.3 0 .7 0 1 .1v2.7a2.5 2.5 0 10.9 4.8 2.5 2.5 0 001.6-2.3V2h2.7c.2.8.7 1.6 1.3 2.2A5.5 5.5 0 0020 5.5v3z"/></svg>
+              </a>
+            </div>
             {/* EN: Mobile contact CTA */}
             {/* AR: زر تواصل للجوال */}
             <Link
               href={lang === "ar" ? "/ar/contact" : "/en/contact"}
               onClick={() => setMobileOpen(false)}
               prefetch
-              className="mt-2 rounded-lg bg-[var(--brand-accent)] text-[var(--brand-primary)] px-3 py-2 text-sm font-semibold transition-transform duration-200 will-change-transform hover:-translate-y-0.5 active:scale-95 shadow"
+              className="mt-2 w-full text-center rounded-lg bg-[var(--brand-accent)] text-[var(--brand-primary)] px-3 py-2 text-sm font-semibold transition-transform duration-200 will-change-transform hover:-translate-y-0.5 active:scale-95 shadow"
             >
-              {t("ctaConsult")}
+              <span className="inline-flex items-center gap-2 justify-center">
+                <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+                  <path d="M4 6h16a1 1 0 011 1v.3l-9 5.7-9-5.7V7a1 1 0 011-1zm16 3.8V18a1 1 0 01-1 1H5a1 1 0 01-1-1V9.8l8.4 5.3a1 1 0 001.2 0L20 9.8z"/>
+                </svg>
+                <span>{t("ctaConsult")}</span>
+              </span>
             </Link>
+            <div className="mt-3 rounded-lg border border-[var(--panel-border)] bg-[var(--panel-bg)] p-3 text-xs text-[var(--text-secondary)]">
+              {lang === "ar"
+                ? "احجز استشارة أولية — سنراجع وضعك القانوني ونرسم خطة عمل واضحة مع توصيات عملية ومواعيد تنفيذ."
+                : "Book an initial consultation — we assess your legal position and map a clear action plan with practical recommendations and timelines."}
+            </div>
           </div>
         </motion.div>
       )}

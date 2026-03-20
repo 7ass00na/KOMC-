@@ -9,11 +9,18 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 
-function SocialIcon({ kind }: { kind: "linkedin" | "twitter" | "facebook" | "instagram" }) {
+function SocialIcon({ kind }: { kind: "linkedin" | "twitter" | "facebook" | "instagram" | "tiktok" }) {
   if (kind === "linkedin") {
     return (
       <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">
         <path fill="currentColor" d="M4.98 3.5C4.98 4.88 3.86 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM0 8.98h5V24H0zM8.5 8.98H13v2.05h.06c.63-1.2 2.17-2.47 4.47-2.47C22.4 8.56 24 11 24 15.02V24h-5v-7.47c0-1.78-.03-4.06-2.48-4.06-2.48 0-2.86 1.94-2.86 3.94V24H8.5z"/>
+      </svg>
+    );
+  }
+  if (kind === "tiktok") {
+    return (
+      <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">
+        <path fill="currentColor" d="M20 8.5c-2 0-3.8-1-4.8-2.6v9.3a5.2 5.2 0 11-5.2-5.2c.3 0 .7 0 1 .1v2.7a2.5 2.5 0 10.9 4.8 2.5 2.5 0 001.6-2.3V2h2.7c.2.8.7 1.6 1.3 2.2A5.5 5.5 0 0020 5.5v3z"/>
       </svg>
     );
   }
@@ -245,26 +252,15 @@ export default function Footer() {
             <p className="text-sm text-[var(--text-secondary)] dark:text-[color-mix(in_oklab,var(--text-on-dark),transparent_20%)] footer-copy">{t("footerIntro")}</p>
             <div className="flex items-center gap-3">
               <motion.a
-                href="https://www.linkedin.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="LinkedIn"
-                whileHover={{ y: -1.5, scale: 1.08, rotate: 0.4 }}
-                whileTap={{ scale: 0.94, rotate: 0 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                className="h-8 w-8 ui-pill social-btn flex items-center justify-center text-[var(--ink-primary)] dark:text-zinc-300"
-              >
-                <SocialIcon kind="linkedin" />
-              </motion.a>
-              <motion.a
                 href="https://twitter.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Twitter / X"
+                data-social="twitter"
                 whileHover={{ y: -1.5, scale: 1.08, rotate: 0.4 }}
                 whileTap={{ scale: 0.94, rotate: 0 }}
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                className="h-8 w-8 ui-pill social-btn flex items-center justify-center text-[var(--ink-primary)] dark:text-zinc-300"
+                className="h-9 w-9 rounded-lg ring-1 ring-[var(--panel-border)] dark:ring-white/15 bg-[var(--panel-bg)] flex items-center justify-center text-[var(--ink-primary)] dark:text-zinc-300 hover:bg-[#1DA1F2]/90 hover:text-white"
               >
                 <SocialIcon kind="twitter" />
               </motion.a>
@@ -273,10 +269,11 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Facebook"
+                data-social="facebook"
                 whileHover={{ y: -1.5, scale: 1.08, rotate: 0.4 }}
                 whileTap={{ scale: 0.94, rotate: 0 }}
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                className="h-8 w-8 ui-pill social-btn flex items-center justify-center text-[var(--ink-primary)] dark:text-zinc-300"
+                className="h-9 w-9 rounded-lg ring-1 ring-[var(--panel-border)] dark:ring-white/15 bg-[var(--panel-bg)] flex items-center justify-center text-[var(--ink-primary)] dark:text-zinc-300 hover:bg-[#1877F2]/90 hover:text-white"
               >
                 <SocialIcon kind="facebook" />
               </motion.a>
@@ -285,12 +282,26 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
+                data-social="instagram"
                 whileHover={{ y: -1.5, scale: 1.08, rotate: 0.4 }}
                 whileTap={{ scale: 0.94, rotate: 0 }}
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                className="h-8 w-8 ui-pill social-btn flex items-center justify-center text-[var(--ink-primary)] dark:text-zinc-300"
+                className="h-9 w-9 rounded-lg ring-1 ring-[var(--panel-border)] dark:ring-white/15 bg-[var(--panel-bg)] flex items-center justify-center text-[var(--ink-primary)] dark:text-zinc-300 hover:bg-[#E1306C]/90 hover:text-white"
               >
                 <SocialIcon kind="instagram" />
+              </motion.a>
+              <motion.a
+                href="https://www.tiktok.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="TikTok"
+                data-social="tiktok"
+                whileHover={{ y: -1.5, scale: 1.08, rotate: 0.4 }}
+                whileTap={{ scale: 0.94, rotate: 0 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                className="h-9 w-9 rounded-lg ring-1 ring-[var(--panel-border)] dark:ring-white/15 bg-[var(--panel-bg)] flex items-center justify-center text-[var(--ink-primary)] dark:text-zinc-300 hover:bg-[#000000]/90 hover:text-white"
+              >
+                <SocialIcon kind="tiktok" />
               </motion.a>
             </div>
           </motion.div>
@@ -434,8 +445,9 @@ export default function Footer() {
                   placeholder={t("newsletterPlaceholder")}
                   className="flex-1 h-10 rounded-lg px-3 text-sm bg-[var(--panel-bg)] border border-[var(--panel-border)] text-[var(--ink-primary)] dark:bg-[color-mix(in oklab,var(--brand-primary),white 10%)] dark:border-white/20 dark:text-[var(--text-on-dark)] newsletter-input"
                 />
-                <button className="h-10 px-3 rounded-lg bg-[var(--brand-accent)] text-[var(--brand-primary)] text-sm hover:bg-[var(--accent-hover)] font-semibold newsletter-btn">
-                  {t("newsletterSubscribe")}
+                <button className="h-10 px-3 rounded-lg bg-[var(--brand-accent)] text-[var(--brand-primary)] text-sm hover:bg-[var(--accent-hover)] font-semibold newsletter-btn inline-flex items-center gap-2">
+                  <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M2 21l21-9-9 3-3 9-2.5-7.5L1 12l1 9z"/></svg>
+                  <span>{t("newsletterSubscribe")}</span>
                 </button>
               </div>
             </div>
@@ -445,12 +457,21 @@ export default function Footer() {
         {/* AR: شريط قانوني سفلي — حقوق النشر والسياسات */}
         <div className="mt-8 border-t border-[var(--panel-border)] dark:border-white/15 pt-4 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-[var(--text-secondary)] dark:text-[color-mix(in_oklab,var(--text-on-dark),transparent_30%)] legal-bar">
           <div className="text-center md:text-left">
-            <span>
-              Khaled Omer Maritime Consultancy{" "}
-              <Link href={`${base}/login`} className="hover:underline font-semibold">( KOMC )</Link>
-              {" - All rights reserved @ 2026 - Create & Dev by "}
-              <a href="mailto:ahmedhussan068@gmail.com" className="hover:underline font-semibold">DevOps</a>
-            </span>
+            {lang === "ar" ? (
+              <span>
+                خالد عمر للاستشارات البحرية{" "}
+                <Link href={`${base}/login`} className="hover:underline font-semibold">( KOMC )</Link>
+                {" - جميع الحقوق محفوظة @ 2026 - الإنشاء والتطوير بواسطة "}
+                <a href="mailto:ahmedhussan068@gmail.com" className="hover:underline font-semibold">DevOps</a>
+              </span>
+            ) : (
+              <span>
+                Khaled Omer Maritime Consultancy{" "}
+                <Link href={`${base}/login`} className="hover:underline font-semibold">( KOMC )</Link>
+                {" - All rights reserved @ 2026 - Create & Dev by "}
+                <a href="mailto:ahmedhussan068@gmail.com" className="hover:underline font-semibold">DevOps</a>
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-4">
             <Link

@@ -45,7 +45,7 @@ export default function NewsPageContent({
   const selectedPost = selectedSlug ? posts.find((post) => post.slug === selectedSlug) : undefined;
   const fmt = (iso?: string) =>
     iso
-      ? new Intl.DateTimeFormat(locale, { year: "numeric", month: "short", day: "numeric" }).format(new Date(iso))
+      ? new Intl.DateTimeFormat(locale, { year: "numeric", month: "short", day: "numeric", timeZone: "UTC" }).format(new Date(iso))
       : null;
   const formatReadTime = (value: string) => {
     const match = value.match(/\d+/);

@@ -83,9 +83,12 @@ export default function TeamOverview() {
         <motion.div variants={item}>
           <Link
             href={`/${lang}/about`}
-            className="hidden md:inline-flex items-center rounded-lg bg-[var(--brand-accent)] text-black px-4 py-2 text-sm font-semibold hover:opacity-95 transition"
+            className="hidden md:inline-flex items-center gap-2 rounded-lg bg-[var(--brand-accent)] text-black px-4 py-2 text-sm font-semibold transition will-change-transform hover:-translate-y-0.5 hover:bg-[color-mix(in_oklab,var(--brand-accent),black_10%)] active:scale-[0.98] ring-1 ring-[var(--brand-accent)]/40"
           >
-            {lang === "ar" ? "تعرف على الفريق" : "Meet the team"}
+            <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+              <path d="M12 12a3 3 0 100-6 3 3 0 000 6zM3 20a6 6 0 1112 0H3zm13.5-8a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM21 20a5 5 0 00-6-4.9 7.1 7.1 0 012 4.9h4z"/>
+            </svg>
+            <span>{lang === "ar" ? "تعرف على الفريق" : "Meet the team"}</span>
           </Link>
         </motion.div>
       </motion.div>

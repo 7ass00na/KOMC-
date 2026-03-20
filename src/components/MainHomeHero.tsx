@@ -211,7 +211,9 @@ export default function HomeHero({
   return (
     <div
       dir={isAr ? "rtl" : "ltr"}
-      className="relative h-[100vh] w-full bg-black text-white overflow-hidden"
+      className="home-hero-scope relative h-[100vh] w-full bg-black text-white overflow-hidden"
+      key={isAr ? "ar" : "en"}
+      suppressHydrationWarning
       data-edit-section
       data-edit-key="home-hero-section"
       onPointerEnter={isEditor ? undefined : () => setHovered(true)}
@@ -298,7 +300,7 @@ export default function HomeHero({
                 </motion.div>
 
                 <motion.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className="mt-4">
-                  <div className="text-[26px] leading-none font-extrabold sm:text-3xl md:text-4xl text-[var(--brand-accent)]" data-edit-key="hero-title">{activeSlide.title}</div>
+                  <div className="hero-title text-[26px] leading-none font-extrabold sm:text-3xl md:text-4xl text-[var(--brand-accent)]" data-edit-key="hero-title">{activeSlide.title}</div>
                 </motion.div>
 
                 <motion.div
@@ -319,15 +321,17 @@ export default function HomeHero({
                 <motion.div variants={{ hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } }} className={["mt-7 w-full flex flex-wrap items-center gap-3 justify-start"].join(" ")}>
                   <Link
                     href={`/${isAr ? "ar" : "en"}/contact`}
-                    className="h-11 px-6 rounded-md bg-[var(--brand-accent)] text-[var(--brand-primary)] font-semibold tracking-wide hover:bg-[var(--accent-hover)] transition-transform duration-200 will-change-transform hover:-translate-y-0.5 active:scale-95 shadow inline-flex items-center justify-center whitespace-nowrap leading-none"
+                    className="hero-cta h-11 px-6 rounded-md bg-[var(--brand-accent)] text-[var(--brand-primary)] font-semibold tracking-wide hover:bg-[var(--accent-hover)] transition-transform duration-200 will-change-transform hover:-translate-y-0.5 active:scale-95 shadow inline-flex items-center justify-center gap-2 whitespace-nowrap leading-none"
                   >
-                    {t("ctaConsult")}
+                    <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M4 6h16a1 1 0 011 1v.3l-9 5.7-9-5.7V7a1 1 0 011-1zm16 3.8V18a1 1 0 01-1 1H5a1 1 0 01-1-1V9.8l8.4 5.3a1 1 0 001.2 0L20 9.8z"/></svg>
+                    <span>{t("ctaConsult")}</span>
                   </Link>
                   <Link
                     href={`/${isAr ? "ar" : "en"}/services`}
-                    className="h-11 px-6 rounded-md border border-[color-mix(in_oklab,var(--brand-accent),white_30%)] text-white font-semibold tracking-wide hover:border-[var(--brand-accent)] hover:bg-white/10 transition-transform duration-200 will-change-transform hover:-translate-y-0.5 active:scale-95 inline-flex items-center justify-center whitespace-nowrap leading-none"
+                    className="hero-services-cta h-11 px-6 rounded-md border border-[color-mix(in_oklab,var(--brand-accent),white_30%)] text-white font-semibold tracking-wide hover:border-[var(--brand-accent)] hover:bg-white/10 transition-transform duration-200 will-change-transform hover:-translate-y-0.5 active:scale-95 inline-flex items-center justify-center gap-2 whitespace-nowrap leading-none"
                   >
-                    {t("navServices")}
+                    <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true" fill="none"><path d="M12 3v3m-6 4l4 7a4 4 0 11-8 0l4-7zm12 0l4 7a4 4 0 11-8 0l4-7zM6 10h12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    <span>{t("navServices")}</span>
                   </Link>
                 </motion.div>
               </motion.div>
@@ -384,8 +388,8 @@ export default function HomeHero({
                       />
 
                       <div className={["absolute inset-0 p-3 flex flex-col justify-end", isAr ? "text-right" : "text-left"].join(" ")}>
-                        <div className="text-xs font-extrabold tracking-wide text-white">{s.title}</div>
-                        <div className="mt-0.5 text-[11px] text-white/70">{s.subtitle}</div>
+                        <div className="hero-thumb-title text-xs font-extrabold tracking-wide text-white" data-hero-thumb-title>{s.title}</div>
+                        <div className="hero-thumb-subtitle mt-0.5 text-[11px] text-white/70" data-hero-thumb-subtitle>{s.subtitle}</div>
 
                         <div className="mt-2 h-1 rounded bg-white/15 overflow-hidden">
                           {isActive ? (
