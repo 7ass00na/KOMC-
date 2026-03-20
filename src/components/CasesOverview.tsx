@@ -4,13 +4,23 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
 export default function CasesOverview({ variant = "home" }: { variant?: "home" | "page" }) {
   const { t, lang } = useLanguage();
   const [taxonomy, setTaxonomy] = useState<{ tags: string[]; categories: { news: string[]; cases: string[] } } | null>(null);
   useEffect(() => {
     fetch("/api/admin/taxonomy", { cache: "no-store" }).then((r) => r.json()).then((d) => setTaxonomy(d)).catch(() => {});
+  }, []);
+  const reduce = useReducedMotion();
+  const [mobile, setMobile] = useState(false);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mq = window.matchMedia("(max-width: 768px)");
+    const on = () => setMobile(mq.matches);
+    on();
+    mq.addEventListener?.("change", on);
+    return () => mq.removeEventListener?.("change", on);
   }, []);
   const searchParams = useSearchParams();
   type CaseItem = { id: string; title: string; desc: string; date: string; views: number; tags: string[] };
@@ -68,17 +78,33 @@ export default function CasesOverview({ variant = "home" }: { variant?: "home" |
   // page resets handled when tag changes via handleTagChange()
   const displayPool =
     variant === "page" && !selectedTag ? (page === 1 ? pool.slice(0, 6) : pool.slice(6)) : pool;
-  const fmtDate = (iso: string) =>
-    new Intl.DateTimeFormat(lang === "ar" ? "ar" : "en", {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const fmtDate = (iso: string) => {
+    if (!mounted) {
+      // Render a stable SSR string to avoid hydration mismatch; upgrade on client
+      // Use YYYY-MM-DD to be invariant across locales/ICU data
+      try {
+        const d = new Date(iso);
+        const y = d.getUTCFullYear();
+        const m = String(d.getUTCMonth() + 1).padStart(2, "0");
+        const da = String(d.getUTCDate()).padStart(2, "0");
+        return `${y}-${m}-${da}`;
+      } catch {
+        return iso.split("T")[0] ?? iso;
+      }
+    }
+    return new Intl.DateTimeFormat(lang === "ar" ? "ar" : "en", {
       year: "numeric",
       month: "short",
       day: "numeric",
       timeZone: "UTC",
     }).format(new Date(iso));
-  const chipRowJustify = lang === "ar" ? "justify-center md:justify-center lg:justify-end" : "justify-center md:justify-center lg:justify-start";
-  const chipInnerJustify = lang === "ar" ? "justify-center md:justify-center lg:justify-end" : "justify-center md:justify-center lg:justify-start";
-  const chipOffsetClass = lang === "ar" ? "lg:ml-auto" : "lg:mr-auto";
-  const chipDirection = lang === "ar" ? "lg:flex-row-reverse" : "lg:flex-row";
+  };
+  const chipRowJustify = lang === "ar" ? "justify-center md:justify-start" : "justify-center md:justify-start";
+  const chipInnerJustify = chipRowJustify;
+  const chipOffsetClass = "";
+  const chipDirection = "flex-row";
   const details =
     lang === "ar"
       ? {
@@ -184,6 +210,84 @@ export default function CasesOverview({ variant = "home" }: { variant?: "home" |
   const [selected, setSelected] = useState<string | null>(initialSelected);
   const selectedItem = selected ? items.find((i) => i.id === selected) : undefined;
   const selectedDetails = selected ? details[selected as keyof typeof details] : undefined;
+  const shareUrlFor = (id: string) => {
+    const path = `/${lang}/cases?case=${id}`;
+    if (typeof window !== "undefined" && window.location?.origin) return window.location.origin + path;
+    return path;
+  };
+  const copyLink = async (id: string) => {
+    const url = shareUrlFor(id);
+    try {
+      if (navigator?.clipboard?.writeText) {
+        await navigator.clipboard.writeText(url);
+      } else {
+        const ta = document.createElement("textarea");
+        ta.value = url;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+      }
+    } catch {
+      // no-op
+    }
+  };
+  const contextLines = (id: string): string[] => {
+    if (lang === "ar") {
+      if (id === "arrest")
+        return ["تقييم أهلية الحجز وفق قانون الإمارات", "تحضير مستندات المسؤولية والأدلة بسرعة", "تنسيق الإجراءات مع الميناء والجهات المختصة"];
+      if (id === "charter")
+        return ["تفكيك بنود الأداء والتأخير بالعقد", "تجميع ملف أدلة فني يدعم الموقف", "إدارة تحكيم فعّالة لإنجاز عادل"];
+      if (id === "compliance")
+        return ["فحص الأطراف وتحديث ضوابط العقوبات", "دمج إجراءات الامتثال ضمن دورة العمل", "تدريب الفرق وتقليل التعرض للمخاطر"];
+      if (id === "recovery")
+        return ["تحليل سلسلة النقل وإثبات المسؤولية", "تجميع وثائق المطالبة والتلف", "التفاوض مع المؤمن لتحقيق تعويض كامل"];
+      if (id === "collision")
+        return ["تحليل سجلات الملاحة والقواعد الدولية", "الاستعانة بخبراء مستقلين", "صياغة مذكرات دقيقة لتوزيع المسؤولية"];
+      return ["تحديد نطاق القضية", "إستراتيجية قائمة على الأدلة", "تنفيذ منضبط حتى النتيجة"];
+    }
+    if (id === "arrest")
+      return ["Assess arrest eligibility under UAE law", "Assemble liability evidence at speed", "Coordinate ports and court logistics"];
+    if (id === "charter")
+      return ["Unpack performance/delay clauses", "Build a technical evidence pack", "Run efficient arbitration to a fair award"];
+    if (id === "compliance")
+      return ["Screen parties and sanctions controls", "Embed compliance into workflows", "Train teams and reduce exposure"];
+    if (id === "recovery")
+      return ["Trace carriage and allocate liability", "Compile claim and damage proofs", "Negotiate insurer toward full recovery"];
+    if (id === "collision")
+      return ["Analyze navigational records and COLREGS", "Engage independent experts", "Draft precise pleadings on fault split"];
+    return ["Define scope and objectives", "Evidence-led strategy", "Disciplined execution to outcome"];
+  };
+  function normalizeTagKey(tag: string): string {
+    const t = String(tag).trim().toLowerCase();
+    // Direct keys first
+    const keys = Object.keys(tagLabels);
+    if (keys.includes(t)) return t;
+    // Reverse-lookup localized labels -> key
+    for (const [key, label] of Object.entries(tagLabels)) {
+      if (String(label).trim().toLowerCase() === t) return key;
+    }
+    // Heuristics for Arabic synonyms
+    if (/(بحر|بحرية|ملاحة|سفن|شحن)/.test(t)) return "maritime";
+    if (/تنفيذ/.test(t)) return "enforcement";
+    if (/(تحكيم|تقاضي|مرافعات)/.test(t)) return "arbitration";
+    if (/امتثال/.test(t)) return "compliance";
+    if (/تجارة/.test(t)) return "trade";
+    if (/(مطالب|مطالبات)/.test(t)) return "claims";
+    if (/(تصادم|اصطدام)/.test(t)) return "collision";
+    return t;
+  }
+  function iconForTagKey(tagKey: string): string {
+    const k = String(tagKey).toLowerCase();
+    if (k === "maritime") return "anchor";
+    if (k === "enforcement") return "lock";
+    if (k === "arbitration" || k === "litigation") return "gavel";
+    if (k === "compliance") return "shieldcheck";
+    if (k === "trade") return "box";
+    if (k === "claims") return "doc";
+    if (k === "collision") return "warn";
+    return "category";
+  }
   const imageFor = (id: string) => {
     if (id === "arrest") return "/images/Services/cargoArrest.jpg";
     if (id === "charter") return "/images/Case/shiping cont.jpg";
@@ -192,6 +296,35 @@ export default function CasesOverview({ variant = "home" }: { variant?: "home" |
     if (id === "collision") return "/images/Case/shiping cont.jpg";
     return "/images/Case/Vessel arrest.jpg";
   };
+  function CaseImage({ id, alt, sizes = "100vw" }: { id: string; alt: string; sizes?: string }) {
+    const primary = imageFor(id);
+    const candidates = [
+      primary,
+      primary.replace(/ /g, "%20"),
+      "/images/Case/Vessel%20arrest.jpg",
+      "/images/Services/Maritime.jpg",
+    ];
+    const [src, setSrc] = useState(candidates[0]);
+    const [idx, setIdx] = useState(0);
+    const onError = () => {
+      const next = idx + 1;
+      if (next < candidates.length) {
+        setIdx(next);
+        setSrc(candidates[next]);
+      }
+    };
+    return (
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        sizes={sizes}
+        className="object-cover"
+        priority={false}
+        onError={onError}
+      />
+    );
+  }
   const legalDescText = (id: string) => {
     if (lang === "ar") {
       if (id === "arrest")
@@ -328,19 +461,7 @@ export default function CasesOverview({ variant = "home" }: { variant?: "home" |
                       : "border-zinc-600 text-zinc-300 hover:border-zinc-500"
                   }`}
                   aria-pressed={selectedTag === tag ? "true" : "false"}
-                  data-icon={
-                    (() => {
-                      const t = String(tag).toLowerCase();
-                      if (t.includes("maritime")) return "anchor";
-                      if (t.includes("enforcement")) return "lock";
-                      if (t.includes("arbitration") || t.includes("litigation")) return "gavel";
-                      if (t.includes("compliance")) return "shieldcheck";
-                      if (t.includes("trade")) return "box";
-                      if (t.includes("claims")) return "doc";
-                      if (t.includes("collision")) return "warn";
-                      return "category";
-                    })()
-                  }
+                  data-icon={iconForTagKey(normalizeTagKey(tag))}
                 >
                   {tagLabels[tag] ?? tag}
                 </button>
@@ -350,10 +471,24 @@ export default function CasesOverview({ variant = "home" }: { variant?: "home" |
         </>
       ) : (
         <>
-          <h2 className={`text-3xl md:text-4xl font-extrabold text-[var(--brand-accent)] ${lang === "ar" ? "text-right" : "text-left"}`} data-edit-key="cases-overview-title">{t("casesTitle")}</h2>
-          <p className={`mt-2 text-zinc-300 text-sm ${lang === "ar" ? "text-right" : "text-left"}`} data-edit-key="cases-overview-subtitle">
+          <div className={`${lang === "ar" ? "text-right" : "text-left"}`}>
+            <span className="inline-flex items-center px-2.5 py-1 rounded-md badge-ink text-[11px] tracking-widest uppercase font-semibold">
+              {lang === "ar" ? "ضمن دراسات الحالة" : "Part of our case studies"}
+            </span>
+          </div>
+          <h2 className={`mt-2 text-3xl md:text-4xl font-extrabold text-[var(--brand-accent)] ${lang === "ar" ? "text-right" : "text-left"}`} data-edit-key="cases-overview-title">{t("casesTitle")}</h2>
+          <p className={`mt-2 text-zinc-300 ${lang === "ar" ? "text-right" : "text-left"}`} data-edit-key="cases-overview-subtitle">
             {lang === "ar" ? "أمثلة عملية على نجاحات حديثة عبر ممارستنا." : "Practical examples of recent successes across our practice."}
           </p>
+          <ul className={`mt-2 list-disc list-inside text-zinc-400 ${lang === "ar" ? "text-right ml-auto pr-4" : "text-left"}`}>
+            {(
+              lang === "ar"
+                ? ["تلخيص الوقائع والمستندات الأساسية", "عرض المنهج والإجراءات القانونية", "نتائج قابلة للقياس ضمن أطر زمنية محددة"]
+                : ["Distills key facts and evidence", "Highlights legal strategy and procedure", "Shows measurable outcomes with timelines"]
+            ).map((line) => (
+              <li key={line}>{line}</li>
+            ))}
+          </ul>
         </>
       )}
       <div className="mt-8 grid grid-cols-1 md:grid-cols-4 items-stretch gap-6">
@@ -363,7 +498,7 @@ export default function CasesOverview({ variant = "home" }: { variant?: "home" |
           <div className="space-y-4 h-full overflow-auto pr-1">
           {/* chips row moved to header for variant='page' */}
           {displayPool.map((c, idx) => (
-            <button
+            <motion.button
               key={c.title}
               onClick={() => handleSelect(c.id)}
               aria-current={selected === c.id ? "true" : undefined}
@@ -372,6 +507,10 @@ export default function CasesOverview({ variant = "home" }: { variant?: "home" |
                   ? "border-[var(--brand-accent)] shadow-md"
                   : "border-zinc-600/60 hover:border-zinc-500 hover:-translate-y-0.5"
               }`}
+              initial={mobile && !reduce ? { opacity: 0, y: 14, filter: "blur(4px)" } : undefined}
+              whileInView={mobile && !reduce ? { opacity: 1, y: 0, filter: "blur(0px)" } : undefined}
+              viewport={mobile && !reduce ? { once: true, amount: 0.2 } : undefined}
+              transition={{ duration: 0.5, delay: mobile && !reduce ? idx * 0.05 : 0, ease: [0.22, 0.95, 0.3, 1] }}
             >
               <div className={`absolute top-4 ${lang === "ar" ? "left-4 right-auto" : "right-4 left-auto"}`}>
                 <span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-zinc-700/40 text-[10px] font-extrabold text-zinc-500 transition-colors duration-200 group-hover:text-[var(--brand-accent)] group-hover:border-[var(--brand-accent)]/60 group-hover:bg-[var(--brand-accent)]/10">
@@ -394,7 +533,7 @@ export default function CasesOverview({ variant = "home" }: { variant?: "home" |
                   <span>{c.views.toLocaleString(lang === "ar" ? "ar" : "en")}</span>
                 </div>
               </div>
-            </button>
+            </motion.button>
           ))}
           {variant === "page" && !selectedTag && pool.length > 6 ? (
             <div className="mt-4 flex justify-center gap-2">
@@ -433,15 +572,36 @@ export default function CasesOverview({ variant = "home" }: { variant?: "home" |
                 <div className="mb-3 h-px w-full bg-gradient-to-r from-[var(--brand-accent)]/90 via-[var(--brand-accent)]/40 to-transparent" />
                 <div className="overflow-hidden rounded-xl border border-white/10 bg-black/20">
                   <div className="relative w-full" style={{ aspectRatio: "3 / 1" }}>
-                    <Image
-                      src={imageFor(selected)}
-                      alt={lang === "ar" ? "صورة دراسة الحالة" : "Case study image"}
-                      fill
-                      sizes="100vw"
-                      className="object-cover"
-                      priority={false}
-                    />
+                    <CaseImage id={selected} alt={lang === "ar" ? "صورة دراسة الحالة" : "Case study image"} sizes="100vw" />
                     <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/25" />
+                    {selectedItem ? (
+                      <div className="absolute top-2 inset-x-3 flex items-center justify-between gap-2">
+                        <div className={`flex items-center gap-2 ${lang === "ar" ? "flex-row-reverse" : "flex-row"}`}>
+                          <span className="rounded-md bg-black/40 px-2 py-0.5 text-[10px] font-semibold text-white/90">
+                            {fmtDate(selectedItem.date)}
+                          </span>
+                          {selectedItem.tags[0] ? (
+                            <span
+                              className="rounded-md bg-black/40 px-2 py-0.5 text-[10px] font-semibold text-[var(--brand-accent)] chip"
+                              data-icon={iconForTagKey(normalizeTagKey(selectedItem.tags[0]))}
+                            >
+                              {tagLabels[selectedItem.tags[0]] ?? selectedItem.tags[0]}
+                            </span>
+                          ) : null}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); copyLink(selected); }}
+                          aria-label={lang === "ar" ? "نسخ رابط القضية" : "Copy case link"}
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-md bg-black/35 text-[var(--brand-accent)] ring-1 ring-white/10 hover:bg-black/45 transition"
+                        >
+                          <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M10 13a5 5 0 0 0 7.54.54l2-2a5 5 0 0 0-7.07-7.07l-1.23 1.23"/>
+                            <path d="M14 11a5 5 0 0 0-7.54-.54l-2 2a5 5 0 0 0 7.07 7.07l1.23-1.23"/>
+                          </svg>
+                        </button>
+                      </div>
+                    ) : null}
                     <div className="absolute bottom-0 left-0 h-0.5 w-full bg-[var(--brand-accent)]/90" />
                   </div>
                 </div>
@@ -449,6 +609,11 @@ export default function CasesOverview({ variant = "home" }: { variant?: "home" |
                   <div className="mt-4">
                     <div className="text-2xl font-bold text-white">{selectedDetails.headline}</div>
                     <p className="mt-2 text-sm text-zinc-300 max-w-3xl">{selectedDetails.summary}</p>
+                    <ul className="mt-2 list-disc list-inside text-sm text-zinc-300">
+                      {contextLines(selected).map((line) => (
+                        <li key={line}>{line}</li>
+                      ))}
+                    </ul>
                   </div>
                 )}
               </div>
@@ -475,19 +640,7 @@ export default function CasesOverview({ variant = "home" }: { variant?: "home" |
                   </>
                 ) : null}
               </div>
-              {variant === "page" && (
-                <div className="mt-2">
-                  <button
-                    onClick={copyShare}
-                    className="inline-flex items-center gap-1 rounded-lg border border-zinc-700/40 px-3 py-1 text-xs font-semibold text-zinc-200 hover:bg-white/5 transition"
-                  >
-                    <svg aria-hidden="true" viewBox="0 0 24 24" className="h-3.5 w-3.5">
-                      <path fill="currentColor" d="M8 3h8a2 2 0 0 1 2 2v6h-2V5H8v14h6v2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm9 8 4 3-4 3v-2h-7v-2h7v-2Z" />
-                    </svg>
-                    {copied ? (lang === "ar" ? "نُسخ!" : "Copied!") : (lang === "ar" ? "انسخ الرابط" : "Copy link")}
-                  </button>
-                </div>
-              )}
+              {/* copy link moved to image top row */}
               {variant === "page" && (
                 <div className="mt-6 rounded-2xl surface p-4 md:p-5">
                   <div className="inline-flex items-center px-2.5 py-1 rounded-md badge-ink text-[10px] tracking-widest uppercase font-semibold">
@@ -594,6 +747,7 @@ export default function CasesOverview({ variant = "home" }: { variant?: "home" |
                         onClick={() => handleTagChange(tag)}
                         aria-pressed={selectedTag === tag ? "true" : "false"}
                         className={`rounded-lg chip px-3 py-1 text-xs text-zinc-300 hover:border-[var(--brand-accent)] hover:text-[var(--brand-accent)] ${selectedTag === tag ? "active" : ""}`}
+                        data-icon={iconForTagKey(normalizeTagKey(tag))}
                       >
                         {tagLabels[tag] ?? tag}
                       </button>
@@ -788,28 +942,61 @@ export default function CasesOverview({ variant = "home" }: { variant?: "home" |
                     <div className="pt-2">
                       <div className="mt-3 h-px bg-gradient-to-r from-[var(--brand-accent)]/30 to-transparent" />
                     </div>
-                    <div className="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-3" role="list">
+                    <div className="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-4" role="list">
                     {candidates.map((c) => {
                       const common = c.tags.find((t) => selectedItem.tags.includes(t));
                       return (
                         <motion.button
                           key={c.id}
                           onClick={() => handleSelectWithTag(c.id, common)}
-                          className="group relative overflow-hidden rounded-xl border border-zinc-700/40 bg-transparent p-4 text-left transition will-change-transform"
-                          whileHover={{ y: -3, scale: 1.01 }}
+                          className="group relative overflow-hidden rounded-xl border border-zinc-700/40 bg-black/20 p-0 text-left transition will-change-transform"
+                          whileHover={{ y: -4, scale: 1.01 }}
                           whileTap={{ scale: 0.99 }}
                           transition={{ type: "spring", stiffness: 300, damping: 22 }}
                           role="listitem"
                           aria-label={c.title}
                         >
-                          <div className="flex items-start justify-between gap-2">
-                            <div className="text-sm font-semibold text-white">{c.title}</div>
-                            <span className="text-[var(--brand-accent)] opacity-0 translate-x-0.5 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-1">
-                              →
-                            </span>
+                          <div className="relative h-28 w-full">
+                            <CaseImage id={c.id} alt={c.title} sizes="(max-width: 768px) 90vw, 30vw" />
+                            <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/0 via-black/10 to-black/40" />
+                            <div className="absolute top-2 inset-x-2 flex items-center justify-between gap-2">
+                              <div className={`flex items-center gap-2 ${lang === "ar" ? "flex-row-reverse" : "flex-row"}`}>
+                                <span className="rounded-md bg-black/40 px-2 py-0.5 text-[10px] font-semibold text-white/90">
+                                  {fmtDate(c.date)}
+                                </span>
+                                {common ? (
+                                  <span className="rounded-md bg-black/40 px-2 py-0.5 text-[10px] font-semibold text-[var(--brand-accent)] chip" data-icon={iconForTagKey(normalizeTagKey(common))}>
+                                    {tagLabels[common] ?? common}
+                                  </span>
+                                ) : null}
+                              </div>
+                              <button
+                                type="button"
+                                onClick={(e) => { e.stopPropagation(); copyLink(c.id); }}
+                                aria-label={lang === "ar" ? "نسخ رابط القضية" : "Copy case link"}
+                                className="inline-flex h-7 w-7 items-center justify-center rounded-md bg-black/35 text-[var(--brand-accent)] ring-1 ring-white/10 hover:bg-black/45 transition"
+                              >
+                                <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                                  <path d="M10 13a5 5 0 0 0 7.54.54l2-2a5 5 0 0 0-7.07-7.07l-1.23 1.23"/>
+                                  <path d="M14 11a5 5 0 0 0-7.54-.54l-2 2a5 5 0 0 0 7.07 7.07l1.23-1.23"/>
+                                </svg>
+                              </button>
+                            </div>
                           </div>
-                          <div className="mt-1 text-xs text-zinc-400">{fmtDate(c.date)}</div>
-                          <div className="mt-2 text-xs text-zinc-300 line-clamp-3">{c.desc}</div>
+                          <div className="p-4">
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="text-sm font-semibold text-white line-clamp-2">{c.title}</div>
+                              <span className="text-[var(--brand-accent)] opacity-0 translate-x-0.5 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-1">
+                                <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                              </span>
+                            </div>
+                            <div className={`mt-1 text-[11px] text-zinc-400 ${lang === "ar" ? "text-right" : "text-left"}`}>
+                              <span className="align-middle">{tagLabels[common ?? c.tags[0]] ?? (common ?? c.tags[0])}</span>
+                              <span className="mx-2">•</span>
+                              <span className="align-middle">{fmtDate(c.date)}</span>
+                            </div>
+                            <div className="mt-1 text-xs text-zinc-300 line-clamp-1">{c.desc}</div>
+                          </div>
                         </motion.button>
                       );
                     })}

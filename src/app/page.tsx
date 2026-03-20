@@ -8,6 +8,7 @@ import NewsOverview from "@/components/NewsOverview";
 import TrustedUAE from "@/components/TrustedUAE";
 import { Suspense } from "react";
 import AboutTrustBand from "@/components/AboutTrustBand";
+import Reveal from "@/components/Reveal";
 
 export const metadata = {
   alternates: {
@@ -28,26 +29,38 @@ export default function Home() {
           <HomeHero />
         </section>
         <section id="partners">
-          <TrustedUAE />
+          <Reveal>
+            <TrustedUAE />
+          </Reveal>
         </section>
         <section id="services">
-          <Suspense fallback={<div className="section mx-auto max-w-7xl px-5 py-10"><div className="h-48 rounded-2xl bg-white/5 border border-zinc-700/40 animate-pulse" /></div>}>
-            <ServicesOverview />
-          </Suspense>
+          <Reveal>
+            <Suspense fallback={<div className="section mx-auto max-w-7xl px-5 py-10"><div className="h-48 rounded-2xl bg-white/5 border border-zinc-700/40 animate-pulse" /></div>}>
+              <ServicesOverview />
+            </Suspense>
+          </Reveal>
         </section>
         <section id="cases">
-          <Suspense fallback={<div className="section mx-auto max-w-7xl px-5 py-10"><div className="h-48 rounded-2xl bg-white/5 border border-zinc-700/40 animate-pulse" /></div>}>
-            <CasesOverview />
-          </Suspense>
+          <Reveal>
+            <Suspense fallback={<div className="section mx-auto max-w-7xl px-5 py-10"><div className="h-48 rounded-2xl bg-white/5 border border-zinc-700/40 animate-pulse" /></div>}>
+              <CasesOverview />
+            </Suspense>
+          </Reveal>
         </section>
         <section id="team">
-          <TeamOverview />
+          <Reveal>
+            <TeamOverview />
+          </Reveal>
         </section>
         <section id="news">
-          <NewsOverview />
+          <Reveal>
+            <NewsOverview />
+          </Reveal>
         </section>
         <section id="trusted">
-          <AboutTrustBand className="no-section-bg" />
+          <Reveal>
+            <AboutTrustBand className="no-section-bg" />
+          </Reveal>
         </section>
       </main>
       <Footer />

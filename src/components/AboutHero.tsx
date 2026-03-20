@@ -13,6 +13,7 @@ export default function AboutHero({
   overlay = "strong",
   kicker,
   kickerVariant = "filled",
+  size = "default",
 }: {
   title: string;
   subtitle: string;
@@ -22,6 +23,7 @@ export default function AboutHero({
   overlay?: "none" | "soft" | "medium" | "strong";
   kicker?: string;
   kickerVariant?: "filled" | "outline";
+  size?: "default" | "compact";
 }) {
   const vidRef = useRef<HTMLVideoElement | null>(null);
   const prefersReduced = useReducedMotion();
@@ -73,7 +75,9 @@ export default function AboutHero({
           {kicker ? (
             <div
               className={
-                "inline-flex items-center gap-2 px-3 py-1 rounded-lg text-xs uppercase tracking-widest font-semibold mb-3 " +
+                `inline-flex items-center gap-2 px-3 py-1 rounded-lg ${
+                  size === "compact" ? "text-[10px]" : "text-xs"
+                } uppercase tracking-widest font-semibold mb-3 ` +
                 (kickerVariant === "outline"
                   ? "border border-[var(--brand-accent)] text-[var(--brand-accent)]"
                   : "bg-[var(--brand-accent)] text-[var(--brand-primary)]")
@@ -87,7 +91,9 @@ export default function AboutHero({
           animate="show"
           variants={variants}
           transition={{ duration: 0.5 }}
-          className={`text-4xl md:text-6xl font-extrabold text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)] ${isRTL ? "text-right" : "text-left"}`}
+          className={`${
+            size === "compact" ? "text-3xl md:text-5xl" : "text-4xl md:text-6xl"
+          } font-extrabold text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)] ${isRTL ? "text-right" : "text-left"}`}
         >
           <span data-edit-key="about-hero-title">{title}</span>
         </motion.h1>
@@ -96,7 +102,9 @@ export default function AboutHero({
           animate="show"
           variants={variants}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className={`mt-3 md:mt-4 text-sm md:text-xl text-zinc-200 max-w-3xl drop-shadow-[0_1px_6px_rgba(0,0,0,0.5)] ${isRTL ? "ml-auto text-right" : "text-left"}`}
+          className={`mt-3 md:mt-4 ${
+            size === "compact" ? "text-xs md:text-lg" : "text-sm md:text-xl"
+          } text-zinc-200 max-w-3xl drop-shadow-[0_1px_6px_rgba(0,0,0,0.5)] ${isRTL ? "ml-auto text-right" : "text-left"}`}
         >
           <span data-edit-key="about-hero-subtitle">{subtitle}</span>
         </motion.p>

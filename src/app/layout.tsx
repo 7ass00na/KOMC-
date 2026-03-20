@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Tajawal } from "next/font/google";
+import { Lora, Tajawal } from "next/font/google";
+import "../lib/ssrDiagnostics";
 import "./globals.css";
 import Providers from "./providers";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
@@ -7,9 +8,10 @@ import WhatsAppFloatingButton from "@/components/WhatsAppFloatingButton";
 import GlobalLoadingOverlay from "@/components/GlobalLoadingOverlay";
 import CookieConsent from "@/components/CookieConsent";
 
-const inter = Inter({
+const lora = Lora({
   variable: "--font-en",
   subsets: ["latin"],
+  weight: ["400", "700"],
   display: "swap",
 });
 
@@ -21,7 +23,7 @@ const tajawal = Tajawal({
 });
 
 export const metadata: Metadata = {
-  title: "KOMC | Legal & Maitime Consultation UAE",
+  title: "KOMC || Legal & Maitime Consultation a cross the UAE",
   description:
     "Trusted maritime law and legal consulting in the UAE. Admiralty, shipping, contracts, disputes, compliance. Bilingual Arabic & English.",
   keywords: [
@@ -61,9 +63,9 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title:
-      "KOMC | Legal & Maitime Consultation UAE",
+      "KOMC || Legal & Maitime Consultation UAE",
     description:
-      "Trusted maritime & legal expertise in the UAE. Bilingual Arabic & English.",
+      "Trusted maritime & legal expertise a cross the UAE.",
   },
 };
 
@@ -84,7 +86,7 @@ export default async function RootLayout({
   } catch {}
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${tajawal.variable} antialiased`}>
+      <body className={`${lora.variable} ${tajawal.variable} antialiased`}>
         <Providers initialLang={initialLang}>
           <GlobalLoadingOverlay />
           <CookieConsent />

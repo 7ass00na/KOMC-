@@ -240,10 +240,18 @@ export default function Footer() {
               {(footerData?.published_logo || footerData?.logo) ? (
                 <Image src={(footerData?.published_logo || footerData?.logo) as string} alt="Footer Logo" width={40} height={40} className="rounded-full object-contain" />
               ) : (
-                <div className="h-10 w-10 rounded-full brand-gradient" />
+                <div className="h-10 w-10 rounded-full bg-[var(--brand-accent)] grid place-items-center text-[var(--brand-primary)]">
+                  <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 3v4m-7 5h14M5 12l3.5 6a4 4 0 11-7 0L5 12Zm14 0l3.5 6a4 4 0 11-7 0L19 12Z" />
+                  </svg>
+                </div>
               )}
               <div>
-                <div className="font-semibold footer-brand-name" data-edit-key="footer-brand-name">{lang === "ar" ? ((footerData?.published_siteName_ar || footerData?.siteName_ar) ?? "خالد عمر") : ((footerData?.published_siteName_en || footerData?.siteName_en) ?? "Khaled Omer")}</div>
+                <div className="font-semibold footer-brand-name" data-edit-key="footer-brand-name">
+                  {lang === "ar"
+                    ? "خالد عمر"
+                    : "Khaled Omer"}
+                </div>
                 <div className="text-xs text-[var(--brand-accent)] footer-subtitle">
                   <span data-edit-key="footer-brand-subtitle">{lang === "ar" ? "الاستشارات البحرية" : "Maritime Consultancy"}</span>
                 </div>
@@ -260,7 +268,7 @@ export default function Footer() {
                 whileHover={{ y: -1.5, scale: 1.08, rotate: 0.4 }}
                 whileTap={{ scale: 0.94, rotate: 0 }}
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                className="h-9 w-9 rounded-lg ring-1 ring-[var(--panel-border)] dark:ring-white/15 bg-[var(--panel-bg)] flex items-center justify-center text-[var(--ink-primary)] dark:text-zinc-300 hover:bg-[#1DA1F2]/90 hover:text-white"
+                className="h-9 w-9 rounded-lg ring-1 ring-[var(--panel-border)] dark:ring-white/15 bg-[var(--panel-bg)] light:bg-[color-mix(in_oklab,var(--brand-primary),black_90%)] flex items-center justify-center text-[var(--ink-primary)] light:text-zinc-300 dark:text-zinc-300 hover:bg-[#1DA1F2]/90 hover:text-white"
               >
                 <SocialIcon kind="twitter" />
               </motion.a>
@@ -273,7 +281,7 @@ export default function Footer() {
                 whileHover={{ y: -1.5, scale: 1.08, rotate: 0.4 }}
                 whileTap={{ scale: 0.94, rotate: 0 }}
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                className="h-9 w-9 rounded-lg ring-1 ring-[var(--panel-border)] dark:ring-white/15 bg-[var(--panel-bg)] flex items-center justify-center text-[var(--ink-primary)] dark:text-zinc-300 hover:bg-[#1877F2]/90 hover:text-white"
+                className="h-9 w-9 rounded-lg ring-1 ring-[var(--panel-border)] dark:ring-white/15 bg-[var(--panel-bg)] light:bg-[color-mix(in_oklab,var(--brand-primary),black_90%)] flex items-center justify-center text-[var(--ink-primary)] light:text-zinc-300 dark:text-zinc-300 hover:bg-[#1877F2]/90 hover:text-white"
               >
                 <SocialIcon kind="facebook" />
               </motion.a>
@@ -286,7 +294,7 @@ export default function Footer() {
                 whileHover={{ y: -1.5, scale: 1.08, rotate: 0.4 }}
                 whileTap={{ scale: 0.94, rotate: 0 }}
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                className="h-9 w-9 rounded-lg ring-1 ring-[var(--panel-border)] dark:ring-white/15 bg-[var(--panel-bg)] flex items-center justify-center text-[var(--ink-primary)] dark:text-zinc-300 hover:bg-[#E1306C]/90 hover:text-white"
+                className="h-9 w-9 rounded-lg ring-1 ring-[var(--panel-border)] dark:ring-white/15 bg-[var(--panel-bg)] light:bg-[color-mix(in_oklab,var(--brand-primary),black_90%)] flex items-center justify-center text-[var(--ink-primary)] light:text-zinc-300 dark:text-zinc-300 hover:bg-[#E1306C]/90 hover:text-white"
               >
                 <SocialIcon kind="instagram" />
               </motion.a>
@@ -299,7 +307,7 @@ export default function Footer() {
                 whileHover={{ y: -1.5, scale: 1.08, rotate: 0.4 }}
                 whileTap={{ scale: 0.94, rotate: 0 }}
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                className="h-9 w-9 rounded-lg ring-1 ring-[var(--panel-border)] dark:ring-white/15 bg-[var(--panel-bg)] flex items-center justify-center text-[var(--ink-primary)] dark:text-zinc-300 hover:bg-[#000000]/90 hover:text-white"
+                className="h-9 w-9 rounded-lg ring-1 ring-[var(--panel-border)] dark:ring-white/15 bg-[var(--panel-bg)] light:bg-[color-mix(in_oklab,var(--brand-primary),black_90%)] flex items-center justify-center text-[var(--ink-primary)] light:text-zinc-300 dark:text-zinc-300 hover:bg-[#000000]/90 hover:text-white"
               >
                 <SocialIcon kind="tiktok" />
               </motion.a>
@@ -468,7 +476,7 @@ export default function Footer() {
               <span>
                 Khaled Omer Maritime Consultancy{" "}
                 <Link href={`${base}/login`} className="hover:underline font-semibold">( KOMC )</Link>
-                {" - All rights reserved @ 2026 - Create & Dev by "}
+                {" - All rights reserved @ 2026 - Designed & Dev by "}
                 <a href="mailto:ahmedhussan068@gmail.com" className="hover:underline font-semibold">DevOps</a>
               </span>
             )}

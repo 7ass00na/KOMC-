@@ -275,8 +275,8 @@ export default function HomeHero({
         </motion.div>
       </AnimatePresence>
 
-      <div className="relative z-10 h-full px-6 pt-3 md:px-12 md:pt-8 lg:px-24">
-        <div className="grid h-full grid-cols-1 items-center pb-36 md:grid-cols-12 md:pb-44">
+      <div className="relative z-10 h-full px-6 pt-14 sm:pt-16 md:px-10 md:pt-20 lg:px-24 lg:pt-24">
+        <div className="grid h-full grid-cols-1 items-center pb-24 md:grid-cols-12 md:pb-32 lg:pb-44">
           <div className={["md:col-span-5 lg:col-span-5", isAr ? "text-right md:col-start-8 md:text-right ml-auto" : "text-left md:col-start-1 md:text-left"].join(" ")}>
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
@@ -300,7 +300,7 @@ export default function HomeHero({
                 </motion.div>
 
                 <motion.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className="mt-4">
-                  <div className="hero-title text-[26px] leading-none font-extrabold sm:text-3xl md:text-4xl text-[var(--brand-accent)]" data-edit-key="hero-title">{activeSlide.title}</div>
+                  <div className="hero-title text-[26px] leading-none font-extrabold sm:text-3xl md:text-[32px] lg:text-4xl text-[var(--brand-accent)]" data-edit-key="hero-title">{activeSlide.title}</div>
                 </motion.div>
 
                 <motion.div
@@ -341,9 +341,9 @@ export default function HomeHero({
           <div className={["hidden md:block md:col-span-7 lg:col-span-7", isAr ? "md:col-start-1" : "md:col-start-6"].join(" ")} />
         </div>
 
-        <div className="absolute bottom-8 left-6 right-6 md:left-12 md:right-12 lg:left-24 lg:right-24">
-          <div className={["flex items-center justify-between gap-6", isAr ? "flex-row-reverse" : ""].join(" ")}>
-            <div className="hidden md:flex items-center gap-3">
+        <div className="absolute bottom-8 left-6 right-6 md:left-10 md:right-10 lg:left-24 lg:right-24">
+          <div className={["flex items-center justify-between gap-4 md:gap-6", isAr ? "flex-row-reverse" : ""].join(" ")}>
+            <div className="hidden md:flex items-center gap-2 md:gap-3">
               <button
                 type="button"
                 aria-label="Previous slide"
@@ -362,8 +362,8 @@ export default function HomeHero({
               </button>
             </div>
 
-            <div className="flex-1 overflow-x-auto overflow-y-visible [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden py-3">
-              <div className={["flex items-end gap-3 justify-center min-w-max md:min-w-0", isAr ? "md:justify-start" : "md:justify-end"].join(" ")}>
+            <div className="flex-1 overflow-x-auto overflow-y-visible [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden py-2 md:py-3">
+              <div className={["flex items-end gap-2 md:gap-3 justify-center min-w-max md:min-w-0", isAr ? "md:justify-start" : "md:justify-end"].join(" ")}>
                 {data.map((s, i) => {
                   const isActive = i === active;
                   return (
@@ -373,7 +373,7 @@ export default function HomeHero({
                       aria-label={`Open ${s.title}`}
                       onClick={() => goTo(i)}
                       className={[
-                        "relative z-0 h-16 w-[150px] sm:h-20 sm:w-[170px] md:h-24 md:w-[190px] overflow-hidden rounded-xl border bg-white/5 backdrop-blur-md shadow-lg transition-transform hover:z-30 focus-visible:z-30",
+                        "relative z-0 h-16 w-[150px] sm:h-20 sm:w-[170px] md:h-24 md:w-[160px] lg:w-[190px] overflow-hidden rounded-xl border bg-white/5 backdrop-blur-md shadow-lg transition-transform hover:z-30 focus-visible:z-30",
                         isActive ? "border-[var(--brand-accent)]/80 scale-[1.05] z-20" : "border-white/10 hover:-translate-y-2 hover:border-white/20",
                       ].join(" ")}
                       style={{ willChange: "transform" }}

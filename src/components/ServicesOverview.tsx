@@ -1,7 +1,7 @@
 "use client";
 import { useLanguage } from "@/context/LanguageContext";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { useMemo, useState, useEffect } from "react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
@@ -57,6 +57,16 @@ type Props = { variant?: "home" | "page" };
 export default function ServicesOverview({ variant = "home" }: Props) {
   const { lang } = useLanguage();
   const searchParams = useSearchParams();
+  const reduce = useReducedMotion();
+  const [mobile, setMobile] = useState(false);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mq = window.matchMedia("(max-width: 768px)");
+    const on = () => setMobile(mq.matches);
+    on();
+    mq.addEventListener?.("change", on);
+    return () => mq.removeEventListener?.("change", on);
+  }, []);
   const detailLines = (title: string, cat: string): string[] => {
     if (lang === "ar") {
       return [
@@ -164,10 +174,19 @@ export default function ServicesOverview({ variant = "home" }: Props) {
     return (slugToLabel as Record<string, string>)[v] ?? null;
   }, [searchParams, slugToLabel]);
   const chipJustify = useMemo(() => {
-    return lang === "ar"
-      ? "justify-center md:justify-center lg:justify-end"
+    if (lang === "ar") {
+      // Arabic (RTL): center on mobile; right-align on md+ in Services page
+      return variant === "page"
+        ? "justify-center md:justify-start lg:justify-start xl:justify-start"
+        : "justify-center md:justify-center lg:justify-start";
+    }
+    return variant === "page"
+      ? "justify-start"
       : "justify-center md:justify-center lg:justify-start";
-  }, [lang]);
+  }, [lang, variant]);
+  const chipDirClass = useMemo(() => {
+    return "flex-row";
+  }, [lang, variant]);
   const [active, setActive] = useState(paramLabel ?? categories[0]);
   const iconForCategory = (label: string) => {
     const l = String(label).toLowerCase();
@@ -378,38 +397,41 @@ export default function ServicesOverview({ variant = "home" }: Props) {
           {headline}
         </h2>
         <p className={`mt-3 text-zinc-300 ${lang === "ar" ? "text-right" : "text-left"}`}>{subhead}</p>
-        <div className={`mt-6 flex flex-wrap items-center ${chipJustify} gap-2`}>
-          {categories.map((c) => {
-            const activeMatch = c === active;
-            return (
-              <button
-                key={c}
-                onClick={() => setActive(c)}
-                aria-pressed={activeMatch ? "true" : "false"}
-                className={
-                  "svc-chip px-3 py-1.5 rounded-lg text-xs font-semibold border transition-transform duration-200 will-change-transform hover:-translate-y-0.5 active:scale-95 " +
-                  (activeMatch
-                    ? "bg-[var(--brand-accent)] text-white border-[color-mix(in_oklab,var(--brand-accent),black_8%)]"
-                    : "bg-[var(--panel-bg)] text-[var(--brand-accent)] border-[var(--panel-border)] hover:bg-[color-mix(in_oklab,var(--panel-bg),white_8%)] dark:bg-[color-mix(in_oklab,var(--brand-primary),white_8%)] dark:text-zinc-300 dark:border-white/20 dark:hover:bg-[color-mix(in_oklab,var(--brand-primary),white_14%)]")
-                }
-                data-icon={iconForCategory(String(c))}
-              >
-                {c}
-              </button>
-            );
-          })}
-        </div>
+      </div>
+      <div className={`mt-6 w-full flex flex-wrap items-center ${chipDirClass} ${chipJustify} gap-2`}>
+        {categories.map((c) => {
+          const activeMatch = c === active;
+          return (
+            <button
+              key={c}
+              onClick={() => setActive(c)}
+              aria-pressed={activeMatch ? "true" : "false"}
+              className={
+                "svc-chip px-3 py-1.5 rounded-lg text-xs font-semibold border transition-transform duration-200 will-change-transform hover:-translate-y-0.5 active:scale-95 " +
+                (activeMatch
+                  ? "bg-[var(--brand-accent)] text-white border-[color-mix(in_oklab,var(--brand-accent),black_8%)]"
+                  : "bg-[var(--panel-bg)] text-[var(--brand-accent)] border-[var(--panel-border)] hover:bg-[color-mix(in_oklab,var(--panel-bg),white_8%)] dark:bg-[color-mix(in_oklab,var(--brand-primary),white_8%)] dark:text-zinc-300 dark:border-white/20 dark:hover:bg-[color-mix(in_oklab,var(--brand-primary),white_14%)]")
+              }
+              data-icon={iconForCategory(String(c))}
+            >
+              {c}
+            </button>
+          );
+        })}
       </div>
       <div className="mt-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {filtered.map((c) => {
+          {filtered.map((c, i) => {
             const isActive = variant === "page" && selected?.title === c.title;
             return (
             <motion.div
               key={c.title}
               className={`group rounded-xl surface p-6 h-64 lg:h-72 flex flex-col ${variant === "page" ? "cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-accent)]/60" : ""}`}
+              initial={mobile && !reduce ? { opacity: 0, y: 14, filter: "blur(4px)" } : undefined}
+              whileInView={mobile && !reduce ? { opacity: 1, y: 0, filter: "blur(0px)" } : undefined}
+              viewport={mobile && !reduce ? { once: true, amount: 0.2 } : undefined}
               whileHover={{ y: -6, scale: 1.02 }}
-              transition={{ type: "spring", stiffness: 260, damping: 18 }}
+              transition={{ type: "spring", stiffness: 260, damping: 18, delay: mobile && !reduce ? i * 0.06 : 0 }}
               role={variant === "page" ? "button" : undefined}
               tabIndex={variant === "page" ? 0 : undefined}
               aria-pressed={variant === "page" ? (isActive ? "true" : "false") : undefined}
@@ -463,7 +485,7 @@ export default function ServicesOverview({ variant = "home" }: Props) {
               >
                 <div className="flex flex-col md:flex-row gap-6">
                   <div className="relative w-full md:w-80 aspect-[16/9] rounded-xl overflow-hidden bg-white/10">
-                    <ThumbImage cat={selected.cat} alt={selected.title} sizes="(max-width: 1024px) 60vw, 30vw" />
+                    <ThumbImage cat={selected.cat} alt={selected.title} sizes="(max-width: 1024px) 60vw, 30vw" src={selected.img} />
                   </div>
                   <div className="flex-1">
                     <div className="text-xs tracking-widest uppercase text-[var(--brand-accent)] font-semibold" data-edit-key="services-details-label">{detailsTitle}</div>

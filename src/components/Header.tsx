@@ -132,7 +132,7 @@ export default function Header() {
   }, []);
 
   return (
-    <header className="fixed top-0 w-full z-50">
+    <header className="fixed top-0 w-full z-50" suppressHydrationWarning>
       <div className="mx-auto max-w-7xl px-5 py-2">
         <div
           className={
@@ -234,7 +234,6 @@ export default function Header() {
             {(() => {
               const activeLangLabel = lang === "ar" ? "عربي" : "Eng";
               const labelClass = dark ? "text-black" : "text-white";
-              const iconClass = dark ? "text-black" : "text-white";
               return (
             <button
               aria-label="Language"
@@ -250,14 +249,14 @@ export default function Header() {
                )
               }
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true" className={iconClass}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" />
                 <path d="M3 12h18M12 3c2.5 2.6 3.8 5.3 3.8 9S14.5 20.4 12 21M12 3C9.5 5.6 8.2 8.3 8.2 12S9.5 18.4 12 21" stroke="currentColor" strokeWidth="1.5" />
               </svg>
-              <span className={"text-xs font-semibold " + labelClass} style={!dark ? { color: "#ffffff" } : undefined}>
+              <span className={"text-xs font-semibold " + labelClass} style={dark ? { color: "#000000" } : { color: "#ffffff" }}>
                 {activeLangLabel}
               </span>
-              <svg width="12" height="12" viewBox="0 0 20 20" fill="none" aria-hidden="true" className={iconClass}>
+              <svg width="12" height="12" viewBox="0 0 20 20" fill="none" aria-hidden="true">
                 <path d="M6 8l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </button>

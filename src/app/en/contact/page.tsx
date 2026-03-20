@@ -32,8 +32,10 @@ export default function Page() {
                 <div className="relative h-80 md:h-96 overflow-hidden rounded-xl border border-[var(--panel-border)] bg-black/20">
                   <Image src="/images/Services/Insurance.jpg" alt="Lawyer consultation" fill sizes="100vw" className="object-cover" priority />
                   <div className="absolute inset-x-4 bottom-4 rounded-xl bg-white/10 dark:bg-[var(--brand-accent)]/10 backdrop-blur-lg px-4 py-3 text-white dark:text-[var(--brand-accent)] border border-white/20">
-                    <div className="text-sm font-semibold dark:text-[var(--brand-accent)]">Confidential legal support you can trust</div>
-                    <div className="text-[12px] text-zinc-300 dark:text-[var(--brand-accent)]">Clear guidance from experienced counsel, focused on outcomes.</div>
+                    <span className="insight-badge inline-flex items-center rounded-full bg-black/35 px-3 py-1 text-xs text-white dark:bg-[var(--brand-accent)] dark:text-black">
+                      Confidential legal support you can trust
+                    </span>
+                    <div className="mt-2 text-sm text-zinc-200 dark:text-[var(--brand-accent)]">Clear guidance from experienced counsel, focused on outcomes.</div>
                   </div>
                 </div>
               </div>
@@ -45,12 +47,19 @@ export default function Page() {
         </section>
         <section className="mx-auto max-w-7xl px-5 pb-20">
           <div className="rounded-2xl surface p-6 md:p-8">
-            <div className="relative h-[360px] w-full overflow-hidden rounded-xl border border-[var(--panel-border)] bg-black/25 group">
+            <div className="relative h-[420px] md:h-[480px] w-full overflow-hidden rounded-xl border border-[var(--panel-border)] ring-1 ring-white/10 bg-black/25 group">
               <div className="pointer-events-none absolute inset-0 rounded-xl bg-[radial-gradient(120%_120%_at_50%_100%,rgba(0,0,0,0.6),transparent_60%)] opacity-80 transition-opacity duration-500 group-hover:opacity-20 dark:opacity-60" />
-              <div className="pointer-events-none absolute top-4 left-4 rounded-md bg-black/50 dark:bg-black/40 backdrop-blur px-2.5 py-1 text-[11px] font-semibold text-white ring-1 ring-white/15">
+              <div className="pointer-events-none absolute top-4 right-4 rounded-md bg-black/50 dark:bg-black/40 backdrop-blur px-2.5 py-1 text-[11px] font-semibold text-white ring-1 ring-white/15">
                 Interactive Map
               </div>
-              <iframe title="Office Map" src="https://www.google.com/maps?q=Dubai&output=embed" className="h-full w-full" loading="lazy" />
+              <iframe
+                title="KOMC Office Map"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3607.264060382202!2d55.328299475385066!3d25.295330777647912!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f5bb4866fb58d%3A0x70ae9812f1ec2b04!2sAl%20Nokhitha%20Building%2C%20Managed%20by%20Betterhomes%20LLC!5e0!3m2!1sen!2sae!4v1773993637369!5m2!1sen!2sae"
+                className="h-full w-full"
+                loading="lazy"
+                allowFullScreen
+                referrerPolicy="no-referrer-when-downgrade"
+              />
             </div>
           </div>
         </section>

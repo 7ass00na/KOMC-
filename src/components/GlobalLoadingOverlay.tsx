@@ -124,8 +124,68 @@ export default function GlobalLoadingOverlay() {
                 <ScalesIcon />
               </div>
             </motion.div>
-            <div className="mt-5 text-sm:3xl tracking-widest uppercase text-white" data-global-cursor-text>
-              {lang === 'ar' ? 'جارٍ تهيئة تجربتك' : 'Preparing your experience'}
+            <div
+              className="mt-5 text-sm:3xl tracking-widest uppercase text-white flex items-center flex-wrap gap-2"
+              data-global-cursor-text
+              aria-live="polite"
+              dir={lang === 'ar' ? 'rtl' : 'ltr'}
+            >
+              {(() => {
+                const iconEl = (
+                  <motion.span
+                    className="inline-flex items-center"
+                    animate={reduce ? undefined : { y: [0, -3, 0] }}
+                    transition={{ duration: 1.2, repeat: Infinity, ease: "easeInOut" }}
+                  >
+                    <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5 text-white dark:text-[var(--brand-accent)]">
+                      <circle cx="12" cy="12" r="10" fill="currentColor" />
+                      <circle cx="9" cy="10" r="1.2" fill="black" />
+                      <circle cx="15" cy="10" r="1.2" fill="black" />
+                      <path d="M8 15c1 .8 2.2 1.2 4 1.2s3-.4 4-1.2" stroke="black" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+                    </svg>
+                  </motion.span>
+                );
+                const msg = lang === 'ar' ? 'جارٍ تهيئة تجربتك' : 'Preparing your experience';
+                const parts = msg.split(' ');
+                const wordsEl = (
+                  <span className="inline-flex flex-wrap gap-x-1">
+                    {parts.map((w, i) =>
+                      <motion.span
+                        key={i}
+                        initial={{ y: 0 }}
+                        animate={reduce ? undefined : { y: [0, -5, 0] }}
+                        transition={reduce ? undefined : { duration: 0.9, ease: 'easeOut', repeat: Infinity, repeatDelay: 0.6, delay: i * 0.08 }}
+                        className="inline-block"
+                      >
+                        {w}
+                      </motion.span>
+                    )}
+                  </span>
+                );
+                return (
+                  <>
+                    {wordsEl}
+                    {iconEl}
+                  </>
+                );
+              })()}
+            </div>
+            <div className="mt-2 text-sm md:text-base tracking-wide text-[var(--brand-accent)] flex flex-wrap gap-x-1">
+              {(() => {
+                const s = lang === 'ar' ? '# اتصل بنا ودع قضيتك لنا' : '# Call us & leave your case to us';
+                const w = s.split(' ');
+                return w.map((t, i) => (
+                  <motion.span
+                    key={i}
+                    initial={{ y: 0 }}
+                    animate={reduce ? undefined : { y: [0, -4, 0] }}
+                    transition={reduce ? undefined : { duration: 0.9, ease: 'easeOut', repeat: Infinity, repeatDelay: 0.6, delay: i * 0.07 }}
+                    className="inline-block"
+                  >
+                    {t}
+                  </motion.span>
+                ));
+              })()}
             </div>
           </div>
         </motion.div>

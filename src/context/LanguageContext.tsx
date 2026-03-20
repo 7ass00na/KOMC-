@@ -35,7 +35,7 @@ const translations: Record<Lang, Record<string, string>> = {
     servicesViewAll: "VIEW ALL SERVICE",
     aboutRead: "Learn more",
     teamTitle: "Our Legal Team",
-    casesTitle: "Case Studies",
+    casesTitle: "Successful Case Studies",
     trustTitle: "Trusted by Clients across the UAE",
     aboutIntro:
       "We deliver strategic legal solutions across maritime, corporate, and international matters.",
@@ -137,7 +137,7 @@ const translations: Record<Lang, Record<string, string>> = {
     servicesViewAll: "عرض جميع الخدمات",
     aboutRead: "اعرف المزيد",
     teamTitle: "فريقنا القانوني",
-    casesTitle: "دراسات حالة",
+    casesTitle: "دراسة حالة لقضايا ناجحة",
     trustTitle: "موضع ثقة لدى عملاء في الإمارات",
     aboutIntro:
       "نقدم حلولًا قانونية استراتيجية في المجالات البحرية والشركات والقضايا الدولية.",

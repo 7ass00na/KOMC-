@@ -62,6 +62,18 @@ export default function TeamOverview() {
           { name: "Malik Omer", role: "Corporate Counsel", tags: ["Manage", "Maritime"], slug: "Malik Omer", focus: "Corporate, Compliance, Transactions", bio: "Structuring deals and governance with pragmatic advice." },
           { name: "Ibrahim Hassan", role: "Litigation Associate", tags: ["Disputes", "Arbitration"], slug: "nour-hassan", focus: "Litigation, Arbitration Support", bio: "Efficient dispute management and procedural mastery." },
         ];
+  const teamLines =
+    lang === "ar"
+      ? [
+          "فريق قانوني محترف يقدم استراتيجية دقيقة وتواصل واضح في كل مرحلة.",
+          "تحضير ملفات صارم وتحليل مبني على الأدلة وتنفيذ منضبط.",
+          "نهج يضع العميل أولًا ويركز على نتائج قابلة للقياس وإنجاز في الوقت المناسب.",
+        ]
+      : [
+          "Seasoned advocates with precise strategy and clear communication at every stage.",
+          "Rigorous preparation, evidence‑led analysis, and disciplined execution.",
+          "Client‑first mindset focused on measurable outcomes and timely results.",
+        ];
   const container = { hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { staggerChildren: 0.07 } } };
   const item = { hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } };
   return (
@@ -75,9 +87,16 @@ export default function TeamOverview() {
     >
       <motion.div className="flex items-end justify-between gap-4" variants={item}>
         <div>
-          <motion.h2 className="text-3xl md:text-4xl font-extrabold text-[var(--brand-accent)]" variants={item} data-edit-key="team-overview-title">{t("teamTitle")}</motion.h2>
-          <motion.p className="mt-1 text-sm text-zinc-300" variants={item} data-edit-key="team-overview-subtitle">
-            {lang === "ar" ? "نخبة قانونية تقود النتائج" : "A legal team focused on outcomes"}
+          <div>
+            <span className="inline-flex items-center px-2.5 py-1 rounded-md badge-ink text-[11px] tracking-widest uppercase font-semibold">
+              {lang === "ar" ? "ضمن فريق خبرائنا" : "Part of our expert team"}
+            </span>
+          </div>
+          <motion.h2 className="mt-2 text-3xl md:text-4xl font-extrabold text-[var(--brand-accent)]" variants={item} data-edit-key="team-overview-title">{t("teamTitle")}</motion.h2>
+          <motion.p className="mt-1 text-zinc-300 leading-6" variants={item} data-edit-key="team-overview-subtitle">
+            <span>
+              {teamLines[0]}<br/>{teamLines[1]}<br/>{teamLines[2]}
+            </span>
           </motion.p>
         </div>
         <motion.div variants={item}>
@@ -88,7 +107,7 @@ export default function TeamOverview() {
             <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
               <path d="M12 12a3 3 0 100-6 3 3 0 000 6zM3 20a6 6 0 1112 0H3zm13.5-8a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM21 20a5 5 0 00-6-4.9 7.1 7.1 0 012 4.9h4z"/>
             </svg>
-            <span>{lang === "ar" ? "تعرف على الفريق" : "Meet the team"}</span>
+            <span>{lang === "ar" ? "تعرف على الفريق" : "Meet our team"}</span>
           </Link>
         </motion.div>
       </motion.div>
@@ -146,9 +165,12 @@ export default function TeamOverview() {
           </motion.div>
         ))}
       </div>
-      <motion.div className="mt-8 md:hidden" variants={item}>
-        <Link href={`/${lang}/about`} className="inline-flex items-center rounded-lg bg-[var(--brand-accent)] text-black px-5 py-2.5 font-semibold hover:opacity-90">
-          {t("aboutRead")}
+      <motion.div className="mt-8 md:hidden text-center" variants={item}>
+        <Link href={`/${lang}/about`} className="inline-flex items-center gap-2 rounded-lg bg-[var(--brand-accent)] text-black px-5 py-2.5 font-semibold hover:opacity-90">
+          <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+            <path d="M12 12a3 3 0 100-6 3 3 0 000 6zM3 20a6 6 0 1112 0H3zm13.5-8a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM21 20a5 5 0 00-6-4.9 7.1 7.1 0 012 4.9h4z"/>
+          </svg>
+          <span>{lang === "ar" ? "تعرف على الفريق" : "Meet our team"}</span>
         </Link>
       </motion.div>
     </motion.section>
