@@ -18,7 +18,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         if (stored === "dark" || stored === "light" || stored === "auto") return stored as ThemeMode;
       }
     } catch {}
-    return "auto";
+    return "dark";
   });
   const [systemPrefersDark, setSystemPrefersDark] = useState<boolean>(() => {
     if (typeof window !== "undefined" && window.matchMedia) {

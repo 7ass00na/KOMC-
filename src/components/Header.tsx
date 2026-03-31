@@ -4,7 +4,7 @@
 import { useLanguage } from "@/context/LanguageContext";
 import { useTheme } from "@/context/ThemeContext";
 import { Home as HomeIcon, Info, Scale, Gavel, Newspaper, Mail } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import Link from "next/link";
 import { useEffect, useMemo, useState, useRef } from "react";
 import { usePathname } from "next/navigation";
@@ -22,6 +22,7 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [settings, setSettings] = useState<{ languageToggle: boolean; pageLoadingCursor: boolean } | null>(null);
   const [header, setHeader] = useState<{ siteName_en?: string; siteName_ar?: string; logo?: string; published_siteName_en?: string; published_siteName_ar?: string; published_logo?: string } | null>(null);
+  const reduce = useReducedMotion();
 
   useEffect(() => {
     const onScroll = () => {
@@ -155,7 +156,13 @@ export default function Header() {
           {/* EN: Brand mark and name */}
           {/* AR: علامة الشعار واسم العلامة */}
           <div className="h-8 w-8 rounded-md bg-[var(--brand-accent)] text-black flex items-center justify-center">
-            <Scale className="h-5 w-5" aria-hidden="true" />
+            <motion.span
+              style={{ display: "inline-flex", transformOrigin: "50% 10%" }}
+              animate={reduce ? undefined : { rotate: [-3, 0, 3, 0] }}
+              transition={reduce ? undefined : { duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <Scale className="h-5 w-5" aria-hidden="true" />
+            </motion.span>
           </div>
           <div className={
             "text-[13px] md:text-sm font-bold " +

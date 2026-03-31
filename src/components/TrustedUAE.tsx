@@ -1,6 +1,7 @@
 'use client';
 import { useLanguage } from "@/context/LanguageContext";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { Scale } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const citiesEn = ["Dubai", "Abu Dhabi", "Sharjah", "Ajman", "RAK", "Fujairah", "UAQ"];
@@ -10,6 +11,7 @@ const sectorsAr = ["مالكو السفن", "التأمين", "نوادي الح
 
 export default function TrustedUAE() {
   const { lang } = useLanguage();
+  const reduce = useReducedMotion();
   const cities = lang === "ar" ? citiesAr : citiesEn;
   const sectors = lang === "ar" ? sectorsAr : sectorsEn;
   const iconForSector = (label: string) => {
@@ -56,6 +58,15 @@ export default function TrustedUAE() {
         <div className="flex items-start justify-between gap-4">
           <div>
             <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-[var(--brand-accent)]/15 text-[var(--brand-accent)] text-[11px] tracking-widest uppercase font-semibold" data-edit-key="uae-band-badge">
+              {!reduce ? (
+                <motion.span
+                  style={{ display: "inline-flex", transformOrigin: "50% 10%" }}
+                  animate={{ rotate: [-3, 0, 3, 0] }}
+                  transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  <Scale className="h-3.5 w-3.5" aria-hidden="true" />
+                </motion.span>
+              ) : null}
               {lang === "ar" ? "موثوق به من عملاء في جميع أنحاء الإمارات" : "Trusted by Clients Across the UAE"}
             </div>
             <p className="mt-2 text-sm text-zinc-300" data-edit-key="uae-band-subtitle">

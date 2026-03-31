@@ -31,9 +31,10 @@ function TeamPhoto({ slug, alt }: { slug: string; alt: string }) {
       src={src}
       alt={alt}
       fill
-      className="object-cover object-center"
+      className="object-cover object-top md:object-center"
       sizes="(max-width: 768px) 100vw, 33vw"
       onError={onError}
+      style={slug === "Mohamed Dafallah" ? { objectPosition: "50% 10%" } : undefined}
     />
   );
 }
@@ -51,14 +52,14 @@ export default function TeamOverview() {
   const items: Person[] =
     lang === "ar"
       ? [
-          { name: "خالد عمر", role: "مستشار قانوني ، مالك", tags: ["بحري", "تنفيذ"], slug: "khaled-omer", focus: "بحري، استراتيجية، منازعات معقدة", bio: "مستشار موثوق في الأميرالية والتقاضي عالي المخاطر." },
-          { name: " محمد دفع الله", role: "مدير المكتب", tags: ["إدارة", "تنفيذ"], slug: "Mohamed Daffa Allah", focus: "أميرالية، بضائع، حجز سفن", bio: "حلول سريعة وتنفيذ دقيق للقضايا." },
+          { name: "خالد عمر", role: "مستشار قانوني ، مالك", tags: ["بحري", "تنفيذ"], slug: "khaled-omer", focus: "بحري، استراتيجية، منازعات معقدة", bio: "مستشار موثوق في البحرية والتقاضي عالي المخاطر." },
+          { name: " محمد دفع الله", role: "مدير المكتب", tags: ["إدارة", "تنفيذ"], slug: "Mohamed Dafallah", focus: "أميرالية، بضائع، حجز سفن", bio: "حلول سريعة وتنفيذ دقيق للقضايا." },
           { name: "مالك عمر", role: "مستشار شركات", tags: ["إدارة", "بحري"], slug: "Malik Omer", focus: "شركات، امتثال، معاملات", bio: "هيكلة صفقات وحوكمة بنهج عملي." },
           { name: "ابراهيم حسن", role: "محامية دعاوى", tags: ["منازعات", "تنفيذ"], slug: "nour-hassan", focus: "تقاضي، دعم التحكيم", bio: "إدارة نزاعات بكفاءة وإتقان للإجراءات." },
         ]
       : [
           { name: "Khaled Omer", role: "Managing Partner", tags: ["Maritime", "Enforcement"], slug: "khaled-omer", focus: "Maritime, Strategy, Complex Disputes", bio: "Trusted adviser on admiralty and high-stakes litigation." },
-          { name: "Mohamed Daffa Allah", role: "Maritime Attorney", tags: ["Enforcement", "Manage"], slug: "Mohamed Daffa Allah", focus: "Admiralty, Cargo, Vessel Arrests", bio: "Delivers fast remedies and precise case execution." },
+          { name: "Mohamed Dafallah", role: "Maritime Attorney", tags: ["Enforcement", "Manage"], slug: "Mohamed Dafallah", focus: "Admiralty, Cargo, Vessel Arrests", bio: "Delivers fast remedies and precise case execution." },
           { name: "Malik Omer", role: "Corporate Counsel", tags: ["Manage", "Maritime"], slug: "Malik Omer", focus: "Corporate, Compliance, Transactions", bio: "Structuring deals and governance with pragmatic advice." },
           { name: "Ibrahim Hassan", role: "Litigation Associate", tags: ["Disputes", "Arbitration"], slug: "nour-hassan", focus: "Litigation, Arbitration Support", bio: "Efficient dispute management and procedural mastery." },
         ];

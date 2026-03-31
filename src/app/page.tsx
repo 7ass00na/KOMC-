@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import HomeHero from "@/components/MainHomeHero";
 import Footer from "@/components/Footer";
+import IntroOverlay from "@/components/IntroOverlay";
 import ServicesOverview from "@/components/ServicesOverview";
 import CasesOverview from "@/components/CasesOverview";
 import TeamOverview from "@/components/TeamOverview";
@@ -23,6 +24,7 @@ export const metadata = {
 export default function Home() {
   return (
     <div className="min-h-screen hero-bg home">
+      <IntroOverlay />
       <Header />
       <main>
         <section id="hero">

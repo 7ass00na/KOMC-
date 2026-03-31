@@ -5,6 +5,7 @@ import AboutMissionValuesSection from "@/components/AboutMissionValuesSection";
 import AboutApproachZill from "@/components/AboutApproachZill";
 import AboutTeamGrid from "@/components/AboutTeamGrid";
 import AboutTrustBand from "@/components/AboutTrustBand";
+import Reveal from "@/components/Reveal";
 
 export const metadata = {
   alternates: {
@@ -34,15 +35,23 @@ export default async function Page() {
     ["--subheading-size" as any]: theme?.sizes?.subheading || undefined,
     ["--content-font-en" as any]: theme?.fonts?.en || undefined,
   };
-  const team = [
-    { name: "Khaled Omer", role: "Managing Partner", focus: "Maritime, Strategy, Complex Disputes", bio: "Maritime law, strategy, complex disputes.", src: withV("/images/team/khaled-omer..png") },
-    { name: "Sara Mohamed", role: "Maritime Attorney", focus: "Admiralty, Cargo, Vessel Arrests", bio: "Admiralty, cargo, vessel arrests.", src: withV("/images/team/sara-mohamed.jpg") },
-    { name: "Ahmed Ali", role: "Corporate Counsel", focus: "Corporate, Compliance, Transactions", bio: "Contracts, compliance, transactions.", src: withV("/images/team/ahmed-ali.jpg") },
-    { name: "Nour Hassan", role: "Litigation Associate", focus: "Litigation, Arbitration Support", bio: "Civil procedure, arbitration support.", src: withV("/images/team/nour-hassan.jpg") },
-    { name: "Mina Saad", role: "Associate", focus: "Contracts, Risk Review", bio: "Drafting and reviewing commercial contracts.", src: withV("/person.svg") },
-    { name: "Fatima Aziz", role: "Paralegal", focus: "Research, Filings", bio: "Legal research and regulatory filings.", src: withV("/person.svg") },
-    { name: "Omar Youssef", role: "Of Counsel", focus: "Arbitration, Enforcement", bio: "Arbitration and award enforcement.", src: withV("/person.svg") },
-    { name: "Layla Karim", role: "Client Relations", focus: "Intake, Communication", bio: "Intake and client communications.", src: withV("/person.svg") },
+  const teamPrimary = [
+    { name: "Khaled Omer", role: "Managing Partner & Maritime Attorney", focus: "Maritime, Strategy, Vessel Arrests", bio: "Maritime law, strategy, vessel arrests.", src: withV("/images/team/khaled-omer.png"), tags: ["Maritime", "Enforcement"], mobileFocal: "50% 22%" },
+    { name: "Mohamed Dafallah", role: "Managing Attorney", focus: "Manage, Cargo, Complex Disputes", bio: "Admiralty, cargo, complex disputes.", src: withV("/images/team/Mohamed Dafallah.png"), tags: ["Legal advisor", "Manage"], mobileFocal: "50% 22%" },
+    { name: "Malik Omer", role: "Maritime Captain", focus: "Shipping, Compliance, Transactions", bio: "Contracts, compliance, transactions.", src: withV("/images/team/Malik Omer.png"), tags: ["Manage", "Maritime"], mobileFocal: "50% 22%" },
+    { name: "Ibrahim Hassan", role: "Litigation Associate", focus: "Litigation, Arbitration Support", bio: "Civil procedure, arbitration support.", src: withV("/images/team/nour-hassan.jpg"), tags: ["Disputes", "Arbitration"] },
+  ];
+  const teamSecondary = [
+    { name: "Hazim Abdallah", role: "Associate Attorney", focus: "Shipping, Compliance", bio: "Shipping operations and compliance support.", src: withV("/images/team/T05.jpeg"), tags: ["Shipping", "Compliance"], mobileFocal: "50% 22%" },
+    { name: "Mohamed Yousif", role: "Associate Attorney", focus: "Cargo, Disputes", bio: "Cargo handling and dispute coordination.", src: withV("/images/team/T06.jpeg"), tags: ["Cargo", "Disputes"], mobileFocal: "50% 22%" },
+    { name: "Mohamed Babiker", role: "Associate", focus: "Transactions, Support", bio: "Transactional support and diligence.", src: withV("/images/team/T07.jpeg"), tags: ["Transactions", "Support"], mobileFocal: "50% 22%" },
+    { name: "Jayantah Chariminar", role: "Associate Attorney", focus: "Shipping, Claims", bio: "Shipping claims coordination and resolution.", src: withV("/images/team/T08.jpeg"), tags: ["Shipping", "Claims"], mobileFocal: "50% 22%" },
+  ];
+  const teamTertiary = [
+    { name: "Somia Khider", role: "Associate", focus: "Contracts, Governance", bio: "Contract reviews and governance processes.", src: withV("/images/team/T09.jpeg"), tags: ["Contracts", "Governance"], mobileFocal: "50% 22%" },
+    { name: "Ahmed Omer", role: "Associate", focus: "Corporate, Transactions", bio: "Corporate support and transactional diligence.", src: withV("/images/team/T010.jpeg"), tags: ["Corporate", "Transactions"] },
+    { name: "Mohamed Sobihi", role: "Associate", focus: "Compliance, Documentation", bio: "Compliance documentation and legal drafting.", src: withV("/images/team/T011.jpeg"), tags: ["Compliance", "Drafting"], mobileFocal: "50% 22%" },
+    { name: "Nadia Ali", role: "Associate", focus: "Arbitration, Trade", bio: "Trade arbitration coordination and case support.", src: withV("/images/team/T012.jpeg"), tags: ["Arbitration", "Trade"], mobileFocal: "50% 22%" },
   ];
   if (pageDown) {
     return (
@@ -76,40 +85,59 @@ export default async function Page() {
         />
         </div>
         <div className="about-scope pt-[32px] md:pt-[48px] lg:pt-[64px]">
-        <section className="section no-section-bg mx-auto max-w-7xl px-5 py-20">
-          <h1 className="text-4xl font-bold text-[var(--brand-accent)]">About KOMC</h1>
-          <p className="mt-4 text-zinc-300 max-w-3xl">
-            KO Maritime Consultancy provides strategic legal guidance across admiralty, corporate advisory,
-            and dispute resolution for maritime businesses in the UAE and globally.
-          </p>
-          <AboutMissionValuesSection
-            image="/images/about/about-hero-poster.jpg"
-            imageAlt="Lawyers collaborating at a maritime boardroom"
-            mission={{ title: "Mission", body: "Protect clients’ interests with precise, commercially‑savvy legal solutions." }}
-            values={{ title: "Values", body: "Integrity, accountability, clarity, and measurable outcomes." }}
-            badges={["Since 2010", "Maritime Focus", "Global Reach"]}
-            accentStripe
-            stats={[
-              { value: "14+", label: "Years" },
-              { value: "48h", label: "Vessel Arrest" },
-              { value: "85%", label: "Early Settlements" },
-            ]}
-            stacked
-            missionSteps={["Purpose", "Principles", "Impact"]}
-            valuesSteps={["Integrity", "Transparency", "Client‑centric", "Accountability", "Clarity", "Outcomes"]}
-            missionRepLines={["Trusted legal representation in maritime and commercial contexts."]}
-            valuesRepLines={["Trusted legal representation in maritime and commercial contexts."]}
-          />
-        </section>
+        <Reveal>
+          <section className="section no-section-bg mx-auto max-w-7xl px-5 py-20">
+            <h1 className="text-3xl md:text-4xl font-extrabold text-[var(--brand-accent)]">About KOMC</h1>
+            <p className="mt-4 text-zinc-300 max-w-3xl text-base md:text-lg leading-7">
+              KO Maritime Consultancy provides strategic legal guidance across admiralty, corporate advisory,
+              and dispute resolution for maritime businesses in the UAE and globally.
+            </p>
+            <AboutMissionValuesSection
+              image="/images/about/about-hero-poster.jpg"
+              imageAlt="Lawyers collaborating at a maritime boardroom"
+              mission={{ title: "Mission", body: "Protect clients’ interests with precise, commercially‑savvy legal solutions." }}
+              values={{ title: "Values", body: "Integrity, accountability, clarity, and measurable outcomes." }}
+              badges={["Since 2010", "Maritime Focus", "Global Reach"]}
+              accentStripe
+              stats={[
+                { value: "14+", label: "Years" },
+                { value: "48h", label: "Vessel Arrest" },
+                { value: "85%", label: "Early Settlements" },
+              ]}
+              stacked
+              missionSteps={["Purpose", "Principles", "Impact"]}
+              valuesSteps={["Integrity", "Transparency", "Client‑centric", "Accountability", "Clarity", "Outcomes"]}
+              missionRepLines={["Trusted legal representation in maritime and commercial contexts."]}
+              valuesRepLines={["Trusted legal representation in maritime and commercial contexts."]}
+            />
+          </section>
+        </Reveal>
 
-        <AboutApproachZill heading="Approach" />
+        <Reveal>
+          <AboutApproachZill heading="Approach" />
+        </Reveal>
 
-        <section className="section no-section-bg mx-auto max-w-7xl px-5 pb-20">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-[var(--brand-accent)]">Our Team of Experts</h2>
-          <AboutTeamGrid team={team} />
-        </section>
+        <Reveal>
+          <section className="section no-section-bg mx-auto max-w-7xl px-5 pb-20">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-[var(--brand-accent)]">Our Legal Team</h2>
+            <p className="mt-1 text-zinc-300 leading-6">
+              <span>Strategy‑first counsel with clear communication and measurable outcomes.</span><br/>
+              <span>Evidence‑led preparation and rigorous documentation at every step.</span><br/>
+              <span>Disciplined execution across admiralty, commercial disputes, and enforcement.</span>
+            </p>
+            <AboutTeamGrid team={teamPrimary} startIndex={0} />
+            <div className="mt-8">
+              <AboutTeamGrid team={teamSecondary} startIndex={4} />
+            </div>
+            <div className="mt-8">
+              <AboutTeamGrid team={teamTertiary} startIndex={8} />
+            </div>
+          </section>
+        </Reveal>
 
-        <AboutTrustBand className="no-section-bg" />
+        <Reveal>
+          <AboutTrustBand className="no-section-bg" />
+        </Reveal>
         </div>
       </main>
       <Footer />

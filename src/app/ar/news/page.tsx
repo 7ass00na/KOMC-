@@ -2,6 +2,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import NewsHero from "@/components/NewsHero";
 import NewsPageContent from "@/components/NewsPageContent";
+import Reveal from "@/components/Reveal";
 
 export const metadata = {
   alternates: {
@@ -97,14 +98,16 @@ export default async function Page() {
         <div className="about-hero-scope">
           <NewsHero isRTL title="مقالات وتحديثات قانونية" subtitle="ملخصات تنفيذية للقيادات القانونية والبحرية." kicker="المقالات" overlay="medium" />
         </div>
-        <NewsPageContent
-          posts={posts}
-          locale="ar"
-          title="معرفة قانونية وتحديثات"
-          subtitle="ابقَ على اطلاع بتحليلات الخبراء في القانون البحري والامتثال وأفضل الممارسات."
-          detailsEmptyLabel="اختر مقالًا لعرض التفاصيل هنا."
-          isRTL
-        />
+        <Reveal>
+          <NewsPageContent
+            posts={posts}
+            locale="ar"
+            title="معرفة قانونية وتحديثات"
+            subtitle="ابقَ على اطلاع بتحليلات الخبراء في القانون البحري والامتثال وأفضل الممارسات."
+            detailsEmptyLabel="اختر مقالًا لعرض التفاصيل هنا."
+            isRTL
+          />
+        </Reveal>
       </main>
       <Footer />
     </div>

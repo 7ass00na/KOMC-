@@ -3,6 +3,7 @@ import Header from "@/components/Header";
 import ServicesOverview from "@/components/ServicesOverview";
 import ServicesHero from "@/components/ServicesHero";
 import { Suspense } from "react";
+import Reveal from "@/components/Reveal";
 
 export const metadata = {
   alternates: {
@@ -51,11 +52,13 @@ export default async function Page() {
         <div className="about-hero-scope">
           <ServicesHero overlay="medium" />
         </div>
-        <div className="pt-[32px] md:pt-[48px] lg:pt-[64px]">
-          <Suspense fallback={<div className="section mx-auto max-w-7xl px-5 py-10"><div className="h-48 rounded-2xl bg-white/5 border border-zinc-700/40 animate-pulse" /></div>}>
-            <ServicesOverview variant="page" />
-          </Suspense>
-        </div>
+        <Reveal>
+          <div className="pt-[32px] md:pt-[48px] lg:pt-[64px]">
+            <Suspense fallback={<div className="section mx-auto max-w-7xl px-5 py-10"><div className="h-48 rounded-2xl bg-white/5 border border-zinc-700/40 animate-pulse" /></div>}>
+              <ServicesOverview variant="page" />
+            </Suspense>
+          </div>
+        </Reveal>
       </main>
       <Footer />
     </div>

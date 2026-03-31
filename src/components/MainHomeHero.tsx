@@ -5,7 +5,6 @@ import Link from "next/link";
 import { AnimatePresence, animate, motion, useMotionValue } from "framer-motion";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
-import maritimeImg from "@/app/Demo.tsx/Images/Admiralty01.jpg";
 
 export interface SlideData {
   id: number;
@@ -65,7 +64,7 @@ export default function HomeHero({
           title: t("slide1Title"),
           subtitle: t("slide1Highlight"),
           description: t("slide1Desc"),
-          image: maritimeImg,
+          image: "/images/home/C01.png",
         },
         {
           id: 2,
@@ -73,7 +72,7 @@ export default function HomeHero({
           title: t("slide2Title"),
           subtitle: t("slide2Highlight"),
           description: t("slide2Desc"),
-          image: "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=2400&q=85",
+          image: "/images/home/C02.png",
         },
         {
           id: 3,
@@ -81,7 +80,7 @@ export default function HomeHero({
           title: t("slide3Title"),
           subtitle: t("slide3Highlight"),
           description: t("slide3Desc"),
-          image: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=2400&q=85",
+          image: "/images/home/C03.png",
         },
         {
           id: 4,
@@ -89,7 +88,7 @@ export default function HomeHero({
           title: t("slide4Title"),
           subtitle: t("slide4Highlight"),
           description: t("slide4Desc"),
-          image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=2400&q=85",
+          image: "/images/home/C04.png",
         },
       ],
     [slides, t]
@@ -260,7 +259,7 @@ export default function HomeHero({
               className="object-cover"
               sizes="100vw"
               draggable={false}
-              style={{ backfaceVisibility: "hidden", transform: "translateZ(0)" }}
+              style={{ backfaceVisibility: "hidden", transform: "translateZ(0)", objectPosition: activeSlide?.id === 1 ? "50% 30%" : "50% 50%" }}
             />
           </motion.div>
 

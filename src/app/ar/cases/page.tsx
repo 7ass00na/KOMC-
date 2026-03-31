@@ -3,6 +3,7 @@ import Footer from "@/components/Footer";
 import CasesOverview from "@/components/CasesOverview";
 import { Suspense } from "react";
 import CasesHero from "@/components/CasesHero";
+import Reveal from "@/components/Reveal";
 
 export const metadata = {
   alternates: {
@@ -51,18 +52,20 @@ export default async function Page() {
         <div className="about-hero-scope">
           <CasesHero isRTL overlay="strong" title="دراسات حالة ونتائج قانونية" subtitle="قضايا مختارة في الأميرالية ونزاعات الشحن والتنفيذ والتحكيم." kicker="نتائج القضايا" />
         </div>
-        <div className="pt-[32px] md:pt-[48px] lg:pt-[64px]">
-          <Suspense
-            fallback={
-              <section className="section mx-auto max-w-7xl px-5 py-20">
-                <div className="h-10 w-48 rounded bg-white/5 border border-zinc-700/40 animate-pulse" />
-                <div className="mt-6 h-64 rounded-2xl bg-white/5 border border-zinc-700/40 animate-pulse" />
-              </section>
-            }
-          >
-            <CasesOverview variant="page" />
-          </Suspense>
-        </div>
+        <Reveal>
+          <div className="pt-[32px] md:pt-[48px] lg:pt-[64px]">
+            <Suspense
+              fallback={
+                <section className="section mx-auto max-w-7xl px-5 py-20">
+                  <div className="h-10 w-48 rounded bg-white/5 border border-zinc-700/40 animate-pulse" />
+                  <div className="mt-6 h-64 rounded-2xl bg-white/5 border border-zinc-700/40 animate-pulse" />
+                </section>
+              }
+            >
+              <CasesOverview variant="page" />
+            </Suspense>
+          </div>
+        </Reveal>
       </main>
       <Footer />
     </div>

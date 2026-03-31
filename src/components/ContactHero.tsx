@@ -30,7 +30,7 @@ export default function ContactHero({
       kicker={kicker}
       overlay={overlay}
       kickerVariant="filled"
-      size="compact"
+      size="section"
       sources={sources}
       poster={poster}
       isRTL={isRTL}

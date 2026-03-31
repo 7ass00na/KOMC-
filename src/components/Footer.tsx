@@ -2,7 +2,7 @@
 // EN: Footer — brand summary, quick links, services, contact, newsletter, legal
 // AR: تذييل — ملخص العلامة، روابط سريعة، خدمات، تواصل، نشرة بريدية، قانوني
 import { useLanguage } from "@/context/LanguageContext";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { useTheme } from "@/context/ThemeContext";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -48,6 +48,7 @@ function SocialIcon({ kind }: { kind: "linkedin" | "twitter" | "facebook" | "ins
 export default function Footer() {
   const { t, lang } = useLanguage();
   const { mode, setMode } = useTheme();
+  const reduce = useReducedMotion();
   const base = `/${lang}`;
   const pathname = usePathname();
   const [footerData, setFooterData] = useState<{ siteName_en: string; siteName_ar: string; logo: string; published_siteName_en?: string; published_siteName_ar?: string; published_logo?: string; links: Array<{ label_en: string; label_ar: string; href: string }> } | null>(null);
@@ -238,12 +239,29 @@ export default function Footer() {
           >
             <div className="flex items-center gap-3">
               {(footerData?.published_logo || footerData?.logo) ? (
-                <Image src={(footerData?.published_logo || footerData?.logo) as string} alt="Footer Logo" width={40} height={40} className="rounded-full object-contain" />
+                <motion.div
+                  animate={reduce ? undefined : { rotate: [-2, 0, 2, 0] }}
+                  transition={reduce ? undefined : { duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  <Image src={(footerData?.published_logo || footerData?.logo) as string} alt="Footer Logo" width={40} height={40} className="rounded-full object-contain" />
+                </motion.div>
               ) : (
                 <div className="h-10 w-10 rounded-full bg-[var(--brand-accent)] grid place-items-center text-[var(--brand-primary)]">
-                  <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                  <motion.svg
+                    viewBox="0 0 24 24"
+                    className="h-5 w-5"
+                    aria-hidden="true"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    style={{ transformOrigin: "50% 10%" }}
+                    animate={reduce ? undefined : { rotate: [-3, 0, 3, 0] }}
+                    transition={reduce ? undefined : { duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
+                  >
                     <path d="M12 3v4m-7 5h14M5 12l3.5 6a4 4 0 11-7 0L5 12Zm14 0l3.5 6a4 4 0 11-7 0L19 12Z" />
-                  </svg>
+                  </motion.svg>
                 </div>
               )}
               <div>
