@@ -13,6 +13,7 @@
   "dependencies": {
     "@tiptap/react": "^3.20.3",
     "@tiptap/starter-kit": "^3.20.3",
+    "@vercel/analytics": "^2.0.1",
     "@yoopta/editor": "^6.0.2",
     "@yoopta/marks": "^6.0.2",
     "@yoopta/paragraph": "^6.0.2",
