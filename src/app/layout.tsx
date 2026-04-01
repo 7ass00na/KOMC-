@@ -7,6 +7,7 @@ import ScrollToTopButton from "@/components/ScrollToTopButton";
 import WhatsAppFloatingButton from "@/components/WhatsAppFloatingButton";
 import GlobalLoadingOverlay from "@/components/GlobalLoadingOverlay";
 import CookieConsent from "@/components/CookieConsent";
+import { Analytics } from "@vercel/analytics/next";
 
 const lora = Lora({
   variable: "--font-en",
@@ -94,6 +95,7 @@ export default async function RootLayout({
           <WhatsAppFloatingButton />
           <ScrollToTopButton />
         </Providers>
+        <Analytics />
       </body>
     </html>
   );
