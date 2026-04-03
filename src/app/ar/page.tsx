@@ -9,6 +9,7 @@ import AboutTrustBand from "@/components/AboutTrustBand";
 import TrustedUAE from "@/components/TrustedUAE";
 import { Suspense } from "react";
 import Reveal from "@/components/Reveal";
+import IntroOverlay from "@/components/IntroOverlay";
 
 export const metadata = {
   alternates: {
@@ -55,6 +56,7 @@ export default async function Page() {
   }
   return (
     <div className="min-h-screen hero-bg home site-content" style={style}>
+      <IntroOverlay />
       <Header />
       <main>
         <section id="hero">

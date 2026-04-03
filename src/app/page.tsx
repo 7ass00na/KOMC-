@@ -10,18 +10,7 @@ import TrustedUAE from "@/components/TrustedUAE";
 import { Suspense } from "react";
 import AboutTrustBand from "@/components/AboutTrustBand";
 import Reveal from "@/components/Reveal";
-import type { AppProps } from 'next/app';
-import { Analytics } from '@vercel/analytics/next';
 
-
-  function MyApp({ Component, pageProps }: AppProps) {
-  return (
-    <>
-      <Component {...pageProps} />
-      <Analytics />
-    </>
-  );
-}
 
 export const metadata = {
   alternates: {
@@ -35,7 +24,7 @@ export const metadata = {
 
 export default function Home() {
   return (
-    <div className="min-h-screen hero-bg home">
+    <div className="min-h-screen hero-bg home site-content">
       <IntroOverlay />
       <Header />
       <main>

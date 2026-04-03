@@ -16,6 +16,8 @@ export default function Header() {
   const { t, lang, setLang } = useLanguage();
   const { toggleDark, dark } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [introPlaying, setIntroPlaying] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const langMenuRef = useRef<HTMLDivElement | null>(null);
   const pathname = usePathname();
@@ -31,6 +33,47 @@ export default function Header() {
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    function beginTimedLoading(ms: number) {
+      setIsLoading(true);
+      const t = setTimeout(() => setIsLoading(false), Math.max(500, ms));
+      return () => clearTimeout(t);
+    }
+    function onSiteLoading(e: Event) {
+      // @ts-ignore
+      const ms = Number(e?.detail?.duration ?? 2500);
+      beginTimedLoading(ms);
+    }
+    function onSiteLoadingShort() {
+      beginTimedLoading(2000);
+    }
+    if (typeof window !== "undefined") {
+      window.addEventListener("site-loading" as any, onSiteLoading as any);
+      window.addEventListener("site-loading-short" as any, onSiteLoadingShort as any);
+      return () => {
+        window.removeEventListener("site-loading" as any, onSiteLoading as any);
+        window.removeEventListener("site-loading-short" as any, onSiteLoadingShort as any);
+      };
+    }
+  }, []);
+
+  useEffect(() => {
+    function onIntroStart() {
+      setIntroPlaying(true);
+    }
+    function onIntroStop() {
+      setIntroPlaying(false);
+    }
+    if (typeof window !== "undefined") {
+      window.addEventListener("intro-video-start", onIntroStart as any);
+      window.addEventListener("intro-video-stop", onIntroStop as any);
+      return () => {
+        window.removeEventListener("intro-video-start", onIntroStart as any);
+        window.removeEventListener("intro-video-stop", onIntroStop as any);
+      };
+    }
   }, []);
 
   useEffect(() => {
@@ -156,13 +199,17 @@ export default function Header() {
           {/* EN: Brand mark and name */}
           {/* AR: علامة الشعار واسم العلامة */}
           <div className="h-8 w-8 rounded-md bg-[var(--brand-accent)] text-black flex items-center justify-center">
-            <motion.span
-              style={{ display: "inline-flex", transformOrigin: "50% 10%" }}
-              animate={reduce ? undefined : { rotate: [-3, 0, 3, 0] }}
-              transition={reduce ? undefined : { duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
-            >
-              <Scale className="h-5 w-5" aria-hidden="true" />
-            </motion.span>
+            {introPlaying ? (
+              <Image src="/icon.svg" alt="KOMC" width={20} height={20} />
+            ) : (
+              <motion.span
+                style={{ display: "inline-flex", transformOrigin: "50% 10%" }}
+                animate={reduce ? undefined : { rotate: [-3, 0, 3, 0] }}
+                transition={reduce ? undefined : { duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
+              >
+                <Scale className="h-5 w-5" aria-hidden="true" />
+              </motion.span>
+            )}
           </div>
           <div className={
             "text-[13px] md:text-sm font-bold " +
@@ -361,17 +408,34 @@ export default function Header() {
       </div>
       {mobileOpen && (
         <motion.div
-          initial={{ height: 0, opacity: 0 }}
-          animate={{ height: "auto", opacity: 1 }}
-          exit={{ height: 0, opacity: 0 }}
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          role="dialog"
+          aria-modal="true"
+          aria-label={lang === "ar" ? "قائمة الجوال" : "Mobile menu"}
           className={
-            "md:hidden border-t text-[var(--ink-primary)] " +
-            (dark ? "border-black/30 bg-[var(--brand-primary)]" : "border-black/10 bg-[color-mix(in_oklab,#e5d8cb,white_70%)]")
+            "md:hidden fixed inset-0 z-[40] text-[var(--ink-primary)] " +
+            (dark ? "bg-[color-mix(in_oklab,var(--brand-primary),black_0%)]" : "bg-[color-mix(in_oklab,#e5d8cb,white_70%)]")
           }
         >
+          <button
+            aria-label={lang === "ar" ? "إغلاق القائمة" : "Close menu"}
+            onClick={() => setMobileOpen(false)}
+            className={
+              "absolute top-2 z-[41] h-11 w-11 rounded-lg flex items-center justify-center ring-1 transition transform transition-colors " +
+              (dark ? "ring-white/15 bg-white/10 hover:bg-white/15 active:scale-95" : "ring-black/10 bg-black/5 hover:bg-black/10 active:scale-95")
+            }
+            style={{ insetInlineEnd: "0.5rem" }}
+          >
+            <svg viewBox="0 0 24 24" className={dark ? "h-6 w-6 text-white" : "h-6 w-6 text-[var(--ink-primary)]"} aria-hidden="true">
+              <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+          <div className="absolute inset-0 overflow-y-auto pt-14">
           {/* EN: Mobile navigation drawer */}
           {/* AR: قائمة ملاحة للجوال */}
-          <div className="px-4 py-3 flex flex-col gap-3">
+          <div className="px-4 py-4 flex flex-col gap-3">
             {navItems.map((item) => {
               const isActive =
                 pathname === item.href ||
@@ -381,7 +445,12 @@ export default function Header() {
                 <Link
                   key={item.id}
                   href={item.href}
-                  onClick={() => setMobileOpen(false)}
+                  onClick={() => {
+                    setMobileOpen(false);
+                    if (typeof window !== "undefined") {
+                      window.dispatchEvent(new Event("site-loading-short") as any);
+                    }
+                  }}
                   aria-current={isActive ? "page" : undefined}
                   className={
                     "text-sm py-2 rounded flex items-center gap-3 px-2 " +
@@ -394,7 +463,7 @@ export default function Header() {
                     <Icon id={item.id} />
                   </span>
                   <span data-edit-key={`nav-${item.id}-mobile`}>{item.label}</span>
-                  <svg className="ml-auto h-4 w-4 opacity-60" viewBox="0 0 24 24" aria-hidden="true">
+                  <svg className={(lang === "ar" ? "ms-auto" : "ml-auto") + " h-4 w-4 opacity-60"} viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                 </Link>
@@ -441,11 +510,49 @@ export default function Header() {
                 <span>{t("ctaConsult")}</span>
               </span>
             </Link>
+            <div className="mt-4 flex items-center justify-center">
+              <div className="relative h-16 w-16">
+                <motion.div
+                  className="absolute inset-0 rounded-full border-2"
+                  style={{ borderColor: "rgba(255,255,255,0.12)" }}
+                  animate={isLoading ? { rotate: 360 } : undefined}
+                  transition={{ repeat: Infinity, duration: 2.8, ease: "linear" }}
+                />
+                <motion.div
+                  className="absolute inset-0 rounded-full border-2 border-t-transparent"
+                  style={{ borderColor: "var(--brand-accent)" }}
+                  data-mobile-menu-cursor-line
+                  animate={isLoading ? { rotate: -360 } : undefined}
+                  transition={{ repeat: Infinity, duration: 2.2, ease: "linear" }}
+                />
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.88 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
+                  className="absolute inset-0 flex items-center justify-center"
+                >
+                  {header?.published_logo || header?.logo ? (
+                    <Image
+                      src={(header?.published_logo || header?.logo) as string}
+                      alt={lang === "ar" ? "شعار الشركة" : "Company logo"}
+                      width={32}
+                      height={32}
+                      className="h-8 w-8 object-contain"
+                      sizes="32px"
+                      priority={true}
+                    />
+                  ) : (
+                    <Image src="/icon.svg" alt="Logo" width={32} height={32} className="h-8 w-8 object-contain" sizes="32px" priority />
+                  )}
+                </motion.div>
+              </div>
+            </div>
             <div className="mt-3 rounded-lg border border-[var(--panel-border)] bg-[var(--panel-bg)] p-3 text-xs text-[var(--text-secondary)]">
               {lang === "ar"
                 ? "احجز استشارة أولية — سنراجع وضعك القانوني ونرسم خطة عمل واضحة مع توصيات عملية ومواعيد تنفيذ."
                 : "Book an initial consultation — we assess your legal position and map a clear action plan with practical recommendations and timelines."}
             </div>
+          </div>
           </div>
         </motion.div>
       )}

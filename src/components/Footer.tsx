@@ -5,7 +5,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import { motion, useReducedMotion } from "framer-motion";
 import { useTheme } from "@/context/ThemeContext";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 
@@ -56,6 +56,11 @@ export default function Footer() {
   const [legalType, setLegalType] = useState<"privacy" | "terms" | "disclaimer">("privacy");
   const [legalHTML, setLegalHTML] = useState<string>("");
   const [loadingLegal, setLoadingLegal] = useState<boolean>(false);
+  const [newsletterEmail, setNewsletterEmail] = useState<string>("");
+  const [newsletterError, setNewsletterError] = useState<string>("");
+  const [newsletterOpen, setNewsletterOpen] = useState<boolean>(false);
+  const [newsletterLoading, setNewsletterLoading] = useState<boolean>(false);
+  const closeBtnRef = useRef<HTMLButtonElement | null>(null);
   const [settings, setSettings] = useState<{
     themeToggle: boolean;
     whatsapp: { enabled: boolean; number: string; message: string };
@@ -177,6 +182,69 @@ export default function Footer() {
       return () => window.removeEventListener("open-legal" as any, handler);
     }
   }, []);
+  useEffect(() => {
+    if (!newsletterOpen) return;
+    const prevActive = document.activeElement as HTMLElement | null;
+    closeBtnRef.current?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        setNewsletterOpen(false);
+      }
+      if (e.key === "Tab") {
+        const dialog = document.getElementById("newsletter-dialog");
+        if (!dialog) return;
+        const focusable = dialog.querySelectorAll<HTMLElement>('a,button,input,textarea,select,[tabindex]:not([tabindex="-1"])');
+        const list = Array.from(focusable).filter((el) => !el.hasAttribute("disabled"));
+        if (list.length === 0) return;
+        const first = list[0];
+        const last = list[list.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      prevActive?.focus();
+    };
+  }, [newsletterOpen]);
+  function isValidEmail(v: string) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  }
+  async function onSubscribe() {
+    const invalidMsg = t("newsletterInvalidEmail") || (lang === "ar" ? "البريد الإلكتروني غير صالح" : "Invalid email address");
+    const submitErr = t("newsletterSubmitError") || (lang === "ar" ? "تعذر إتمام الاشتراك، حاول مرة أخرى." : "Subscription failed, please try again.");
+    if (!isValidEmail(newsletterEmail.trim())) {
+      setNewsletterError(invalidMsg);
+      return;
+    }
+    setNewsletterError("");
+    setNewsletterLoading(true);
+    try {
+      const res = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: newsletterEmail.trim() }),
+      });
+      const ok = res.ok;
+      if (!ok) {
+        setNewsletterError(submitErr);
+      } else {
+        setNewsletterOpen(true);
+        setNewsletterEmail("");
+      }
+    } catch {
+      setNewsletterError(submitErr);
+    } finally {
+      setNewsletterLoading(false);
+    }
+  }
   const services = lang === "ar"
     ? [
         { label: "البحري", href: `${base}/services?cat=maritime` },
@@ -468,13 +536,25 @@ export default function Footer() {
               <div className="mt-2 flex items-center gap-2">
                 <input
                   type="email"
+                  value={newsletterEmail}
+                  onChange={(e) => setNewsletterEmail(e.target.value)}
                   placeholder={t("newsletterPlaceholder")}
-                  className="flex-1 h-10 rounded-lg px-3 text-sm bg-[var(--panel-bg)] border border-[var(--panel-border)] text-[var(--ink-primary)] dark:bg-[color-mix(in oklab,var(--brand-primary),white 10%)] dark:border-white/20 dark:text-[var(--text-on-dark)] newsletter-input"
+                  aria-invalid={!!newsletterError}
+                  aria-describedby={newsletterError ? "newsletter-error" : undefined}
+                  className={"flex-1 h-10 rounded-lg px-3 text-sm bg-[var(--panel-bg)] border text-[var(--ink-primary)] dark:bg-[color-mix(in oklab,var(--brand-primary),white 10%)] dark:border-white/20 dark:text-[var(--text-on-dark)] newsletter-input " + (newsletterError ? "border-red-500 focus:outline-red-500" : "border-[var(--panel-border)]")}
                 />
-                <button className="h-10 px-3 rounded-lg bg-[var(--brand-accent)] text-[var(--brand-primary)] text-sm hover:bg-[var(--accent-hover)] font-semibold newsletter-btn inline-flex items-center gap-2">
+                <button
+                  onClick={onSubscribe}
+                  disabled={newsletterLoading}
+                  className="h-10 px-3 rounded-lg bg-[var(--brand-accent)] text-[var(--brand-primary)] text-sm hover:bg-[var(--accent-hover)] font-semibold newsletter-btn inline-flex items-center gap-2 disabled:opacity-70"
+                  aria-busy={newsletterLoading}
+                >
                   <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M2 21l21-9-9 3-3 9-2.5-7.5L1 12l1 9z"/></svg>
                   <span>{t("newsletterSubscribe")}</span>
                 </button>
+              </div>
+              <div id="newsletter-error" className="mt-1 text-xs text-red-400 min-h-4" aria-live="polite">
+                {newsletterError}
               </div>
             </div>
           </motion.div>
@@ -582,6 +662,52 @@ export default function Footer() {
             </div>
           </div>
         )}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={newsletterOpen ? { opacity: 1 } : { opacity: 0 }}
+          transition={{ duration: 0.25 }}
+          style={{ pointerEvents: newsletterOpen ? "auto" : "none" }}
+          className="fixed inset-0 z-[10000] flex items-center justify-center"
+          aria-hidden={!newsletterOpen}
+        >
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setNewsletterOpen(false)}
+          />
+          <motion.div
+            id="newsletter-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="newsletter-title"
+            aria-describedby="newsletter-desc"
+            dir={lang === "ar" ? "rtl" : "ltr"}
+            initial={{ opacity: 0, scale: 0.98, y: 8 }}
+            animate={newsletterOpen ? { opacity: 1, scale: 1, y: 0 } : { opacity: 0, scale: 0.98, y: 8 }}
+            transition={{ type: "spring", stiffness: 260, damping: 24 }}
+            className={"relative z-10 w-[92%] max-w-md rounded-2xl surface p-6 md:p-7 " + (lang === "ar" ? "text-right" : "text-left")}
+          >
+            <div className="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-full bg-[var(--brand-accent)]/15 ring-1 ring-[var(--brand-accent)]/30 text-[var(--brand-accent)]">
+              <svg viewBox="0 0 24 24" className="h-6 w-6" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 1 0 .001 20.001A10 10 0 0 0 12 2Zm-7 9h14v2H5v-2Z"/></svg>
+            </div>
+            <div id="newsletter-title" className="mt-3 text-2xl font-extrabold text-[var(--brand-accent)]">
+              {lang === "ar" ? "تم الاشتراك بنجاح" : "Subscription Confirmed"}
+            </div>
+            <div id="newsletter-desc" className="mt-2 text-sm text-white/90">
+              {lang === "ar"
+                ? "شكرًا لك على الاشتراك. سنبقيك مطلعًا على أحدث الأخبار القانونية."
+                : "Thank you for subscribing. We will keep you updated on the latest legal news."}
+            </div>
+            <div className="mt-5 flex items-center justify-end">
+              <button
+                ref={closeBtnRef}
+                onClick={() => setNewsletterOpen(false)}
+                className="btn-secondary"
+              >
+                {lang === "ar" ? "إغلاق" : "Close"}
+              </button>
+            </div>
+          </motion.div>
+        </motion.div>
       </div>
     </footer>
   );

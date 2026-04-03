@@ -17,6 +17,20 @@
   --panel-border: rgba(0,0,0,0.08);
   --chip-bg: rgba(15,30,46,0.06);
   --chip-border: rgba(0,0,0,0.12);
+  /* Typography scale */
+  --fs-h1: clamp(2rem, 1.2rem + 2.4vw, 3rem);
+  --fs-h2: clamp(1.75rem, 1.1rem + 1.8vw, 2.5rem);
+  --fs-h3: clamp(1.5rem, 1rem + 1.2vw, 2rem);
+  --fs-h4: clamp(1.25rem, 0.9rem + 0.8vw, 1.5rem);
+  --fs-h5: clamp(1.125rem, 0.85rem + 0.5vw, 1.25rem);
+  --fs-h6: clamp(1rem, 0.85rem + 0.2vw, 1.125rem);
+  --fs-body: clamp(1rem, 0.96rem + 0.2vw, 1.0625rem);
+  --fs-small: clamp(0.875rem, 0.84rem + 0.2vw, 0.9375rem);
+  --fs-xs: 0.75rem;
+  --lh-tight: 1.1;
+  --lh-title: 1.2;
+  --lh-heading: 1.25;
+  --lh-body: 1.6;
 }
 
 /* Admin UI isolation — lock brand variables within admin wrapper so theme changes don't affect CMS */
@@ -86,6 +100,198 @@
   background: #a0a7ae;
 }
 
+/* Home responsive adjustments */
+@media (max-width: 640px) {
+  .home main section {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .home #hero {
+    min-height: 60vh;
+  }
+  /* Intro video container on small screens */
+  .intro-video {
+    aspect-ratio: 9 / 16;
+  }
+}
+/* Mobile full-bleed hero (≤ 767px): ensure edge-to-edge without horizontal scroll */
+@media (max-width: 767px) {
+  .home main #hero {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 100vw;
+  }
+  .home .home-hero-scope {
+    width: 100vw;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+}
+@media (min-width: 641px) and (max-width: 1024px) {
+  .home main section {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+  .home #hero {
+    min-height: 70vh;
+  }
+  .intro-video {
+    aspect-ratio: 16 / 9;
+  }
+}
+/* Tablet full-bleed hero (≤ 1024px): edge-to-edge hero only */
+@media (max-width: 1024px) {
+  .home main #hero {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 100vw;
+  }
+  .home .home-hero-scope {
+    width: 100vw;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+}
+@media (min-width: 1025px) {
+  .home #hero {
+    min-height: 72vh;
+  }
+  .intro-video {
+    aspect-ratio: 16 / 9;
+  }
+}
+
+/* Prevent text overflow on headings and overlays */
+.home .site-content h1,
+.home .site-content h2,
+.home .site-content .overlay-message {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Intro video fit strategy */
+.intro-video {
+  object-fit: cover;
+}
+@media (max-width: 480px) {
+  .intro-video {
+    object-fit: contain;
+    background-color: #000;
+  }
+}
+
+/* Team portraits optimization for mobile */
+.team-card-photo {
+  position: relative;
+  overflow: hidden;
+}
+.team-photo {
+  object-fit: cover;
+  transition: object-position 180ms ease, transform 180ms ease;
+}
+@media (max-width: 768px) {
+  .team-card-photo {
+    aspect-ratio: 3 / 4;
+  }
+  .team-photo {
+    object-position: var(--mobile-focal, 50% 18%) !important;
+    transform: none;
+  }
+  /* Ensure flip-card images expand to full card width on mobile */
+  .flip-card .team-card-photo {
+    aspect-ratio: auto;
+    width: 100%;
+  }
+}
+
+/* Standard front image behavior for team cards */
+.team-card-front .team-photo {
+  object-fit: cover !important;
+  object-position: center !important;
+  width: 100%;
+  height: 100%;
+  background-color: #0a0a0a;
+  position: absolute;
+  inset: 0;
+  z-index: 0; /* Ensure image sits behind overlay and badges */
+  pointer-events: none; /* Keep tap/hover events on overlay button */
+}
+.team-card-front {
+  position: relative;
+  isolation: isolate; /* Create stacking context so z-index works predictably */
+}
+.gradient-overlay {
+  z-index: 10;
+  pointer-events: none;
+}
+@media (max-width: 768px) {
+  .team-card-front .team-photo {
+    object-fit: cover !important;
+    width: 100%;
+    height: 100%;
+    object-position: var(--mobile-focal, 50% 18%) !important;
+    inset: 0;
+  }
+}
+@media (min-width: 769px) and (max-width: 1024px) {
+  .team-card-front .team-photo {
+    object-fit: cover !important;
+    width: 100%;
+    height: 100%;
+    object-position: center !important;
+    inset: 0;
+  }
+}
+
+/* Flip card 3D interaction */
+.flip-card {
+  perspective: 1000px;
+}
+.flip-card .flip-inner {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 500ms ease-in-out;
+}
+[data-flipped="true"] .flip-inner {
+  transform: rotateY(180deg);
+}
+.flip-front,
+.flip-back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+}
+.flip-back {
+  transform: rotateY(180deg);
+}
+.flip-card:hover {
+  box-shadow: 0 6px 22px rgba(0,0,0,0.18);
+}
+@media (hover: hover) and (pointer: fine) {
+  .flip-card:hover .flip-inner {
+    transform: rotateY(180deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .flip-card .flip-inner {
+    transition: none;
+  }
+}
+
+/* Custom height utility to match requested h-65 */
+.h-65 {
+  height: 16.25rem;
+}
+
+/* Taller card min-height for enhanced visibility */
+.h-72 {
+  height: 18rem;
+}
+
 @media (prefers-color-scheme: dark) {
   /* EN: System dark-mode base colors
      AR: ألوان الوضع الداكن حسب النظام */
@@ -101,6 +307,38 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-en), Arial, Helvetica, sans-serif;
+  transition: color 240ms ease, background-color 240ms ease;
+}
+header, .surface, .section, .footer-premier {
+  transition: color 240ms ease, background-color 240ms ease, border-color 240ms ease;
+}
+/* Typography system */
+.typography-root h1 { font-size: var(--fs-h1) !important; line-height: var(--lh-title) !important; margin-block: 0.8em 0.4em; }
+.typography-root h2 { font-size: var(--fs-h2) !important; line-height: var(--lh-heading) !important; margin-block: 0.8em 0.4em; }
+.typography-root h3 { font-size: var(--fs-h3) !important; line-height: var(--lh-heading) !important; margin-block: 0.8em 0.4em; }
+.typography-root h4 { font-size: var(--fs-h4) !important; line-height: var(--lh-heading) !important; margin-block: 0.8em 0.4em; }
+.typography-root h5 { font-size: var(--fs-h5) !important; line-height: var(--lh-heading) !important; margin-block: 0.8em 0.4em; }
+.typography-root h6 { font-size: var(--fs-h6) !important; line-height: var(--lh-heading) !important; margin-block: 0.8em 0.4em; }
+.typography-root p, .typography-root li, .typography-root dd { font-size: var(--fs-body) !important; line-height: var(--lh-body) !important; margin-block: 0.75em; }
+.typography-root small { font-size: var(--fs-small) !important; line-height: var(--lh-body) !important; }
+.typography-root .text-xs { font-size: var(--fs-xs) !important; }
+body[data-intro-state="transitioning"] {
+  cursor: progress !important;
+  overflow: hidden;
+  -webkit-user-select: none;
+  user-select: none;
+}
+body[data-intro-state="transitioning"] .site-content {
+  opacity: 0;
+  transform: translateY(12px);
+  filter: blur(6px);
+  transition: none;
+}
+body[data-intro-state="ready"] .site-content {
+  opacity: 1;
+  transform: none;
+  filter: none;
+  transition: opacity 420ms cubic-bezier(0.22, 0.95, 0.3, 1), transform 420ms cubic-bezier(0.22, 0.95, 0.3, 1), filter 420ms ease;
 }
 
 /* EN: Light-mode overrides for common Tailwind text utilities to ensure contrast

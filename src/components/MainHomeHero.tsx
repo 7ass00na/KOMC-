@@ -245,7 +245,7 @@ export default function HomeHero({
           transition={{ duration: 0.75, ease: [0.22, 0.95, 0.3, 1] }}
         >
           <motion.div
-            className="absolute -inset-px"
+            className="absolute -inset-6 md:-inset-4 lg:-inset-6"
             initial={false}
             animate={{ scale: [1.0, 1.08], x: [0, direction * -20, 0], y: [0, 10, 0] }}
             transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}

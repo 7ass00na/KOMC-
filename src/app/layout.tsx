@@ -7,6 +7,8 @@ import ScrollToTopButton from "@/components/ScrollToTopButton";
 import WhatsAppFloatingButton from "@/components/WhatsAppFloatingButton";
 import GlobalLoadingOverlay from "@/components/GlobalLoadingOverlay";
 import CookieConsent from "@/components/CookieConsent";
+import { Analytics } from "@vercel/analytics/react";
+import AIChatFab from "@/components/AIChatFab";
 
 const lora = Lora({
   variable: "--font-en",
@@ -86,11 +88,17 @@ export default async function RootLayout({
   } catch {}
   return (
     <html lang="en">
-      <body className={`${lora.variable} ${tajawal.variable} antialiased`}>
+      <head>
+        <meta name="extension-detection" content="no-transform" />
+        <meta name="format-detection" content="telephone=no,address=no,email=no" />
+      </head>
+      <body className={`${lora.variable} ${tajawal.variable} antialiased typography-root`} suppressHydrationWarning={true}>
         <Providers initialLang={initialLang}>
           <GlobalLoadingOverlay />
           <CookieConsent />
           {children}
+          <Analytics />
+          <AIChatFab />
           <WhatsAppFloatingButton />
           <ScrollToTopButton />
         </Providers>

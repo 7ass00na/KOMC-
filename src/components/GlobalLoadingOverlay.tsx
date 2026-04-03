@@ -8,6 +8,8 @@ const FORCE_CURSOR = true;
 
 export default function GlobalLoadingOverlay() {
   const [visible, setVisible] = useState(false);
+  const [variant, setVariant] = useState<'default' | 'welcome'>('default');
+  const [eventLang, setEventLang] = useState<'en' | 'ar' | null>(null);
   const [enabled, setEnabled] = useState<boolean>(false);
   const reduce = useReducedMotion();
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -44,16 +46,19 @@ export default function GlobalLoadingOverlay() {
     if (!FORCE_CURSOR && !enabled) return;
     const prevCursor = document.body.style.cursor;
 
-    const showShort = () => {
+    const showFor = (ms: number) => {
       if (timerRef.current) clearTimeout(timerRef.current);
       if (ENABLE_OVERLAY) setVisible(true);
       document.body.style.cursor = 'progress';
       const t = setTimeout(() => {
         if (ENABLE_OVERLAY) setVisible(false);
+        setVariant('default');
+        setEventLang(null);
         document.body.style.cursor = prevCursor || '';
-      }, 2000);
+      }, ms);
       timerRef.current = t;
     };
+    const showShort = () => showFor(2000);
 
     const isInternal = (href: string) => {
       try {
@@ -81,15 +86,33 @@ export default function GlobalLoadingOverlay() {
     const onCustomShort = () => {
       showShort();
     };
+    const onCustomTimed = (e: Event) => {
+      // @ts-ignore
+      const ms = Math.max(0, Number(e?.detail?.duration ?? 2500));
+      // @ts-ignore
+      const welcome = !!e?.detail?.welcome;
+      // @ts-ignore
+      const l = e?.detail?.lang === 'ar' ? 'ar' : e?.detail?.lang === 'en' ? 'en' : null;
+      if (welcome) {
+        setVariant('welcome');
+        if (l) setEventLang(l);
+      } else {
+        setVariant('default');
+        setEventLang(null);
+      }
+      showFor(ms || 2500);
+    };
 
     document.addEventListener('click', onClick, true);
     window.addEventListener('popstate', onPopState);
     window.addEventListener('site-loading-short' as any, onCustomShort as any);
+    window.addEventListener('site-loading' as any, onCustomTimed as any);
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
       document.removeEventListener('click', onClick, true);
       window.removeEventListener('popstate', onPopState);
       window.removeEventListener('site-loading-short' as any, onCustomShort as any);
+      window.removeEventListener('site-loading' as any, onCustomTimed as any);
       document.body.style.cursor = prevCursor || '';
     };
   }, [enabled, reduce]);
@@ -120,11 +143,28 @@ export default function GlobalLoadingOverlay() {
                 animate={reduce ? {} : { rotate: -360 }}
                 transition={{ repeat: Infinity, duration: 2.2, ease: 'linear' }}
               />
-              <div className="absolute inset-0 flex items-center justify-center text-[var(--brand-accent)]" data-global-cursor-icon>
-                <ScalesIcon />
-              </div>
+              {variant === 'welcome' ? (
+                <div className="absolute inset-0 flex items-center justify-center" aria-hidden="true">
+                  <img src="/icon.svg" alt="" className="h-9 w-9" />
+                </div>
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center text-[var(--brand-accent)]" data-global-cursor-icon>
+                  <ScalesIcon />
+                </div>
+              )}
             </motion.div>
-            <div
+            {variant === 'welcome' && (
+              <div
+                className="mt-5 text-center text-sm md:text-base text-white max-w-[80ch] px-6"
+                aria-label="Welcome message"
+                dir={(eventLang || lang) === 'ar' ? 'rtl' : 'ltr'}
+              >
+                {(eventLang || lang) === 'ar'
+                  ? 'مرحبًا بكم في مكتب خالد عمر للمحاماة والاستشارات البحرية. يسعدنا دائمًا خدمتكم ونأمل أن نحظى برضاكم. 😊'
+                  : 'Welcome to Khaled Omar Law and Maritime Consulting Office. We are always happy to serve you and hope to earn your satisfaction. 😊'}
+              </div>
+            )}
+            {variant !== 'welcome' && (<div
               className="mt-5 text-sm:3xl tracking-widest uppercase text-white flex items-center flex-wrap gap-2"
               data-global-cursor-text
               aria-live="polite"
@@ -169,8 +209,8 @@ export default function GlobalLoadingOverlay() {
                   </>
                 );
               })()}
-            </div>
-            <div className="mt-2 text-sm md:text-base tracking-wide text-[var(--brand-accent)] flex flex-wrap gap-x-1">
+            </div>)}
+            {variant !== 'welcome' && (<div className="mt-2 text-sm md:text-base tracking-wide text-[var(--brand-accent)] flex flex-wrap gap-x-1">
               {(() => {
                 const s = lang === 'ar' ? '# اتصل بنا ودع قضيتك لنا' : '# Call us & leave your case to us';
                 const w = s.split(' ');
@@ -186,7 +226,7 @@ export default function GlobalLoadingOverlay() {
                   </motion.span>
                 ));
               })()}
-            </div>
+            </div>)}
           </div>
         </motion.div>
       )}
