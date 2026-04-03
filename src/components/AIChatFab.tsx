@@ -25,6 +25,7 @@ export default function AIChatFab() {
           : "Welcome! I’m KOMC’s AI legal assistant for UAE law. Ask about procedures, requirements, or consultations and I’ll guide you. This is not a substitute for formal legal advice.",
     },
   ]);
+  const loadedFromSession = useRef(false);
   const [draft, setDraft] = useState("");
   const reduce = useReducedMotion();
   const sideClass = lang === "ar" ? "left-6" : "right-6";
@@ -38,8 +39,27 @@ export default function AIChatFab() {
   }, []);
 
   useEffect(() => {
+    // Load persisted chat history once per session
+    if (!loadedFromSession.current) {
+      try {
+        const k = `komc_chat_session_${lang}`;
+        const raw = sessionStorage.getItem(k);
+        if (raw) {
+          const arr = JSON.parse(raw) as ChatMessage[];
+          if (Array.isArray(arr) && arr.length > 0) setMessages(arr);
+        }
+      } catch {}
+      loadedFromSession.current = true;
+    }
+  }, [lang]);
+
+  useEffect(() => {
     listRef.current?.scrollTo({ top: 999999, behavior: "smooth" });
-  }, [messages, open]);
+    try {
+      const k = `komc_chat_session_${lang}`;
+      sessionStorage.setItem(k, JSON.stringify(messages));
+    } catch {}
+  }, [messages, open, lang]);
 
   useEffect(() => {
     function onCloseAll() {
@@ -54,6 +74,18 @@ export default function AIChatFab() {
       return () => window.removeEventListener("chat-close-all" as any, onCloseAll as any);
     }
   }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        setOpen(false);
+      }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
 
   const closeAllChats = () => {
     try {
@@ -187,39 +219,31 @@ export default function AIChatFab() {
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-[60] pointer-events-none"
           >
-            {open && sizeMode !== "max" ? (
-              <div
-                role="button"
-                tabIndex={0}
-                aria-label={lang === "ar" ? "تصغير المحادثة" : "Minimize chat"}
-                className="absolute inset-0 bg-transparent pointer-events-auto"
-                onClick={() => {
-                  setDimmed(true);
-                  setSizeMode("min");
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    setDimmed(true);
-                    setSizeMode("min");
-                  }
-                }}
-              />
-            ) : null}
-            {sizeMode === "max" ? (
+            {open ? (
               <div
                 role="button"
                 tabIndex={0}
                 aria-label={lang === "ar" ? "إغلاق المحادثة" : "Close chat"}
-                className="absolute inset-0 bg-black/55 pointer-events-auto"
-                onClick={closeAllChats}
+                className="absolute inset-0 pointer-events-auto"
+                onClick={() => {
+                  setOpen(false);
+                }}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " " || e.key === "Escape") {
                     e.preventDefault();
-                    closeAllChats();
+                    setOpen(false);
                   }
                 }}
-              />
+                onTouchStart={() => setOpen(false)}
+              >
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 0.85 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.24, ease: "easeOut" }}
+                  className="absolute inset-0 bg-black"
+                />
+              </div>
             ) : null}
             <motion.div
               ref={panelRef}
@@ -349,7 +373,7 @@ export default function AIChatFab() {
                       }
                     }}
                     aria-label={lang === "ar" ? "إغلاق" : "Close"}
-                    className="h-8 w-8 rounded hover:bg-black/10 grid place-items-center text-[var(--brand-accent)]"
+                    className="h-8 w-8 rounded hover:bg-black/10 grid place-items-center text-[var(--ink-primary)]"
                   >
                     <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden>
                       <path fill="currentColor" d="M6 6l12 12M18 6L6 18" />
