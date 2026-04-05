@@ -10,8 +10,10 @@ export default function AIChatFab() {
   const [visible, setVisible] = useState(false);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [busy, setBusy] = useState(false);
   const [sizeMode, setSizeMode] = useState<"min" | "default" | "lg" | "max">("default");
   const [dimmed, setDimmed] = useState(false);
+  const [clearOpen, setClearOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement | null>(null);
   const [dragging, setDragging] = useState(false);
   const dragStart = useRef<{ x: number; y: number; left: number; top: number } | null>(null);
@@ -28,8 +30,15 @@ export default function AIChatFab() {
   const loadedFromSession = useRef(false);
   const [draft, setDraft] = useState("");
   const reduce = useReducedMotion();
-  const sideClass = lang === "ar" ? "left-6" : "right-6";
+  const sideClass = lang === "ar" ? "left-6" : "right-5";
   const listRef = useRef<HTMLDivElement | null>(null);
+  const [consent, setConsent] = useState<boolean>(() => {
+    try {
+      return sessionStorage.getItem("komc_ai_consent") === "1";
+    } catch {
+      return false;
+    }
+  });
 
   useEffect(() => {
     const onScroll = () => setVisible(window.scrollY > 160);
@@ -133,6 +142,7 @@ export default function AIChatFab() {
   };
 
   const send = async () => {
+    if (!consent || busy) return;
     const text = draft.trim();
     if (!text) return;
     setDraft("");
@@ -140,19 +150,49 @@ export default function AIChatFab() {
     setMessages(next);
     setLoading(true);
     try {
-      const res = await fetch("/api/legal-chat", {
+      setBusy(true);
+      setMessages((m) => [...m, { role: "assistant", content: "" }]);
+      const res = await fetch("/api/legal-chat/stream", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ lang, messages: next.slice(-10) }),
       });
-      const data = await res.json().catch(() => ({}));
-      const reply =
-        data?.reply ||
-        (lang === "ar"
-          ? "شكرًا على سؤالك. سأطلعك على المتطلبات والخطوات المبدئية وفقًا للوائح الإماراتية. للمضي قدمًا، يمكنك حجز استشارة تفصيلية."
-          : "Thanks for your question. I’ll outline preliminary UAE requirements and steps. To proceed further, please book a detailed consultation.");
-      setMessages((m) => [...m, { role: "assistant", content: reply }]);
+      if (!res.body) {
+        const fallback =
+          lang === "ar"
+            ? "تعذر توليد الرد الآن. يرجى المحاولة لاحقًا أو استخدام واتساب للتواصل الفوري."
+            : "Unable to stream a reply right now. Please try again or use WhatsApp for immediate help.";
+        setMessages((m) => {
+          const arr = [...m];
+          arr[arr.length - 1] = { role: "assistant", content: fallback };
+          return arr;
+        });
+      } else {
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let acc = "";
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          acc += decoder.decode(value, { stream: true });
+          setMessages((m) => {
+            const arr = [...m];
+            arr[arr.length - 1] = { role: "assistant", content: acc };
+            return arr;
+          });
+        }
+      }
       try {
+        const auditPayload = {
+          event: "chat_exchange",
+          lang,
+          ts: Date.now(),
+        };
+        fetch("/api/analytics/audit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(auditPayload),
+        }).catch(() => {});
         fetch("/api/analytics/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -172,7 +212,37 @@ export default function AIChatFab() {
       ]);
     } finally {
       setLoading(false);
+      setBusy(false);
     }
+  };
+
+  const exportTranscript = () => {
+    try {
+      const blob = new Blob([JSON.stringify({ lang, messages }, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `komc-chat-${lang}-${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {}
+  };
+
+  const clearHistory = () => {
+    try {
+      const k = `komc_chat_session_${lang}`;
+      sessionStorage.removeItem(k);
+    } catch {}
+    setMessages([
+      {
+        role: "assistant",
+        content:
+          lang === "ar"
+            ? "مرحبًا بك! أنا مساعد الاستشارات القانونية الذكي الخاص بـ KOMC. اكتب سؤالك بخصوص القوانين والإجراءات في دولة الإمارات، وسأساعدك بخطوات عملية. هذا ليس بديلاً عن المشورة القانونية الرسمية."
+            : "Welcome! I’m KOMC’s AI legal assistant for UAE law. Ask about procedures, requirements, or consultations and I’ll guide you. This is not a substitute for formal legal advice.",
+      },
+    ]);
+    setClearOpen(false);
   };
 
   return (
@@ -187,21 +257,26 @@ export default function AIChatFab() {
             animate={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
             exit={reduce ? { opacity: 0 } : { opacity: 0, y: 12 }}
             transition={{ type: "spring", stiffness: 300, damping: 24 }}
-            className={`fixed bottom-24 md:bottom-40 ${sideClass} z-50 grid place-items-center h-12 w-12 md:h-14 md:w-14 rounded-full bg-[var(--brand-accent)] text-black shadow-lg active:translate-y-[1px]`}
+            className={`fixed bottom-21 md:bottom-36 ${sideClass} z-50 grid place-items-center h-16 w-16 md:h-20 md:w-20 active:translate-y-[1px]`}
           >
             {reduce ? (
-              <svg viewBox="0 0 24 24" className="h-7 w-7" aria-hidden="true">
-                <path fill="currentColor" d="M4 4h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H8l-4 4V5a1 1 0 0 1 1-1Zm3 4h10v2H7V8Zm0 4h7v2H7v-2Z" />
-              </svg>
+              <img
+                src="/AI_Chat.png"
+                alt=""
+                className="h-16 w-16 md:h-20 md:w-20 object-contain"
+                decoding="async"
+                style={{ imageRendering: "auto" }}
+              />
             ) : (
-              <motion.div
+              <motion.img
+                src="/AI_Chat.png"
+                alt=""
+                className="h-16 w-16 md:h-20 md:w-20 object-contain"
                 animate={{ y: [0, -6, 0, -3, 0] }}
                 transition={{ duration: 1.6, repeat: Infinity, repeatDelay: 4, ease: "easeOut" }}
-              >
-                <svg viewBox="0 0 24 24" className="h-7 w-7" aria-hidden="true">
-                  <path fill="currentColor" d="M4 4h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H8l-4 4V5a1 1 0 0 1 1-1Zm3 4h10v2H7V8Zm0 4h7v2H7v-2Z" />
-                </svg>
-              </motion.div>
+                decoding="async"
+                style={{ imageRendering: "auto" }}
+              />
             )}
           </motion.button>
         )}
@@ -388,6 +463,35 @@ export default function AIChatFab() {
                   sizeMode === "max" ? "max-h-[calc(100vh-10rem)]" : "max-h-[60vh]",
                 ].join(" ")}
               >
+              {!consent ? (
+                <div className="rounded-lg border border-[var(--panel-border)] bg-[var(--panel-muted-bg)] p-3 text-xs text-[var(--ink-primary)]">
+                  <div className="font-semibold mb-1">
+                    {lang === "ar" ? "الموافقة مطلوبة" : "Consent Required"}
+                  </div>
+                  <div className="opacity-90">
+                    {lang === "ar"
+                      ? "الردود لأغراض إرشادية وليست نصيحة قانونية. بالمتابعة، فإنك توافق على معالجة البيانات وفق قوانين حماية البيانات في الإمارات وسياسة الخصوصية."
+                      : "Responses are informational and not legal advice. By continuing, you consent to processing under UAE data protection law and our privacy policy."}
+                  </div>
+                  <div className="mt-2 flex gap-2">
+                    <button
+                      onClick={() => {
+                        try { sessionStorage.setItem("komc_ai_consent", "1"); } catch {}
+                        setConsent(true);
+                      }}
+                      className="rounded-md bg-[var(--brand-accent)] text-black text-xs font-semibold px-3 py-1.5"
+                    >
+                      {lang === "ar" ? "أوافق" : "I Consent"}
+                    </button>
+                    <button
+                      onClick={() => setOpen(false)}
+                      className="rounded-md border border-[var(--panel-border)] text-xs px-3 py-1.5"
+                    >
+                      {lang === "ar" ? "إلغاء" : "Cancel"}
+                    </button>
+                  </div>
+                </div>
+              ) : null}
                 {messages.map((m, i) => (
                   <div
                     key={i}
@@ -423,10 +527,24 @@ export default function AIChatFab() {
                   />
                   <button
                     onClick={send}
-                    disabled={loading}
+                    disabled={loading || busy || !consent}
                     className="h-10 rounded-lg px-3 text-sm font-semibold bg-[var(--brand-accent)] text-black disabled:opacity-70"
                   >
                     {lang === "ar" ? "إرسال" : "Send"}
+                  </button>
+                  <button
+                    onClick={exportTranscript}
+                    className="h-10 rounded-lg px-3 text-sm font-semibold border border-[var(--panel-border)]"
+                    aria-label={lang === "ar" ? "تصدير المحادثة" : "Export transcript"}
+                  >
+                    {lang === "ar" ? "تصدير" : "Export"}
+                  </button>
+                  <button
+                    onClick={() => setClearOpen(true)}
+                    className="h-10 rounded-lg px-3 text-sm font-semibold border border-[var(--panel-border)]"
+                    aria-label={lang === "ar" ? "مسح المحادثة" : "Clear chat"}
+                  >
+                    {lang === "ar" ? "مسح" : "Clear"}
                   </button>
                 </div>
                 <div className="mt-2 text-[10px] text-zinc-500">
@@ -437,6 +555,64 @@ export default function AIChatFab() {
               </div>
               {dimmed ? (
                 <div className="pointer-events-none absolute inset-0 bg-black/15" aria-hidden="true" />
+              ) : null}
+              {clearOpen ? (
+                <div className="fixed inset-0 z-[80]" aria-hidden={false}>
+                  <div
+                    role="button"
+                    tabIndex={0}
+                    aria-label={lang === "ar" ? "إغلاق" : "Close"}
+                    className="absolute inset-0 bg-black/55"
+                    onClick={() => setClearOpen(false)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Escape" || e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setClearOpen(false);
+                      }
+                    }}
+                  />
+                  <div className="absolute inset-0 grid place-items-center px-4">
+                    <div
+                      role="dialog"
+                      aria-modal="true"
+                      aria-label={lang === "ar" ? "تأكيد مسح المحادثة" : "Confirm Clear Chat"}
+                      className="w-[min(92vw,420px)] rounded-2xl border border-zinc-700/40 bg-[var(--panel-bg)] shadow-2xl"
+                    >
+                      <div className="relative p-4 border-b border-zinc-700/40">
+                        <div className="text-sm font-semibold text-[var(--ink-primary)]">
+                          {lang === "ar" ? "تأكيد" : "Confirmation"}
+                        </div>
+                        <button
+                          aria-label={lang === "ar" ? "إغلاق" : "Close"}
+                          className="absolute top-3 right-3 h-8 w-8 rounded hover:bg-black/10 grid place-items-center"
+                          onClick={() => setClearOpen(false)}
+                        >
+                          <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden>
+                            <path fill="currentColor" d="M6 6l12 12M18 6L6 18" />
+                          </svg>
+                        </button>
+                      </div>
+                      <div className="p-4 text-sm text-[var(--ink-primary)]">
+                        {lang === "ar" ? "سيؤدي هذا إلى مسح المحادثة الحالية. المتابعة؟" : "This will clear the current conversation. Proceed?"}
+                      </div>
+                      <div className="flex items-center justify-end gap-2 p-4 border-t border-zinc-700/40">
+                        <button
+                          className="rounded-lg border border-[var(--panel-border)] px-3 py-2 text-sm"
+                          onClick={() => setClearOpen(false)}
+                        >
+                          {lang === "ar" ? "إلغاء" : "Cancel"}
+                        </button>
+                        <button
+                          className="rounded-lg bg-[var(--brand-accent)] text-black px-3 py-2 text-sm font-semibold"
+                          onClick={clearHistory}
+                          autoFocus
+                        >
+                          {lang === "ar" ? "تأكيد" : "Confirm"}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               ) : null}
             </motion.div>
           </motion.div>

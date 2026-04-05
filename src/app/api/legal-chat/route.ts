@@ -1,10 +1,36 @@
 import { NextRequest, NextResponse } from "next/server";
+import { streamText } from "ai";
+import { ollamaProvider, LEGAL_MODELS, getLegalSystemPrompt } from "@/lib/ollama";
 
 type ChatMessage = { role: "user" | "assistant"; content: string };
 
 export async function POST(req: NextRequest) {
   try {
-    const { lang, messages } = (await req.json()) as { lang?: "en" | "ar"; messages?: ChatMessage[] };
+    const { lang, messages, model = "allam", jurisdiction } = (await req.json()) as {
+      lang?: "en" | "ar";
+      messages?: ChatMessage[];
+      model?: keyof typeof LEGAL_MODELS;
+      jurisdiction?: string;
+    };
+    const language = (lang === "ar" ? "ar" : "en") as "en" | "ar";
+    if (process.env.ENABLE_LEGAL_STREAMING === "true" && process.env.OLLAMA_BASE_URL) {
+      const modelName = LEGAL_MODELS[model] || LEGAL_MODELS.allam;
+      const legalSystem = getLegalSystemPrompt(language, jurisdiction);
+      const result = streamText({
+        model: ollamaProvider(modelName),
+        messages: [
+          { role: "system" as const, content: legalSystem },
+          ...((messages || []) as any),
+        ],
+        temperature: 0.3,
+      });
+      return result.toTextStreamResponse({
+        headers: {
+          "Cache-Control": "no-store, no-cache, must-revalidate",
+          "X-Legal-Disclaimer": "NOT_LEGAL_ADVICE",
+        },
+      });
+    }
     const apiKey = process.env.OPENAI_API_KEY || process.env.AZURE_OPENAI_KEY || "";
     const sysEn =
       "You are a legal intake assistant for a UAE-focused law consultancy (KOMC). Provide high-level guidance about UAE legal processes, jurisdiction, and documentation. Do not provide definitive legal advice—recommend booking a consultation with a licensed attorney. Keep answers concise and professional.";

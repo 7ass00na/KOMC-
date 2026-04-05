@@ -34,7 +34,7 @@ export default function IntroOverlay() {
     const v = vidRef.current;
     if (!show || !v) return;
     let retryTimer: ReturnType<typeof setInterval> | null = null;
-    const targetRate = 0.8;
+    const targetRate = 0.75;
     const applyRate = () => {
       try {
         v.playbackRate = targetRate;
@@ -44,8 +44,14 @@ export default function IntroOverlay() {
       if (!v) return;
       if (Math.abs(v.playbackRate - targetRate) > 0.01) applyRate();
     };
-    const onLoadedMeta = () => ensureRate();
-    const onCanPlay = () => ensureRate();
+    const onLoadedMeta = () => {
+      ensureRate();
+      try { v.muted = true; v.play()?.catch(() => {}); } catch {}
+    };
+    const onCanPlay = () => {
+      ensureRate();
+      try { v.muted = true; v.play()?.catch(() => {}); } catch {}
+    };
     const onPlay = () => ensureRate();
     const onRateChange = () => ensureRate();
     const onPlayStart = () => {

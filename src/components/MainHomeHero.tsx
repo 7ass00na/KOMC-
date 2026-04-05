@@ -2,7 +2,7 @@
 
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
-import { AnimatePresence, animate, motion, useMotionValue } from "framer-motion";
+import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion } from "framer-motion";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 
@@ -99,6 +99,30 @@ export default function HomeHero({
   const [hovered, setHovered] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [tabHidden, setTabHidden] = useState(false);
+  const reduce = useReducedMotion();
+  const parallaxY = useMotionValue(0);
+
+  useEffect(() => {
+    if (reduce) return;
+    let raf = 0;
+    const onScroll = () => {
+      const target = Math.max(-12, Math.min(12, window.scrollY * 0.02));
+      parallaxY.set(target);
+    };
+    const onTouch = (e: TouchEvent) => {
+      const y = e.touches?.[0]?.clientY || 0;
+      const target = Math.max(-14, Math.min(14, (y / window.innerHeight - 0.5) * 20));
+      parallaxY.set(target);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("touchmove", onTouch, { passive: true });
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("touchmove", onTouch);
+    };
+  }, [reduce, parallaxY]);
 
   const progress = useMotionValue(0);
   const progressAnim = useRef<ReturnType<typeof animate> | null>(null);
@@ -247,9 +271,13 @@ export default function HomeHero({
           <motion.div
             className="absolute -inset-6 md:-inset-4 lg:-inset-6"
             initial={false}
-            animate={{ scale: [1.0, 1.08], x: [0, direction * -20, 0], y: [0, 10, 0] }}
+            animate={
+              reduce
+                ? { scale: 1.0 }
+                : { scale: [1.0, 1.08], x: [0, direction * -20, 0], y: [0, 10, 0] }
+            }
             transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
-            style={{ willChange: "transform" }}
+            style={{ willChange: "transform", y: parallaxY as any }}
           >
             <Image
               src={activeSlide.image}
