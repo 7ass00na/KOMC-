@@ -29,3 +29,14 @@ Files of Interest
 - src/components/CookieConsent.tsx — 30s deferred, once‑per‑session logic with activity detection.
 - src/app/api/legal-chat/route.ts & stream/route.ts — streaming AI endpoints and fallbacks.
 - src/lib/ollama.ts — provider config and legal system prompts (EN/AR).
+
+
+Welcoming Message Update
+- Mobile/tablet: image appears first with staggered entrance, then professional copy; ensures clear hierarchy.
+- RTL applied on Arabic with dir and text alignment; consistent typography and spacing.
+- File: src/components/IntroOverlay.tsx
+
+تحديث رسالة الترحيب
+- الجوال/اللوحي: تظهر الصورة أولًا يتبعها المحتوى بتسلسل انسيابي، مع ضبط هرمي واضح.
+- دعم RTL عند العربية مع dir ومحاذاة نص؛ اتساق في الطباعة والمسافات.
+- الملف: src/components/IntroOverlay.tsx
