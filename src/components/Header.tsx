@@ -22,17 +22,58 @@ export default function Header() {
   const langMenuRef = useRef<HTMLDivElement | null>(null);
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
+  const [isMobileTablet, setIsMobileTablet] = useState(false);
+  const headerRef = useRef<HTMLElement | null>(null);
+  const [headerH, setHeaderH] = useState<number>(64);
   const [settings, setSettings] = useState<{ languageToggle: boolean; pageLoadingCursor: boolean } | null>(null);
   const [header, setHeader] = useState<{ siteName_en?: string; siteName_ar?: string; logo?: string; published_siteName_en?: string; published_siteName_ar?: string; published_logo?: string } | null>(null);
   const reduce = useReducedMotion();
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mq = window.matchMedia("(max-width: 1024px)");
+    const onChange = () => setIsMobileTablet(mq.matches);
+    onChange();
+    mq.addEventListener ? mq.addEventListener("change", onChange) : mq.addListener(onChange);
     const onScroll = () => {
-      setScrolled(window.scrollY > 8);
+      if (!mq.matches) {
+        setScrolled(window.scrollY > 8);
+      } else {
+        setScrolled(false);
+      }
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      mq.removeEventListener ? mq.removeEventListener("change", onChange) : mq.removeListener(onChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!headerRef.current || typeof window === "undefined") return;
+    const el = headerRef.current;
+    const measure = () => {
+      try {
+        setHeaderH(el.getBoundingClientRect().height || 64);
+      } catch {}
+    };
+    measure();
+    let ro: ResizeObserver | null = null;
+    try {
+      ro = new ResizeObserver(measure);
+      ro.observe(el);
+    } catch {}
+    const onResize = () => measure();
+    window.addEventListener("resize", onResize);
+    window.addEventListener("orientationchange", onResize as any);
+    return () => {
+      try {
+        ro?.disconnect();
+      } catch {}
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("orientationchange", onResize as any);
+    };
   }, []);
 
   useEffect(() => {
@@ -175,13 +216,15 @@ export default function Header() {
     return () => document.removeEventListener("click", onDocClick);
   }, []);
 
+  const scrolledVisual = isMobileTablet ? false : scrolled;
+
   return (
-    <header className="fixed top-0 w-full z-50" suppressHydrationWarning>
+    <header ref={headerRef} className="fixed top-0 w-full z-[70]" suppressHydrationWarning>
       <div className="mx-auto max-w-7xl px-5 py-2">
         <div
           className={
             "relative flex items-center justify-between rounded-2xl border backdrop-blur transition-all duration-300 " +
-            (scrolled
+            (scrolledVisual
               ? (dark
                   ? "bg-[color-mix(in_oklab,var(--brand-primary),white_10%)]/85 border-black/25 shadow-[0_6px_28px_rgba(0,0,0,0.25)]"
                   : "bg-[color-mix(in_oklab,#ffffff,transparent_0%)]/40 border-black/10 shadow-[0_6px_22px_rgba(0,0,0,0.06)]")
@@ -214,10 +257,10 @@ export default function Header() {
           <div className={
             "text-[13px] md:text-sm font-bold " +
             (dark
-              ? (scrolled
+              ? (scrolledVisual
                   ? "text-transparent bg-clip-text bg-gradient-to-r from-white/60 via-white to-white/60 bg-center"
                   : "text-[var(--brand-accent)]")
-              : (!scrolled
+              : (!scrolledVisual
                   ? "text-transparent bg-clip-text bg-gradient-to-r from-white/60 via-white to-white/60 bg-center"
                   : "text-transparent bg-clip-text bg-gradient-to-r from-[#132437] via-[color-mix(in_oklab,#132437,white_18%)] to-[#132437] bg-center"))
           }>
@@ -252,7 +295,7 @@ export default function Header() {
                        "absolute inset-0 rounded-lg border " +
                        (dark
                          ? "border-white/10 bg-white/10"
-                         : scrolled
+                        : scrolledVisual
                            ? "border-transparent bg-[var(--brand-accent)]"
                            : "border-white/15 bg-white/10")
                     }
@@ -260,12 +303,12 @@ export default function Header() {
                 ) : null}
                 <motion.span
                   className={
-                    "relative z-10 block px-3 py-1.5 " +
+                "relative z-10 block px-3 py-1.5 " +
                      (dark
-                       ? (scrolled
+                       ? (scrolledVisual
                            ? "text-[#ffffff]"
                            : "text-[var(--brand-accent)] hover:text-[var(--brand-accent)]")
-                       : scrolled
+                       : scrolledVisual
                          ? (isActive ? "text-[#ffffff] font-bold hover:text-[#ffffff]" : "text-[var(--ink-primary)] font-bold hover:text-[var(--ink-primary)]")
                          : "text-[#ffffff] font-bold hover:text-[#ffffff]") +
                     (isActive ? " font-bold" : "")
@@ -284,7 +327,7 @@ export default function Header() {
           {/* EN: Language menu, theme toggle, and contact CTA */}
           {/* AR: قائمة اللغة، تبديل السمة، وزر التواصل */}
           {settings?.languageToggle !== false ? (
-          <div className="relative" ref={langMenuRef}>
+          <div className="relative z-[85]" ref={langMenuRef}>
             {(() => {
               const activeLangLabel = lang === "ar" ? "عربي" : "Eng";
               const labelClass = dark ? "text-black" : "text-white";
@@ -320,7 +363,7 @@ export default function Header() {
               <div
                 role="menu"
                 className={
-                  "absolute right-0 mt-2 w-36 rounded-md border text-[var(--ink-primary)] shadow-lg overflow-hidden z-50 ring-1 " +
+                  "absolute right-0 mt-2 w-36 rounded-md border text-[var(--ink-primary)] shadow-lg overflow-hidden z-[100] ring-1 " +
                   (dark
                     ? "border-black/20 ring-white/5 bg-[var(--brand-primary)]"
                     : "border-black/15 ring-black/5 bg-white")
@@ -386,16 +429,23 @@ export default function Header() {
           <button
             aria-label="Menu"
             onClick={() => setMobileOpen((v) => !v)}
+            aria-expanded={mobileOpen}
             className={
-               "md:hidden ml-2 h-9 w-9 rounded-lg border flex items-center justify-center " +
-               (dark ? "border-white/10 bg-white/10" : (scrolled ? "border-transparent bg-[var(--brand-accent)]" : "border-black/10 bg-black/5 hover:bg-black/10"))
+               "md:hidden ml-2 h-11 w-11 rounded-lg border flex items-center justify-center " +
+               (dark ? "border-white/10 bg-white/10" : (scrolledVisual ? "border-transparent bg-[var(--brand-accent)]" : "border-black/10 bg-black/5 hover:bg-black/10"))
             }
           >
-            <div className="flex flex-col gap-1.5">
-               <span className={"block h-0.5 w-5 " + (dark ? (scrolled ? "bg-white" : "bg-[var(--brand-accent)]") : "bg-[#ffffff]")} />
-               <span className={"block h-0.5 w-5 " + (dark ? (scrolled ? "bg-white" : "bg-[var(--brand-accent)]") : "bg-[#ffffff]")} />
-               <span className={"block h-0.5 w-5 " + (dark ? (scrolled ? "bg-white" : "bg-[var(--brand-accent)]") : "bg-[#ffffff]")} />
-            </div>
+            {mobileOpen ? (
+              <svg viewBox="0 0 24 24" className="h-6 w-6" aria-hidden="true">
+                <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            ) : (
+              <div className="flex flex-col gap-1.5">
+                <span className={"block h-0.5 w-5 " + (dark ? (scrolledVisual ? "bg-white" : "bg-[var(--brand-accent)]") : "bg-[#ffffff]")} />
+                <span className={"block h-0.5 w-5 " + (dark ? (scrolledVisual ? "bg-white" : "bg-[var(--brand-accent)]") : "bg-[#ffffff]")} />
+                <span className={"block h-0.5 w-5 " + (dark ? (scrolledVisual ? "bg-white" : "bg-[var(--brand-accent)]") : "bg-[#ffffff]")} />
+              </div>
+            )}
           </button>
           </div>
           {dark ? (
@@ -408,34 +458,35 @@ export default function Header() {
       </div>
       {mobileOpen && (
         <motion.div
-          initial={{ opacity: 0, y: -8 }}
+          initial={{ opacity: 0, y: -6 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
+          exit={{ opacity: 0, y: -6 }}
           role="dialog"
           aria-modal="true"
           aria-label={lang === "ar" ? "قائمة الجوال" : "Mobile menu"}
-          className={
-            "md:hidden fixed inset-0 z-[40] text-[var(--ink-primary)] " +
-            (dark ? "bg-[color-mix(in_oklab,var(--brand-primary),black_0%)]" : "bg-[color-mix(in_oklab,#e5d8cb,white_70%)]")
-          }
+          className="md:hidden fixed left-0 right-0 z-[60] text-[var(--ink-primary)]"
+          style={{ top: headerH, bottom: 0 }}
         >
-          <button
-            aria-label={lang === "ar" ? "إغلاق القائمة" : "Close menu"}
-            onClick={() => setMobileOpen(false)}
+          <div
             className={
-              "absolute top-2 z-[41] h-11 w-11 rounded-lg flex items-center justify-center ring-1 transition transform transition-colors " +
-              (dark ? "ring-white/15 bg-white/10 hover:bg-white/15 active:scale-95" : "ring-black/10 bg-black/5 hover:bg-black/10 active:scale-95")
+              "absolute inset-0 overflow-y-auto border-t border-[var(--panel-border)] backdrop-blur-md " +
+              (dark
+                ? "bg-[color-mix(in_oklab,var(--brand-primary),black_8%)] text-white"
+                : "bg-[color-mix(in_oklab,#ffffff,white_0%)] text-[var(--ink-primary)]")
             }
-            style={{ insetInlineEnd: "0.5rem" }}
           >
-            <svg viewBox="0 0 24 24" className={dark ? "h-6 w-6 text-white" : "h-6 w-6 text-[var(--ink-primary)]"} aria-hidden="true">
-              <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
-          <div className="absolute inset-0 overflow-y-auto pt-14">
           {/* EN: Mobile navigation drawer */}
           {/* AR: قائمة ملاحة للجوال */}
           <div className="px-4 py-4 flex flex-col gap-3">
+            <motion.div
+              className="sticky top-0 z-10 h-[2px] rounded-full"
+              style={{
+                background: "linear-gradient(90deg, transparent, var(--brand-accent), transparent)",
+                backgroundSize: "200% 100%",
+              }}
+              animate={{ backgroundPosition: ["0% 0%", "200% 0%"] }}
+              transition={{ duration: 2.2, repeat: Infinity, ease: "linear" }}
+            />
             {navItems.map((item) => {
               const isActive =
                 pathname === item.href ||
@@ -453,7 +504,7 @@ export default function Header() {
                   }}
                   aria-current={isActive ? "page" : undefined}
                   className={
-                    "text-sm py-2 rounded flex items-center gap-3 px-2 " +
+                    "text-sm rounded flex items-center gap-3 px-3 py-3 min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-accent)] " +
                     (isActive
                       ? "bg-[var(--brand-accent)] text-[var(--brand-primary)] font-semibold ring-1 ring-[var(--brand-accent)]/50"
                       : "hover:bg-[color-mix(in oklab,var(--brand-primary),white 10%)]")
@@ -501,7 +552,7 @@ export default function Header() {
               href={lang === "ar" ? "/ar/contact" : "/en/contact"}
               onClick={() => setMobileOpen(false)}
               prefetch
-              className="mt-2 w-full text-center rounded-lg bg-[var(--brand-accent)] text-[var(--brand-primary)] px-3 py-2 text-sm font-semibold transition-transform duration-200 will-change-transform hover:-translate-y-0.5 active:scale-95 shadow"
+              className="mt-2 w-full text-center rounded-lg bg-[var(--brand-accent)] text-[var(--brand-primary)] px-3 py-3 min-h-[44px] text-sm font-semibold transition-transform duration-200 will-change-transform hover:-translate-y-0.5 active:scale-95 shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-accent)]"
             >
               <span className="inline-flex items-center gap-2 justify-center">
                 <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">

@@ -103,16 +103,29 @@ export default function GlobalLoadingOverlay() {
       showFor(ms || 2500);
     };
 
+    const onCancel = () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null as any;
+      }
+      if (ENABLE_OVERLAY) setVisible(false);
+      setVariant('default');
+      setEventLang(null);
+      document.body.style.cursor = prevCursor || '';
+    };
+
     document.addEventListener('click', onClick, true);
     window.addEventListener('popstate', onPopState);
     window.addEventListener('site-loading-short' as any, onCustomShort as any);
     window.addEventListener('site-loading' as any, onCustomTimed as any);
+    window.addEventListener('site-loading-cancel' as any, onCancel as any);
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
       document.removeEventListener('click', onClick, true);
       window.removeEventListener('popstate', onPopState);
       window.removeEventListener('site-loading-short' as any, onCustomShort as any);
       window.removeEventListener('site-loading' as any, onCustomTimed as any);
+      window.removeEventListener('site-loading-cancel' as any, onCancel as any);
       document.body.style.cursor = prevCursor || '';
     };
   }, [enabled, reduce]);
@@ -212,7 +225,7 @@ export default function GlobalLoadingOverlay() {
             </div>)}
             {variant !== 'welcome' && (<div className="mt-2 text-sm md:text-base tracking-wide text-[var(--brand-accent)] flex flex-wrap gap-x-1">
               {(() => {
-                const s = lang === 'ar' ? '# اتصل بنا ودع قضيتك لنا' : '# Call us & leave your case to us';
+                const s = lang === 'ar' ? '# اتصل بينا ودع قضيتك لينا' : '# Call us & leave your case to us';
                 const w = s.split(' ');
                 return w.map((t, i) => (
                   <motion.span

@@ -654,8 +654,11 @@ export default function Footer() {
                   </div>
                 )}
               </div>
-              <div className="mt-5 flex items-center justify-end">
-                <button onClick={() => setShowLegal(false)} className="btn-secondary">
+              <div className="sticky bottom-0 -mx-6 px-6 pt-3 pb-4 bg-gradient-to-t from-[var(--panel-bg)] via-[var(--panel-bg)]/95 to-transparent">
+                <button
+                  onClick={() => setShowLegal(false)}
+                  className="btn-secondary mx-auto block w-[40%] max-[1024px]:w-[60%] max-[480px]:w-full max-[480px]:px-4 max-[480px]:py-4 min-h-[44px]"
+                >
                   {lang === "ar" ? "إغلاق" : "Close"}
                 </button>
               </div>
@@ -697,11 +700,11 @@ export default function Footer() {
                 ? "شكرًا لك على الاشتراك. سنبقيك مطلعًا على أحدث الأخبار القانونية."
                 : "Thank you for subscribing. We will keep you updated on the latest legal news."}
             </div>
-            <div className="mt-5 flex items-center justify-end">
+            <div className="sticky bottom-0 -mx-6 px-6 pt-3 pb-4 bg-gradient-to-t from-[var(--panel-bg)] via-[var(--panel-bg)]/95 to-transparent">
               <button
                 ref={closeBtnRef}
                 onClick={() => setNewsletterOpen(false)}
-                className="btn-secondary"
+                className="btn-secondary mx-auto block w-[40%] max-[1024px]:w-[60%] max-[480px]:w-full max-[480px]:px-4 max-[480px]:py-4 min-h-[44px]"
               >
                 {lang === "ar" ? "إغلاق" : "Close"}
               </button>
