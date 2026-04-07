@@ -201,27 +201,38 @@ export default function IntroOverlay() {
           dir={lang === "ar" ? "rtl" : "ltr"}
         >
           <div className="w-full max-w-4xl rounded-2xl surface p-6 md:p-8">
-            <div className={"flex items-center gap-6 max-[600px]:flex-col " + (lang === "ar" ? "text-right" : "text-left")}>
-              <div className="basis-[30%] max-[600px]:basis-full grid place-items-center">
-                <div className="relative w-full max-w-[240px] aspect-square rounded-xl overflow-hidden ring-1 ring-[var(--panel-border)]">
+            <div className={"flex items-center gap-6 max-[1024px]:flex-col " + (lang === "ar" ? "text-right" : "text-left")}>
+              <motion.div
+                initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ duration: 0.35, ease: "easeOut" }}
+                className="basis-[30%] max-[1024px]:basis-full grid place-items-center"
+              >
+                <div className="relative w-full max-w-[240px] aspect-square rounded-xl overflow-hidden ring-1 ring-[var(--panel-border)] shadow-sm">
                   <Image
                     src="/images/team/khaled-omer.png"
                     alt={lang === "ar" ? "المدير التنفيذي" : "CEO"}
                     fill
-                    sizes="(max-width: 600px) 240px, 240px"
+                    sizes="(max-width: 1024px) 240px, 240px"
                     className="object-cover"
                     priority
                   />
                 </div>
-              </div>
-              <div className="basis-[70%] max-[600px]:basis-full">
-                <div className="text-2xl md:text-3xl font-extrabold text-[var(--brand-accent)]">
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35, ease: "easeOut", delay: 0.12 }}
+                className="basis-[70%] max-[1024px]:basis-full"
+              >
+                <div className="text-2xl md:text-3xl font-extrabold text-[var(--brand-accent)] tracking-tight">
                   {lang === "ar" ? "مرحبًا بكم في خالد عمر للاستشارات البحرية والقانونية" : "Welcome to Khaled Omer Maritime & Legal Consultancy"}
                 </div>
-                <div className="mt-3 text-sm md:text-base text-[var(--text-secondary)]">
+                <div className="mx-auto my-3 h-px w-24 bg-gradient-to-r from-transparent via-[var(--brand-accent)]/70 to-transparent" />
+                <div className="text-sm md:text-base text-[var(--text-secondary)] leading-relaxed">
                   {lang === "ar"
-                    ? "نقدّم خبرة دقيقة في القانون البحري والعقود والنزاعات عبر دولة الإمارات، مع التزام كامل بالجودة والسرعة."
-                    : "We deliver precise expertise in maritime law, contracts, and disputes across the UAE, with an uncompromising focus on quality and speed."}
+                    ? "نقدّم خبرة دقيقة في القانون البحري والعقود والنزاعات عبر دولة الإمارات، مع التزام بالجودة والسرعة، ونهج عملي موجّه لتحقيق النتائج."
+                    : "We deliver precise expertise in maritime law, contracts, and disputes across the UAE, with a commitment to quality, speed, and practical, results‑driven counsel."}
                 </div>
                 <div className="mt-6">
                   <button
@@ -243,7 +254,7 @@ export default function IntroOverlay() {
                     {lang === "ar" ? "الانتقال إلى الصفحة الرئيسية" : "Move to Homepage"}
                   </button>
                 </div>
-              </div>
+              </motion.div>
             </div>
           </div>
         </motion.div>
