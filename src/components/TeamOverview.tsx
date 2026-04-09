@@ -73,17 +73,6 @@ export default function TeamOverview() {
     };
     return map[slug] ?? (lang === "ar" ? "5 سنوات" : "5y");
   };
-  const regionsFor = (slug: string) => {
-    const ar = (arr: string[]) => arr;
-    const en = (arr: string[]) => arr;
-    const map: Record<string, string[]> = {
-      "khaled-omer": lang === "ar" ? ar(["الإمارات","السعودية","مصر","الخليج"]) : en(["UAE","Saudi Arabia","Egypt","GCC"]),
-      "Mohamed Dafallah": lang === "ar" ? ar(["الإمارات","مصر","الخليج"]) : en(["UAE","Egypt","GCC"]),
-      "Malik Omer": lang === "ar" ? ar(["الإمارات","مصر","الخليج"]) : en(["United Arab Emirates","Egypt","GCC"]),
-      "nour-hassan": lang === "ar" ? ar(["الإمارات","جنوب مصر","مصر"]) : en(["United Arab Emirates","Southern Egypt","Egypt"]),
-    };
-    return map[slug] ?? (lang === "ar" ? ["الإمارات","الخليج"] : ["UAE","GCC"]);
-  };
   type Person = {
     name: string;
     role: string;
@@ -91,20 +80,21 @@ export default function TeamOverview() {
     slug: string;
     focus: string;
     bio: string;
+    regions: string[];
   };
   const items: Person[] =
     lang === "ar"
       ? [
-          { name: "خالد عمر", role: "المالك/مستشار قانوني بحري معتمد", tags: ["بحري", "استراتيجيات", "منازعات"], slug: "khaled-omer", focus: "بحري، استراتيجيات، منازعات معقدة", bio: "مستشار موثوق في القضايا البحرية وعالية المخاطر." },
-          { name: "محمد دفع الله", role: "مدير/مستشار قانوني", tags: ["تجاري", "عمالي"], slug: "Mohamed Dafallah", focus: "استشارات قانونية متنوعة", bio: "مستشار موثوق في الشؤون التجارية والعمالية." },
-          { name: "مالك عمر", role: "بحري/تجاري", tags: ["بحري","تجاري"], slug: "Malik Omer", focus: "قبطان سفينة سابق، متخصص في الشؤون البحرية التجارية", bio: "مستشار موثوق في المسائل البحرية والتجارية المعقدة." },
-          { name: "إبراهيم أبو روياس", role: "أعمال/شركات", tags: ["أعمال","إدارة"], slug: "nour-hassan", focus: "أعمال، إدارة", bio: "مستشار موثوق في المسائل البحرية والتجارية المعقدة." },
+          { name: "خالد عمر", role: "مستشار قانوني بحري معتمد", tags: ["بحري", "استراتيجية", "نزاعات معقدة"], slug: "khaled-omer", focus: "بحري، استراتيجي، منازعات معقدة", bio: "مستشار موثوق في القضايا البحرية والملفات عالية المخاطر.", regions: ["UAE", "SUD", "EGP", "GCC"] },
+          { name: "محمد دفع الله", role: "مدير/مستشار قانوني", tags: ["استشارات متنوعة", "تجاري", "عمل"], slug: "Mohamed Dafallah", focus: "استشارات قانونية متنوعة", bio: "مستشار موثوق في المسائل التجارية والعمالية.", regions: ["UAE", "EGP", "GCC"] },
+          { name: "مالك عمر", role: "بحري/تجاري", tags: ["قائد سفينة سابق", "بحري تجاري"], slug: "Malik Omer", focus: "بحري تجاري — قائد سفينة سابق", bio: "مستشار موثوق في المسائل البحرية والتجارية المعقدة.", regions: ["UAE", "EGP", "GCC"] },
+          { name: "إبراهيم أبو رواس", role: "أعمال/شركات", tags: ["إدارة", "شركات"], slug: "nour-hassan", focus: "أعمال، إدارة", bio: "مستشار موثوق في المسائل البحرية والتجارية المعقدة.", regions: ["UAE", "EGP", "SUD"] },
         ]
       : [
-          { name: "Khaled Omar", role: "Owner/Certified Maritime Legal Advisor", tags: ["Maritime","Strategy","Disputes"], slug: "khaled-omer", focus: "Maritime, Strategic, and Complex Disputes", bio: "Trusted Advisor on Maritime and High-Risk Matters." },
-          { name: "Mohammed Dafallah", role: "Manager/Legal Advisor", tags: ["Commercial","Labor"], slug: "Mohamed Dafallah", focus: "Diverse Legal Advice", bio: "Trusted Advisor on Commercial and Labor Matters." },
-          { name: "Malik Omar", role: "Maritime/Commercial", tags: ["Maritime","Commercial"], slug: "Malik Omer", focus: "Former Ship Captain, specializing in commercial maritime matters", bio: "Trusted Consultant in Complex Maritime and Commercial Matters." },
-          { name: "Ibrahim Abu Ruyas", role: "Business/Companies", tags: ["Business","Management"], slug: "nour-hassan", focus: "Business, Management", bio: "Trusted Consultant in Complex Maritime and Commercial Matters." },
+          { name: "Khaled Omer", role: "Certified Maritime Legal Advisor", tags: ["Maritime", "Strategic", "Complex Disputes"], slug: "khaled-omer", focus: "Maritime, Strategic, and Complex Disputes", bio: "Trusted Advisor on Maritime and High-Risk Matters.", regions: ["UAE", "SUD", "EGP", "GCC"] },
+          { name: "Mohammed Dafaallah", role: "Manager/Legal Advisor", tags: ["Diverse Legal Advice", "Commercial", "Labor"], slug: "Mohamed Dafallah", focus: "Diverse Legal Advice", bio: "Trusted Advisor on Commercial and Labor Matters.", regions: ["UAE", "EGP", "GCC"] },
+          { name: "Malik Omer", role: "Maritime/Commercial", tags: ["Former Ship Captain", "Commercial Maritime"], slug: "Malik Omer", focus: "Former Ship Captain, specializing in commercial maritime matters", bio: "Trusted Consultant in Complex Maritime and Commercial Matters.", regions: ["UAE", "EGP", "GCC"] },
+          { name: "Ibrahim Abu Roais", role: "Business/Companies", tags: ["Business", "Management"], slug: "nour-hassan", focus: "Business, Management", bio: "Trusted Consultant in Complex Maritime and Commercial Matters.", regions: ["UAE", "EGP", "SUD"] },
         ];
   const teamLines =
     lang === "ar"
@@ -166,8 +156,8 @@ export default function TeamOverview() {
             transition={{ type: "spring", stiffness: 300, damping: 22 }}
           >
             <div className="block relative" data-flipped={flipped === idx}>
-              <div className="flip-inner h-72 md:h-56">
-                <div className="flip-front team-card-photo team-card-front relative h-72 md:h-56 overflow-hidden">
+              <div className="flip-inner min-h-72 md:min-h-56">
+                <div className="flip-front team-card-photo team-card-front relative min-h-72 md:min-h-56 overflow-hidden">
                   <TeamPhoto slug={p.slug} alt={p.name} />
                   <div className="absolute inset-0 gradient-overlay bg-gradient-to-t from-black/40 to-transparent" />
                   <div className="absolute top-2 left-2 z-20">
@@ -185,7 +175,7 @@ export default function TeamOverview() {
                     aria-label={lang === "ar" ? `عرض تفاصيل ${p.name}` : `Show ${p.name} details`}
                   />
                 </div>
-                <div className="flip-back relative h-72 md:h-56 overflow-hidden" dir={lang === "ar" ? "rtl" : "ltr"}>
+                <div className="flip-back relative min-h-72 md:min-h-56 overflow-visible" dir={lang === "ar" ? "rtl" : "ltr"}>
                   <div className="absolute top-2 left-2">
                     <span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-zinc-700/40 text-[10px] font-extrabold text-zinc-500">
                       {String(idx + 1).padStart(2, "0")}
@@ -222,11 +212,9 @@ export default function TeamOverview() {
                     </p>
                     <div className="mt-auto pt-3">
                       <div className="flex items-center justify-between gap-2">
-                        <div className="flex flex-wrap items-center gap-2">
-                          {regionsFor(p.slug).map((r) => (
-                            <span key={r} className="rounded-lg chip px-2 py-0.5 text-[10px] text-zinc-300">{r}</span>
-                          ))}
-                        </div>
+                        <div className="flex flex-wrap items-center gap-2">{(items[idx].regions || []).map(r => (
+                          <span key={r} className="rounded-lg chip px-2 py-0.5 text-[10px] text-zinc-300">{r}</span>
+                        ))}</div>
                         <div className="inline-flex items-center gap-1 rounded-lg bg-zinc-800/60 px-2 py-0.5 text-[10px] text-zinc-200">
                           <svg aria-hidden="true" viewBox="0 0 24 24" className="h-3.5 w-3.5">
                             <path fill="currentColor" d="M12 2a7 7 0 1 1 0 14A7 7 0 0 1 12 2Zm0 2a5 5 0 1 0 .001 10.001A5 5 0 0 0 12 4Zm-.5 2h1v4h-1V6Zm0 5h1v1h-1v-1Z"/>
