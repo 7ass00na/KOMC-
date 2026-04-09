@@ -224,10 +224,11 @@ export default function IntroOverlay() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.35 }}
-          className="absolute inset-0 grid place-items-center p-4 max-[480px]:px-6"
+          className="absolute inset-0 overflow-y-auto"
           dir={lang === "ar" ? "rtl" : "ltr"}
         >
-          <div className="w-full max-w-5xl lg:max-w-6xl rounded-2xl surface p-6 md:p-8">
+          <div className="min-h-[100svh] grid place-items-center py-6 md:py-8 px-4 max-[480px]:px-6">
+          <div className="w-full max-w-5xl lg:max-w-6xl rounded-2xl surface p-6 md:p-8 max-h-[calc(100svh-96px)] md:max-h-[calc(100svh-128px)] overflow-auto">
             <div className={"flex items-center gap-6 lg:gap-8 max-[480px]:gap-4 max-[1024px]:flex-col " + (lang === "ar" ? "text-right" : "text-left")}>
               <motion.div
                 initial={{ opacity: 0, y: 10, scale: 0.98 }}
@@ -288,6 +289,7 @@ export default function IntroOverlay() {
                 )}
               </motion.div>
             </div>
+          </div>
           </div>
         </motion.div>
       )}
