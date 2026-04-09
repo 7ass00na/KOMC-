@@ -5,6 +5,7 @@ Cleanup:
 - npm prune --production=false
 - npm dedupe
 - node -e "require('fs').rmSync('.next',{recursive:true,force:true});require('fs').rmSync('coverage',{recursive:true,force:true})"
+- npm audit fix
 
 Build (production):
 - npm run clean-build

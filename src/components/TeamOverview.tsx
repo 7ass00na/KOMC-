@@ -54,24 +54,9 @@ export default function TeamOverview() {
   const { t, lang } = useLanguage();
   const [flipped, setFlipped] = useState<number | null>(null);
   const toggleFlip = (idx: number) => setFlipped((v) => (v === idx ? null : idx));
-  const scoreFor = (slug: string) => {
-    const map: Record<string, number> = {
-      "khaled-omer": 95,
-      "Mohamed Dafallah": 88,
-      "Malik Omer": 92,
-      "nour-hassan": 90,
-    };
-    const v = map[slug] ?? 82;
-    return Math.min(95, Math.max(75, v));
-  };
-  const credFor = (slug: string) => {
-    const map: Record<string, string> = {
-      "khaled-omer": lang === "ar" ? "25 سنة" : "25y",
-      "Mohamed Dafallah": lang === "ar" ? "10 سنوات" : "10y",
-      "Malik Omer": lang === "ar" ? "18 سنة" : "18y",
-      "nour-hassan": lang === "ar" ? "15 سنة" : "15y",
-    };
-    return map[slug] ?? (lang === "ar" ? "5 سنوات" : "5y");
+  const scoreFor = (slug: string, items: Person[]) => {
+    const p = items.find((i) => i.slug === slug);
+    return p?.rating ?? 82;
   };
   type Person = {
     name: string;
@@ -80,21 +65,23 @@ export default function TeamOverview() {
     slug: string;
     focus: string;
     bio: string;
-    regions: string[];
+    regions?: string;
+    experience?: string;
+    rating?: number;
   };
   const items: Person[] =
     lang === "ar"
       ? [
-          { name: "خالد عمر", role: "مستشار قانوني بحري معتمد", tags: ["بحري", "استراتيجية", "نزاعات معقدة"], slug: "khaled-omer", focus: "بحري، استراتيجي، منازعات معقدة", bio: "مستشار موثوق في القضايا البحرية والملفات عالية المخاطر.", regions: ["UAE", "SUD", "EGP", "GCC"] },
-          { name: "محمد دفع الله", role: "مدير/مستشار قانوني", tags: ["استشارات متنوعة", "تجاري", "عمل"], slug: "Mohamed Dafallah", focus: "استشارات قانونية متنوعة", bio: "مستشار موثوق في المسائل التجارية والعمالية.", regions: ["UAE", "EGP", "GCC"] },
-          { name: "مالك عمر", role: "بحري/تجاري", tags: ["قائد سفينة سابق", "بحري تجاري"], slug: "Malik Omer", focus: "بحري تجاري — قائد سفينة سابق", bio: "مستشار موثوق في المسائل البحرية والتجارية المعقدة.", regions: ["UAE", "EGP", "GCC"] },
-          { name: "إبراهيم أبو رواس", role: "أعمال/شركات", tags: ["إدارة", "شركات"], slug: "nour-hassan", focus: "أعمال، إدارة", bio: "مستشار موثوق في المسائل البحرية والتجارية المعقدة.", regions: ["UAE", "EGP", "SUD"] },
+          { name: "خالد عمر", role: "مستشار قانوني بحري معتمد", tags: ["بحري", "منازعات معقدة"], slug: "khaled-omer", focus: "بحري، منازعات معقدة", bio: "مستشار موثوق في الشؤون البحرية والمسائل عالية المخاطر.", regions: "UAE/SUD/EGP/GCC", experience: "25 سنة", rating: 95 },
+          { name: "محمد دفع الله", role: "مدير / مستشار قانوني", tags: ["تجاري", "عمل"], slug: "Mohamed Dafallah", focus: "استشارات قانونية متنوعة", bio: "مستشار موثوق في القضايا التجارية والعمالية.", regions: "UAE/EGP/GCC", experience: "10 سنة خبرة", rating: 88 },
+          { name: "مالك عمر", role: "بحري / تجاري", tags: ["بحري", "تجاري"], slug: "Malik Omer", focus: "قائد سفينة سابق، مختص في الشؤون البحرية التجارية", bio: "مستشار موثوق في القضايا البحرية والتجارية المعقدة.", regions: "UAE/EGP/GCC", experience: "18 سنة خبرة", rating: 92 },
+          { name: "إبراهيم أبو رويص", role: "أعمال / شركات", tags: ["أعمال", "إدارة"], slug: "nour-hassan", focus: "أعمال، إدارة", bio: "مستشار موثوق في القضايا البحرية والتجارية المعقدة.", regions: "UAE/EGP/SUD", experience: "15 سنة خبرة", rating: 90 },
         ]
       : [
-          { name: "Khaled Omer", role: "Certified Maritime Legal Advisor", tags: ["Maritime", "Strategic", "Complex Disputes"], slug: "khaled-omer", focus: "Maritime, Strategic, and Complex Disputes", bio: "Trusted Advisor on Maritime and High-Risk Matters.", regions: ["UAE", "SUD", "EGP", "GCC"] },
-          { name: "Mohammed Dafaallah", role: "Manager/Legal Advisor", tags: ["Diverse Legal Advice", "Commercial", "Labor"], slug: "Mohamed Dafallah", focus: "Diverse Legal Advice", bio: "Trusted Advisor on Commercial and Labor Matters.", regions: ["UAE", "EGP", "GCC"] },
-          { name: "Malik Omer", role: "Maritime/Commercial", tags: ["Former Ship Captain", "Commercial Maritime"], slug: "Malik Omer", focus: "Former Ship Captain, specializing in commercial maritime matters", bio: "Trusted Consultant in Complex Maritime and Commercial Matters.", regions: ["UAE", "EGP", "GCC"] },
-          { name: "Ibrahim Abu Roais", role: "Business/Companies", tags: ["Business", "Management"], slug: "nour-hassan", focus: "Business, Management", bio: "Trusted Consultant in Complex Maritime and Commercial Matters.", regions: ["UAE", "EGP", "SUD"] },
+          { name: "Khaled Omer", role: "Certified Maritime Legal Advisor", tags: ["Maritime", "Complex Disputes"], slug: "khaled-omer", focus: "Maritime, Complex Disputes", bio: "Trusted Advisor on Maritime and High-Risk Matters.", regions: "UAE/SUD/EGP/GCC", experience: "25 yrs", rating: 95 },
+          { name: "Mohammed Dafaallah", role: "Manager/Legal Advisor", tags: ["Commercial", "Labor"], slug: "Mohamed Dafallah", focus: "Diverse Legal Advice", bio: "Trusted Advisor on Commercial and Labor Matters.", regions: "UAE/EGP/GCC", experience: "10 yrs", rating: 88 },
+          { name: "Malik Omer", role: "Maritime/Commercial", tags: ["Maritime", "Commercial"], slug: "Malik Omer", focus: "Former Ship Captain, specializing in commercial maritime matters", bio: "Trusted Consultant in Complex Maritime and Commercial Matters.", regions: "UAE/EGP/GCC", experience: "18 yrs", rating: 92 },
+          { name: "Ibrahim Abu Roais", role: "Business/Companies", tags: ["Business", "Management"], slug: "nour-hassan", focus: "Business, Management", bio: "Trusted Consultant in Complex Maritime and Commercial Matters.", regions: "UAE/ EGP / SUD", experience: "15 yrs", rating: 90 },
         ];
   const teamLines =
     lang === "ar"
@@ -156,8 +143,8 @@ export default function TeamOverview() {
             transition={{ type: "spring", stiffness: 300, damping: 22 }}
           >
             <div className="block relative" data-flipped={flipped === idx}>
-              <div className="flip-inner min-h-72 md:min-h-56">
-                <div className="flip-front team-card-photo team-card-front relative min-h-72 md:min-h-56 overflow-hidden">
+              <div className="flip-inner h-80 md:h-64 lg:h-72">
+                <div className="flip-front team-card-photo team-card-front relative h-80 md:h-64 lg:h-72 overflow-hidden">
                   <TeamPhoto slug={p.slug} alt={p.name} />
                   <div className="absolute inset-0 gradient-overlay bg-gradient-to-t from-black/40 to-transparent" />
                   <div className="absolute top-2 left-2 z-20">
@@ -175,7 +162,7 @@ export default function TeamOverview() {
                     aria-label={lang === "ar" ? `عرض تفاصيل ${p.name}` : `Show ${p.name} details`}
                   />
                 </div>
-                <div className="flip-back relative min-h-72 md:min-h-56 overflow-visible" dir={lang === "ar" ? "rtl" : "ltr"}>
+                <div className="flip-back relative h-80 md:h-64 lg:h-72 overflow-visible" dir={lang === "ar" ? "rtl" : "ltr"}>
                   <div className="absolute top-2 left-2">
                     <span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-zinc-700/40 text-[10px] font-extrabold text-zinc-500">
                       {String(idx + 1).padStart(2, "0")}
@@ -184,7 +171,7 @@ export default function TeamOverview() {
                   <div className="absolute top-2 right-2 rounded-full bg-[var(--brand-accent)] text-black text-[10px] font-semibold px-2 py-0.5">
                     {lang === "ar" ? "احترافي" : "Pro"}
                   </div>
-                  <div className="h-full overflow-visible p-5 pt-8 flex flex-col">
+                  <div className="min-h-full overflow-visible p-5 pt-8 flex flex-col">
                     <div className="text-center font-semibold text-white" data-edit-key={`team-member-name-${idx}`}>{p.name}</div>
                     <div className="mt-0.5 text-center text-sm text-zinc-300" data-edit-key={`team-member-role-${idx}`}>{p.role}</div>
                     <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
@@ -212,21 +199,19 @@ export default function TeamOverview() {
                     </p>
                     <div className="mt-auto pt-3">
                       <div className="flex items-center justify-between gap-2">
-                        <div className="flex flex-wrap items-center gap-2">{(items[idx].regions || []).map(r => (
-                          <span key={r} className="rounded-lg chip px-2 py-0.5 text-[10px] text-zinc-300">{r}</span>
-                        ))}</div>
+                        <div className="flex flex-wrap items-center gap-2">{(p.regions || "").split("/").filter(Boolean).map((r) => (<span key={r} className="rounded-lg chip px-2 py-0.5 text-[10px] text-zinc-300">{r}</span>))}</div>
                         <div className="inline-flex items-center gap-1 rounded-lg bg-zinc-800/60 px-2 py-0.5 text-[10px] text-zinc-200">
                           <svg aria-hidden="true" viewBox="0 0 24 24" className="h-3.5 w-3.5">
                             <path fill="currentColor" d="M12 2a7 7 0 1 1 0 14A7 7 0 0 1 12 2Zm0 2a5 5 0 1 0 .001 10.001A5 5 0 0 0 12 4Zm-.5 2h1v4h-1V6Zm0 5h1v1h-1v-1Z"/>
                           </svg>
-                          <span>{credFor(p.slug)}</span>
+                          <span>{p.experience || (lang === "ar" ? "خبرة" : "Exp")}</span>
                         </div>
                       </div>
                       <div className="mt-2 h-2 rounded-full bg-zinc-700/50 overflow-hidden">
-                        <div className="h-full rounded-full bg-[var(--brand-accent)]" style={{ width: `${scoreFor(p.slug)}%` }} />
+                        <div className="h-full rounded-full bg-[var(--brand-accent)]" style={{ width: `${scoreFor(p.slug, items)}%` }} />
                       </div>
                       <div className="mt-1 text-[10px] text-zinc-400 text-right">
-                        <span>{lang === "ar" ? "الاحترافية" : "Professionalism"} {scoreFor(p.slug)}%</span>
+                        <span>{lang === "ar" ? "الاحترافية" : "Professionalism"} {scoreFor(p.slug, items)}%</span>
                       </div>
                     </div>
                   </div>

@@ -68,8 +68,8 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
   };
 
   const inquiries = rtl
-    ? ["قانون بحري", "امتثال شركات", "تحكيم ومنازعات", "عقود واتفاقيات", "أخرى"]
-    : ["Maritime Law", "Corporate Compliance", "Arbitration & Disputes", "Contracts & Agreements", "Other"];
+    ? ["القانون بحري", "القانون المدني", "القانون الجنائي", "القانون التجاري", "قانون العمل", "القانون العقاري", "قانون الأسرة", "أخرى"]
+    : ["Maritime Law", "Civil law", "Criminal law", "Commercial law", "Labor law", "Real estate law", "Family law", "Other"];
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
