@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title>KOMC Crest</title>
+  <desc>Symmetrical laurel crest with three stars, central shield, Arabic ribbon motif, and open book</desc>
+  <defs>
+    <style>
+      :root{--brand-accent:#C8A24A;--ink-primary:#132437;--surface:#FFFFFF;--neutral:#EDE8DD}
+      .a{fill:var(--brand-accent)}
+      .b{fill:none;stroke:var(--ink-primary);stroke-width:8;stroke-linecap:round;stroke-linejoin:round}
+      .c{fill:var(--surface)}
+      .d{fill:var(--ink-primary)}
+      .e{fill:none;stroke:var(--brand-accent);stroke-width:6;stroke-linecap:round;stroke-linejoin:round}
+      @keyframes komcStarSway { 0%{ transform: rotate(0deg) } 50%{ transform: rotate(2deg) } 100%{ transform: rotate(0deg) } }
+      #komc-stars{ transform-origin: 256px 64px; animation: komcStarSway 1.2s cubic-bezier(0.22,1,0.36,1) 1 }
+      :root:hover #komc-stars{ transform-origin: 256px 64px; animation: komcStarSway 1.8s cubic-bezier(0.22,1,0.36,1) infinite }
+      .komc-animate #komc-stars{ transform-origin: 256px 64px; animation: komcStarSway 2.4s cubic-bezier(0.22,1,0.36,1) infinite }
+      @media (prefers-reduced-motion: reduce){
+        #komc-stars, :root:hover #komc-stars, .komc-animate #komc-stars { animation: none }
+      }
+    </style>
+  </defs>
+  <g id="logo-root">
+    <g id="komc-stars" transform="translate(256 72)">
+      <polygon class="a" points="0,-28 7,-9 27,-9 10,3 16,23 0,11 -16,23 -10,3 -27,-9 -7,-9" />
+      <g transform="translate(-70,8)">
+        <polygon class="a" points="0,-28 7,-9 27,-9 10,3 16,23 0,11 -16,23 -10,3 -27,-9 -7,-9" />
+      </g>
+      <g transform="translate(70,8)">
+        <polygon class="a" points="0,-28 7,-9 27,-9 10,3 16,23 0,11 -16,23 -10,3 -27,-9 -7,-9" />
+      </g>
+    </g>
+    <g id="laurel-left" transform="translate(116 128)">
+      <g transform="rotate(-20)">
+        <ellipse class="a" cx="0" cy="0" rx="10" ry="20" transform="rotate(-20) translate(0,-10)"/>
+      </g>
+      <g transform="translate(0,36) rotate(-10)"><ellipse class="a" cx="0" cy="0" rx="10" ry="20"/></g>
+      <g transform="translate(4,72) rotate(0)"><ellipse class="a" cx="0" cy="0" rx="10" ry="20"/></g>
+      <g transform="translate(12,108) rotate(10)"><ellipse class="a" cx="0" cy="0" rx="10" ry="20"/></g>
+      <g transform="translate(24,144) rotate(18)"><ellipse class="a" cx="0" cy="0" rx="10" ry="20"/></g>
+      <g transform="translate(40,178) rotate(26)"><ellipse class="a" cx="0" cy="0" rx="10" ry="20"/></g>
+      <g transform="translate(60,210) rotate(34)"><ellipse class="a" cx="0" cy="0" rx="10" ry="20"/></g>
+      <g transform="translate(82,238) rotate(42)"><ellipse class="a" cx="0" cy="0" rx="10" ry="20"/></g>
+      <g transform="translate(108,262) rotate(50)"><ellipse class="a" cx="0" cy="0" rx="10" ry="20"/></g>
+      <path class="e" d="M-6,-18 C24,70 58,138 124,288"/>
+    </g>
+    <g id="laurel-right" transform="translate(396 128) scale(-1,1)">
+      <g transform="rotate(-20)">
+        <ellipse class="a" cx="0" cy="0" rx="10" ry="20" transform="rotate(-20) translate(0,-10)"/>
+      </g>
+      <g transform="translate(0,36) rotate(-10)"><ellipse class="a" cx="0" cy="0" rx="10" ry="20"/></g>
+      <g transform="translate(4,72) rotate(0)"><ellipse class="a" cx="0" cy="0" rx="10" ry="20"/></g>
+      <g transform="translate(12,108) rotate(10)"><ellipse class="a" cx="0" cy="0" rx="10" ry="20"/></g>
+      <g transform="translate(24,144) rotate(18)"><ellipse class="a" cx="0" cy="0" rx="10" ry="20"/></g>
+      <g transform="translate(40,178) rotate(26)"><ellipse class="a" cx="0" cy="0" rx="10" ry="20"/></g>
+      <g transform="translate(60,210) rotate(34)"><ellipse class="a" cx="0" cy="0" rx="10" ry="20"/></g>
+      <g transform="translate(82,238) rotate(42)"><ellipse class="a" cx="0" cy="0" rx="10" ry="20"/></g>
+      <g transform="translate(108,262) rotate(50)"><ellipse class="a" cx="0" cy="0" rx="10" ry="20"/></g>
+      <path class="e" d="M-6,-18 C24,70 58,138 124,288"/>
+    </g>
+    <g id="shield" transform="translate(256 210)">
+      <path class="c" d="M-86,-44 h172 v64 c0,40 -26,76 -86,106 -60,-30 -86,-66 -86,-106 z"/>
+      <path class="b" d="M-86,-44 h172 v64 c0,40 -26,76 -86,106 -60,-30 -86,-66 -86,-106 z"/>
+      <g id="emblem" transform="translate(0,6)">
+        <path class="d" d="M-54,18 h108 v18 h-108 z M-54,42 c18,-6 36,-6 54,0 18,6 36,6 54,0" opacity=".9"/>
+        <path class="d" d="M-42,0 h84 v10 h-84 z" opacity=".9"/>
+        <path class="d" d="M-30,-14 h60 v8 h-60 z" opacity=".9"/>
+      </g>
+      <g id="ribbon" transform="translate(0,-64)">
+        <rect class="d" x="-62" y="-10" width="124" height="20" rx="8"/>
+        <rect class="c" x="-58" y="-6" width="116" height="12" rx="6"/>
+        <path class="d" d="M-92,-5 l30,-15 v30 z M62,-5 l30,-15 v30 z"/>
+      </g>
+    </g>
+    <g id="book" transform="translate(256 420)">
+      <path class="c" d="M-120,0 c40,-16 80,-16 120,0 c40,-16 80,-16 120,0 v28 c-40,-16 -80,-16 -120,0 c-40,-16 -80,-16 -120,0 z"/>
+      <path class="e" d="M-120,0 c40,-16 80,-16 120,0 c40,-16 80,-16 120,0"/>
+      <line class="e" x1="0" y1="-4" x2="0" y2="24"/>
+    </g>
+  </g>
+</svg>

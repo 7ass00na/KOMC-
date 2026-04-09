@@ -1,0 +1,29 @@
+Lint:
+- npm run lint
+
+Cleanup:
+- npm prune --production=false
+- npm dedupe
+- node -e "require('fs').rmSync('.next',{recursive:true,force:true});require('fs').rmSync('coverage',{recursive:true,force:true})"
+
+Build (production):
+- npm run clean-build
+
+Run tests:
+- npm test
+
+Start (development):
+- npm run dev
+
+Start (production preview):
+- npm run clean-build
+- npm run start
+
+Git (stage, commit, push):
+- git add .
+- git commit -m "Welcome flow polish: card width + image column; curved-square logo; hydration-safe labels; tests green"
+- git push
+
+Notes:
+- Hydration fix: compute welcome labels in useEffect and render label text only when ready.
+- Analytics: disabled during SSR/tests to avoid invalid URL errors.

@@ -306,32 +306,9 @@ export default function Footer() {
             className="space-y-4"
           >
             <div className="flex items-center gap-3">
-              {(footerData?.published_logo || footerData?.logo) ? (
-                <motion.div
-                  animate={reduce ? undefined : { rotate: [-2, 0, 2, 0] }}
-                  transition={reduce ? undefined : { duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
-                >
-                  <Image src={(footerData?.published_logo || footerData?.logo) as string} alt="Footer Logo" width={40} height={40} className="rounded-full object-contain" />
-                </motion.div>
-              ) : (
-                <div className="h-10 w-10 rounded-full bg-[var(--brand-accent)] grid place-items-center text-[var(--brand-primary)]">
-                  <motion.svg
-                    viewBox="0 0 24 24"
-                    className="h-5 w-5"
-                    aria-hidden="true"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.6"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    style={{ transformOrigin: "50% 10%" }}
-                    animate={reduce ? undefined : { rotate: [-3, 0, 3, 0] }}
-                    transition={reduce ? undefined : { duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
-                  >
-                    <path d="M12 3v4m-7 5h14M5 12l3.5 6a4 4 0 11-7 0L5 12Zm14 0l3.5 6a4 4 0 11-7 0L19 12Z" />
-                  </motion.svg>
-                </div>
-              )}
+              <div className="h-10 w-10 logo-bg overflow-hidden">
+                <Image src="/main_logo.svg" alt={lang === "ar" ? "الشعار" : "Logo"} width={40} height={40} className="object-contain logo-anim" />
+              </div>
               <div>
                 <div className="font-semibold footer-brand-name" data-edit-key="footer-brand-name">
                   {lang === "ar"

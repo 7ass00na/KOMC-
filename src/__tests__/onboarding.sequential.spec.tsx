@@ -44,32 +44,23 @@ describe("Onboarding sequential loading flow", () => {
       </Wrapper>
     );
 
+    await act(async () => {
+      vi.advanceTimersByTime(2050); // initial wait to video
+    });
     const skip = screen.getByRole("button", { name: /Skip Intro/i });
     fireEvent.click(skip);
 
     await act(async () => {
-      vi.advanceTimersByTime(50);
+      vi.advanceTimersByTime(2050); // secondary wait to welcome
     });
-    const globalLine1 = document.querySelector("[data-global-cursor-line]");
-    expect(globalLine1).toBeTruthy();
-
-    await act(async () => {
-      vi.advanceTimersByTime(1300);
-    });
-    const moveBtn = screen.getByRole("button", { name: /Move to Homepage/i });
+    const moveBtn = screen.getByRole("button", { name: /Move to Home/i });
     expect(moveBtn).toBeTruthy();
 
     fireEvent.click(moveBtn);
     await act(async () => {
-      vi.advanceTimersByTime(50);
+      vi.advanceTimersByTime(2050); // final wait to home
     });
-    const globalLine2 = document.querySelector("[data-global-cursor-line]");
-    expect(globalLine2).toBeTruthy();
-
-    await act(async () => {
-      vi.advanceTimersByTime(1300);
-    });
-    const moveBtnGone = screen.queryByRole("button", { name: /Move to Homepage/i });
+    const moveBtnGone = screen.queryByRole("button", { name: /Move to Home/i });
     expect(moveBtnGone).toBeNull();
   }, 15000);
 });

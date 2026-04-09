@@ -4,14 +4,17 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { useLanguage } from "@/context/LanguageContext";
 import { useRouter } from "next/navigation";
+import WelcomingMessage from "./WelcomingMessage";
+import { deriveLabels, track, type WelcomeLabels } from "@/lib/welcomeLabels";
 
 export default function IntroOverlay() {
   const { lang } = useLanguage();
-  const [mode, setMode] = useState<"video" | "welcome" | "hidden">("video");
+  const [mode, setMode] = useState<"pre" | "video" | "welcome" | "hidden">("pre");
   const [muted, setMuted] = useState(true);
   const [showControls, setShowControls] = useState(false);
   const vidRef = useRef<HTMLVideoElement | null>(null);
   const router = useRouter();
+  const [labels, setLabels] = useState<WelcomeLabels | null>(null);
 
   useEffect(() => {
     try {
@@ -19,18 +22,38 @@ export default function IntroOverlay() {
       const now = Date.now();
       if (ts && now - ts < 24 * 60 * 60 * 1000) {
         setMode("hidden");
+      } else {
+        const dur = 2000;
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("site-loading", { detail: { duration: dur } }) as any);
+        }
+        const t = setTimeout(() => {
+          setMode("video");
+        }, dur + 50);
+        return () => clearTimeout(t);
       }
     } catch {}
   }, []);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const isSmall = window.matchMedia("(max-width: 768px)").matches;
-        setShowControls(isSmall);
-      } catch {}
-    }
+    // Use custom controls for consistent UI and translation; keep native controls off
+    setShowControls(false);
   }, []);
+
+  useEffect(() => {
+    try {
+      const l = deriveLabels(lang);
+      setLabels(l);
+    } catch {
+      setLabels({
+        welcomeType: "new_visitor",
+        userRole: "consumer",
+        actionRequired: "cta_home",
+        variant: "A",
+        lang,
+      });
+    }
+  }, [lang]);
 
   useEffect(() => {
     const v = vidRef.current;
@@ -90,6 +113,14 @@ export default function IntroOverlay() {
       v.removeEventListener("play", onPlayStart);
       v.removeEventListener("ratechange", onRateChange);
     };
+    // Safety timeout: if video doesn't end within a reasonable time, proceed
+    const safety = setTimeout(() => {
+      endIntro();
+    }, 15000);
+    return () => {
+      if (retryTimer) clearInterval(retryTimer);
+      clearTimeout(safety);
+    };
   }, [mode]);
 
   const endIntro = () => {
@@ -103,7 +134,7 @@ export default function IntroOverlay() {
         localStorage.setItem("komc_intro_ts", String(now));
         document.cookie = `komc_intro_ts=${now}; max-age=${24 * 60 * 60}; path=/; samesite=lax`;
       } catch {}
-      const duration = 1200;
+      const duration = 2000;
       if (typeof document !== "undefined") {
         document.body.setAttribute("data-intro-state", "transitioning");
       }
@@ -142,7 +173,7 @@ export default function IntroOverlay() {
               ref={vidRef}
               className="intro-video h-full w-full"
               autoPlay
-              preload="metadata"
+              preload="auto"
               controls={showControls}
               controlsList="nodownload noplaybackrate"
               loop={false}
@@ -153,18 +184,24 @@ export default function IntroOverlay() {
               onStalled={endIntro}
               poster="/images/about-hero-poster.jpg"
             >
-              <source src="/videos/komc.webm" type="video/webm" />
-              <source src="/videos/komc.mp4" type="video/mp4" />
-              <source src="/videos/komc-intro.mp4" type="video/mp4" />
-              <source src="/videos/komc.ogv" type="video/ogg" />
+              <source src="/videos/Komc.mp4" type="video/mp4" />
+              <source src="/videos/about-hero.webm" type="video/webm" />
               <track kind="captions" />
               Sorry, your browser doesn’t support embedded videos. 
               {lang === "ar" ? "عذرًا، متصفحك لا يدعم تشغيل الفيديو المضمن." : "Please update your browser to view this content."}
             </video>
             <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/70 pointer-events-none" />
           </div>
-          <div className="absolute top-3 right-3 z-[1001]" style={{ insetInlineEnd: "0.75rem", insetBlockStart: "0.75rem" }}>
-            <div className="flex items-center gap-3">
+          <div className="absolute inset-x-0 bottom-0 flex items-end justify-between p-4 md:p-6" dir={lang === "ar" ? "rtl" : "ltr"}>
+            <div className="inline-flex items-center gap-2 flex-1">
+              <div className="relative h-8 w-8 logo-bg overflow-hidden">
+                <Image src="/main_logo.svg" alt={lang === "ar" ? "الشعار الرئيسي" : "Main Logo"} fill sizes="32px" className="object-contain logo-anim" />
+              </div>
+              <span className="text-xs md:text-sm font-semibold text-white/80" dir={lang === "ar" ? "rtl" : "ltr"}>
+                {lang === "ar" ? "شركة خالد عمر للاستشارات البحرية والقانونية" : "Khaled Omar Maritime & Legal Consulting Company"}
+              </span>
+            </div>
+            <div className="inline-flex items-center gap-3">
               <button
                 onClick={() => setMuted((m) => !m)}
                 className="rounded-lg border border-white/30 bg-white/10 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/15 min-h-[36px]"
@@ -181,79 +218,74 @@ export default function IntroOverlay() {
               </button>
             </div>
           </div>
-          <div className="absolute inset-x-0 bottom-0 flex items-end justify-between p-4 md:p-6">
-            <div className="inline-flex items-center gap-2">
-              <div className="relative h-8 w-8">
-                <Image src="/icon.svg" alt="KOMC" fill sizes="32px" className="object-contain" />
-              </div>
-              <span className="text-xs md:text-sm font-semibold text-white/80" dir={lang === "ar" ? "rtl" : "ltr"}>
-                {lang === "ar" ? "شركة خالد عمر للاستشارات البحرية والقانونية" : "Khaled Omar Maritime & Legal Consulting Company"}
-              </span>
-            </div>
-          </div>
         </>
       ) : (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.35 }}
-          className="absolute inset-0 grid place-items-center p-4"
+          className="absolute inset-0 grid place-items-center p-4 max-[480px]:px-6"
           dir={lang === "ar" ? "rtl" : "ltr"}
         >
-          <div className="w-full max-w-4xl rounded-2xl surface p-6 md:p-8">
-            <div className={"flex items-center gap-6 max-[1024px]:flex-col " + (lang === "ar" ? "text-right" : "text-left")}>
+          <div className="w-full max-w-5xl lg:max-w-6xl rounded-2xl surface p-6 md:p-8">
+            <div className={"flex items-center gap-6 lg:gap-8 max-[480px]:gap-4 max-[1024px]:flex-col " + (lang === "ar" ? "text-right" : "text-left")}>
               <motion.div
                 initial={{ opacity: 0, y: 10, scale: 0.98 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ duration: 0.35, ease: "easeOut" }}
-                className="basis-[30%] max-[1024px]:basis-full grid place-items-center"
+                className="md:basis-[36%] lg:basis-[38%] max-[1024px]:basis-full grid place-items-center self-stretch"
               >
-                <div className="relative w-full max-w-[240px] aspect-square rounded-xl overflow-hidden ring-1 ring-[var(--panel-border)] shadow-sm">
+                <div className="relative w-full max-w-none max-[1024px]:aspect-[4/3] md:h-full md:max-w-none rounded-xl overflow-hidden ring-1 ring-[var(--panel-border)] shadow-sm">
                   <Image
                     src="/images/team/khaled-omer.png"
                     alt={lang === "ar" ? "المدير التنفيذي" : "CEO"}
                     fill
-                    sizes="(max-width: 1024px) 240px, 240px"
+                    sizes="(max-width: 480px) 100vw, (max-width: 1024px) 90vw, 480px"
                     className="object-cover"
                     priority
                   />
+                </div>
+                <div className="block max-[1024px]:mt-4 w-full hidden max-[1024px]:block">
+                  <div className="h-px w-full bg-gradient-to-r from-transparent via-[var(--brand-accent)]/60 to-transparent" />
                 </div>
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, ease: "easeOut", delay: 0.12 }}
-                className="basis-[70%] max-[1024px]:basis-full"
+                className="md:basis-[64%] lg:basis-[62%] max-[1024px]:basis-full"
               >
-                <div className="text-2xl md:text-3xl font-extrabold text-[var(--brand-accent)] tracking-tight">
-                  {lang === "ar" ? "مرحبًا بكم في خالد عمر للاستشارات البحرية والقانونية" : "Welcome to Khaled Omer Maritime & Legal Consultancy"}
-                </div>
-                <div className="mx-auto my-3 h-px w-24 bg-gradient-to-r from-transparent via-[var(--brand-accent)]/70 to-transparent" />
-                <div className="text-sm md:text-base text-[var(--text-secondary)] leading-relaxed">
-                  {lang === "ar"
-                    ? "نقدّم خبرة دقيقة في القانون البحري والعقود والنزاعات عبر دولة الإمارات، مع التزام بالجودة والسرعة، ونهج عملي موجّه لتحقيق النتائج."
-                    : "We deliver precise expertise in maritime law, contracts, and disputes across the UAE, with a commitment to quality, speed, and practical, results‑driven counsel."}
-                </div>
-                <div className="mt-6">
-                  <button
-                    onClick={() => {
+                {labels && (
+                  <>
+                    {(() => {
                       try {
-                        const dur = 1200;
-                        window.dispatchEvent(new CustomEvent("site-loading", { detail: { duration: dur } }) as any);
-                        router.push(lang === "ar" ? "/ar" : "/en");
-                        setTimeout(() => {
+                        track("welcome_impression", labels);
+                      } catch {}
+                      return null;
+                    })()}
+                    <WelcomingMessage
+                      lang={lang}
+                      labels={labels}
+                      labelsReady={true}
+                      onPrimary={() => {
+                        try {
+                          track("welcome_cta_click", labels);
+                        } catch {}
+                        try {
+                          const dur = 2000;
+                          window.dispatchEvent(new CustomEvent("site-loading", { detail: { duration: dur } }) as any);
+                          setTimeout(() => {
+                            router.push(lang === "ar" ? "/ar" : "/en");
+                            setMode("hidden");
+                          }, dur + 20);
+                        } catch {
+                          router.push(lang === "ar" ? "/ar" : "/en");
                           setMode("hidden");
-                        }, dur + 50);
-                      } catch {
-                        router.push(lang === "ar" ? "/ar" : "/en");
-                        setMode("hidden");
-                      }
-                    }}
-                    className="mx-auto block w-[40%] max-[1024px]:w-[60%] max-[480px]:w-full max-[480px]:px-4 max-[480px]:py-4 min-h-[44px] rounded-lg bg-[var(--brand-accent)] text-[var(--brand-primary)] font-semibold shadow hover:opacity-90"
-                  >
-                    {lang === "ar" ? "الانتقال إلى الصفحة الرئيسية" : "Move to Homepage"}
-                  </button>
-                </div>
+                        }
+                      }}
+                    />
+                  </>
+                )}
               </motion.div>
             </div>
           </div>

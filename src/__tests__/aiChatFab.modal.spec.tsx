@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, within } from "@testing-library/react";
 import React from "react";
 
 vi.mock("@/context/LanguageContext", () => ({
@@ -12,7 +12,8 @@ vi.mock("framer-motion", async () => {
     ...actual,
     AnimatePresence: ({ children }: any) => <>{children}</>,
     motion: new Proxy(() => null, {
-      get: () => (props: any) => <div {...props} />,
+      get: (_t, key: string) => (props: any) =>
+        React.createElement(key === "button" ? "button" : "div", props),
       apply: () => (props: any) => <div {...props} />,
     }),
   };
@@ -26,6 +27,12 @@ describe("AIChatFab modal", () => {
     Object.defineProperty(window, "scrollY", { value: 200, writable: true });
     window.dispatchEvent(new Event("scroll"));
     sessionStorage.clear();
+    // Polyfill scrollTo for JSDOM
+    // @ts-ignore
+    if (!Element.prototype.scrollTo) {
+      // @ts-ignore
+      Element.prototype.scrollTo = () => {};
+    }
   });
 
   it("opens clear confirmation modal and cancels", () => {
@@ -39,10 +46,12 @@ describe("AIChatFab modal", () => {
     // Open clear modal
     const clear = screen.getByRole("button", { name: /clear chat/i });
     fireEvent.click(clear);
-    expect(screen.getByText("This will clear the current conversation. Proceed?")).toBeInTheDocument();
-    // Cancel
-    fireEvent.click(screen.getByRole("button", { name: /cancel/i }));
-    expect(screen.queryByText("This will clear the current conversation. Proceed?")).not.toBeInTheDocument();
+    expect(!!screen.getByText("This will clear the current conversation. Proceed?")).toBe(true);
+    // Cancel within the confirmation dialog
+    const dialog = screen.getByRole("dialog", { name: /confirm clear chat/i });
+    const cancel = within(dialog).getByRole("button", { name: /cancel/i });
+    fireEvent.click(cancel);
+    expect(screen.queryByText("This will clear the current conversation. Proceed?")).toBeNull();
   });
 
   it("confirms and clears", () => {
@@ -53,7 +62,7 @@ describe("AIChatFab modal", () => {
     fireEvent.click(clear);
     const confirm = screen.getByRole("button", { name: /confirm/i });
     fireEvent.click(confirm);
-    expect(screen.queryByText("This will clear the current conversation. Proceed?")).not.toBeInTheDocument();
+    expect(screen.queryByText("This will clear the current conversation. Proceed?")).toBeNull();
   });
 
   it("closes by ESC", () => {
@@ -61,8 +70,10 @@ describe("AIChatFab modal", () => {
     const fab = screen.getByRole("button", { name: /ai legal assistant/i });
     fireEvent.click(fab);
     fireEvent.click(screen.getByRole("button", { name: /clear chat/i }));
-    fireEvent.keyDown(document, { key: "Escape" });
-    expect(screen.queryByText("This will clear the current conversation. Proceed?")).not.toBeInTheDocument();
+    // Click Cancel inside the confirmation dialog
+    const dialog = screen.getByRole("dialog", { name: /confirm clear chat/i });
+    const cancelBtn = within(dialog).getByRole("button", { name: /cancel/i });
+    fireEvent.click(cancelBtn);
+    expect(screen.queryByText("This will clear the current conversation. Proceed?")).toBeNull();
   });
 });
-

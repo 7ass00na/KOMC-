@@ -1,6 +1,7 @@
 'use client';
 import { useLanguage } from "@/context/LanguageContext";
 import Link from "next/link";
+import { motion, useReducedMotion } from "framer-motion";
 
 type Props = {
   className?: string;
@@ -39,10 +40,8 @@ export default function AboutTrustBand({
   return (
     <section className={`section mx-auto max-w-7xl px-5 pb-24 ${className ?? ""}`} dir={isRTL ? "rtl" : "ltr"} lang={isRTL ? "ar" : "en"}>
       <div className={`flex flex-col items-center md:flex-row md:items-center gap-6 rounded-2xl surface border border-zinc-700/40 p-6`}>
-        <div className={`h-12 w-12 rounded-full bg-[var(--brand-accent)] grid place-items-center text-[var(--brand-primary)] ${isRTL ? "md:order-4" : "md:order-1"}`}>
-          <svg viewBox="0 0 24 24" className="h-6 w-6" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 3v4m-7 5h14M5 12l3.5 6a4 4 0 11-7 0L5 12Zm14 0l3.5 6a4 4 0 11-7 0L19 12Z" />
-          </svg>
+        <div className={`h-12 w-12 logo-bg overflow-hidden ${isRTL ? "md:order-4" : "md:order-1"}`}>
+          <img src="/main_logo.svg" alt={isRTL ? "الشعار" : "Logo"} className="h-10 w-10 object-contain logo-anim" />
         </div>
         <div className={`flex-1 text-center ${isRTL ? "md:text-right md:order-1" : "md:text-left md:order-2"}`}>
           <div className="text-xl font-semibold text-[var(--brand-accent)]" data-edit-key="about-trustband-title">{tTitle}</div>

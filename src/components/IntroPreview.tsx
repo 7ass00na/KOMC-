@@ -85,7 +85,7 @@ export default function IntroPreview() {
         <div className="flex h-full w-full items-center justify-center" dir={dir}>
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }} className="text-center">
             <div className="mx-auto mb-3 relative h-10 w-10 md:h-12 md:w-12 lg:h-14 lg:w-14">
-              <Image src={"/icon.svg"} alt="KOMC" fill sizes="(max-width: 768px) 40px, (max-width: 1024px) 48px, 56px" className="object-contain" priority />
+              <Image src={"/main_logo.svg"} alt={lang === "ar" ? "الشعار الرئيسي" : "Main Logo"} fill sizes="(max-width: 768px) 40px, (max-width: 1024px) 48px, 56px" className="object-contain" priority />
             </div>
             <div className="text-2xl font-extrabold tracking-wide text-amber-300">{lang === "ar" ? "شركة خالد عمر للاستشارات البحرية والقانونية" : "Khaled Omar Legal & Maritime Consultancy "}</div>
             <div className="mt-2 text-sm text-white/90">{lang === "ar" ? "دقة في القانون البحري" : "Precision in Maritime Law."}</div>

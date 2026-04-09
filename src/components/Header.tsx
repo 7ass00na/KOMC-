@@ -241,18 +241,8 @@ export default function Header() {
         >
           {/* EN: Brand mark and name */}
           {/* AR: علامة الشعار واسم العلامة */}
-          <div className="h-8 w-8 rounded-md bg-[var(--brand-accent)] text-black flex items-center justify-center">
-            {introPlaying ? (
-              <Image src="/icon.svg" alt="KOMC" width={20} height={20} />
-            ) : (
-              <motion.span
-                style={{ display: "inline-flex", transformOrigin: "50% 10%" }}
-                animate={reduce ? undefined : { rotate: [-3, 0, 3, 0] }}
-                transition={reduce ? undefined : { duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
-              >
-                <Scale className="h-5 w-5" aria-hidden="true" />
-              </motion.span>
-            )}
+          <div className="h-8 w-8 logo-bg overflow-hidden">
+            <Image src="/main_logo.svg" alt={lang === "ar" ? "الشعار الرئيسي" : "Main Logo"} width={20} height={20} className="object-contain logo-anim" />
           </div>
           <div className={
             "text-[13px] md:text-sm font-bold " +
@@ -593,7 +583,7 @@ export default function Header() {
                       priority={true}
                     />
                   ) : (
-                    <Image src="/icon.svg" alt="Logo" width={32} height={32} className="h-8 w-8 object-contain" sizes="32px" priority />
+                    <Image src="/main_logo.svg" alt={lang === "ar" ? "الشعار" : "Logo"} width={32} height={32} className="h-8 w-8 object-contain" sizes="32px" priority />
                   )}
                 </motion.div>
               </div>
