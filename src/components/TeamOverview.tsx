@@ -57,21 +57,32 @@ export default function TeamOverview() {
   const scoreFor = (slug: string) => {
     const map: Record<string, number> = {
       "khaled-omer": 95,
-      "Mohamed Dafallah": 90,
-      "Malik Omer": 86,
-      "nour-hassan": 82,
+      "Mohamed Dafallah": 88,
+      "Malik Omer": 92,
+      "nour-hassan": 90,
     };
     const v = map[slug] ?? 82;
     return Math.min(95, Math.max(75, v));
   };
   const credFor = (slug: string) => {
     const map: Record<string, string> = {
-      "khaled-omer": lang === "ar" ? "14 سنة" : "14y",
+      "khaled-omer": lang === "ar" ? "25 سنة" : "25y",
       "Mohamed Dafallah": lang === "ar" ? "10 سنوات" : "10y",
-      "Malik Omer": lang === "ar" ? "8 سنوات" : "8y",
-      "nour-hassan": lang === "ar" ? "6 سنوات" : "6y",
+      "Malik Omer": lang === "ar" ? "18 سنة" : "18y",
+      "nour-hassan": lang === "ar" ? "15 سنة" : "15y",
     };
     return map[slug] ?? (lang === "ar" ? "5 سنوات" : "5y");
+  };
+  const regionsFor = (slug: string) => {
+    const ar = (arr: string[]) => arr;
+    const en = (arr: string[]) => arr;
+    const map: Record<string, string[]> = {
+      "khaled-omer": lang === "ar" ? ar(["الإمارات","السعودية","مصر","الخليج"]) : en(["UAE","Saudi Arabia","Egypt","GCC"]),
+      "Mohamed Dafallah": lang === "ar" ? ar(["الإمارات","مصر","الخليج"]) : en(["UAE","Egypt","GCC"]),
+      "Malik Omer": lang === "ar" ? ar(["الإمارات","مصر","الخليج"]) : en(["United Arab Emirates","Egypt","GCC"]),
+      "nour-hassan": lang === "ar" ? ar(["الإمارات","جنوب مصر","مصر"]) : en(["United Arab Emirates","Southern Egypt","Egypt"]),
+    };
+    return map[slug] ?? (lang === "ar" ? ["الإمارات","الخليج"] : ["UAE","GCC"]);
   };
   type Person = {
     name: string;
@@ -84,16 +95,16 @@ export default function TeamOverview() {
   const items: Person[] =
     lang === "ar"
       ? [
-          { name: "خالد عمر", role: "مستشار قانوني ، مالك", tags: ["بحري", "تنفيذ"], slug: "khaled-omer", focus: "بحري، استراتيجية، منازعات معقدة", bio: "مستشار موثوق في البحرية والتقاضي عالي المخاطر." },
-          { name: " محمد دفع الله", role: "مدير المكتب", tags: ["إدارة", "تنفيذ"], slug: "Mohamed Dafallah", focus: "أميرالية، بضائع، حجز سفن", bio: "حلول سريعة وتنفيذ دقيق للقضايا." },
-          { name: "مالك عمر", role: "مستشار شركات", tags: ["إدارة", "بحري"], slug: "Malik Omer", focus: "شركات، امتثال، معاملات", bio: "هيكلة صفقات وحوكمة بنهج عملي." },
-          { name: "ابراهيم حسن", role: "محامية دعاوى", tags: ["منازعات", "تنفيذ"], slug: "nour-hassan", focus: "تقاضي، دعم التحكيم", bio: "إدارة نزاعات بكفاءة وإتقان للإجراءات." },
+          { name: "خالد عمر", role: "المالك/مستشار قانوني بحري معتمد", tags: ["بحري", "استراتيجيات", "منازعات"], slug: "khaled-omer", focus: "بحري، استراتيجيات، منازعات معقدة", bio: "مستشار موثوق في القضايا البحرية وعالية المخاطر." },
+          { name: "محمد دفع الله", role: "مدير/مستشار قانوني", tags: ["تجاري", "عمالي"], slug: "Mohamed Dafallah", focus: "استشارات قانونية متنوعة", bio: "مستشار موثوق في الشؤون التجارية والعمالية." },
+          { name: "مالك عمر", role: "بحري/تجاري", tags: ["بحري","تجاري"], slug: "Malik Omer", focus: "قبطان سفينة سابق، متخصص في الشؤون البحرية التجارية", bio: "مستشار موثوق في المسائل البحرية والتجارية المعقدة." },
+          { name: "إبراهيم أبو روياس", role: "أعمال/شركات", tags: ["أعمال","إدارة"], slug: "nour-hassan", focus: "أعمال، إدارة", bio: "مستشار موثوق في المسائل البحرية والتجارية المعقدة." },
         ]
       : [
-          { name: "Khaled Omer", role: "Managing Partner", tags: ["Maritime", "Enforcement"], slug: "khaled-omer", focus: "Maritime, Strategy, Complex Disputes", bio: "Trusted adviser on admiralty and high-stakes litigation." },
-          { name: "Mohamed Dafallah", role: "Maritime Attorney", tags: ["Enforcement", "Manage"], slug: "Mohamed Dafallah", focus: "Admiralty, Cargo, Vessel Arrests", bio: "Delivers fast remedies and precise case execution." },
-          { name: "Malik Omer", role: "Corporate Counsel", tags: ["Manage", "Maritime"], slug: "Malik Omer", focus: "Corporate, Compliance, Transactions", bio: "Structuring deals and governance with pragmatic advice." },
-          { name: "Ibrahim Hassan", role: "Litigation Associate", tags: ["Disputes", "Arbitration"], slug: "nour-hassan", focus: "Litigation, Arbitration Support", bio: "Efficient dispute management and procedural mastery." },
+          { name: "Khaled Omar", role: "Owner/Certified Maritime Legal Advisor", tags: ["Maritime","Strategy","Disputes"], slug: "khaled-omer", focus: "Maritime, Strategic, and Complex Disputes", bio: "Trusted Advisor on Maritime and High-Risk Matters." },
+          { name: "Mohammed Dafallah", role: "Manager/Legal Advisor", tags: ["Commercial","Labor"], slug: "Mohamed Dafallah", focus: "Diverse Legal Advice", bio: "Trusted Advisor on Commercial and Labor Matters." },
+          { name: "Malik Omar", role: "Maritime/Commercial", tags: ["Maritime","Commercial"], slug: "Malik Omer", focus: "Former Ship Captain, specializing in commercial maritime matters", bio: "Trusted Consultant in Complex Maritime and Commercial Matters." },
+          { name: "Ibrahim Abu Ruyas", role: "Business/Companies", tags: ["Business","Management"], slug: "nour-hassan", focus: "Business, Management", bio: "Trusted Consultant in Complex Maritime and Commercial Matters." },
         ];
   const teamLines =
     lang === "ar"
@@ -212,8 +223,9 @@ export default function TeamOverview() {
                     <div className="mt-auto pt-3">
                       <div className="flex items-center justify-between gap-2">
                         <div className="flex flex-wrap items-center gap-2">
-                          <span className="rounded-lg chip px-2 py-0.5 text-[10px] text-zinc-300">UAE</span>
-                          <span className="rounded-lg chip px-2 py-0.5 text-[10px] text-zinc-300">GCC</span>
+                          {regionsFor(p.slug).map((r) => (
+                            <span key={r} className="rounded-lg chip px-2 py-0.5 text-[10px] text-zinc-300">{r}</span>
+                          ))}
                         </div>
                         <div className="inline-flex items-center gap-1 rounded-lg bg-zinc-800/60 px-2 py-0.5 text-[10px] text-zinc-200">
                           <svg aria-hidden="true" viewBox="0 0 24 24" className="h-3.5 w-3.5">

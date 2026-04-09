@@ -18,30 +18,45 @@ export default function AboutTeamGrid({ team, isRTL = false, startIndex = 0 }: {
   const toggleFlip = (idx: number) => setFlipped((v) => (v === idx ? null : idx));
   const scoreFor = (name: string) => {
     const map: Record<string, number> = {
-      "Khaled Omer": 95,
-      "Mohamed Dafallah": 90,
-      "Malik Omer": 86,
-      "Ibrahim Hassan": 82,
+      "Khaled Omar": 95,
+      "Mohammed Dafallah": 88,
+      "Malik Omar": 92,
+      "Ibrahim Abu Ruyas": 90,
       "خالد عمر": 95,
-      "محمد دفع الله": 90,
-      "مالك عمر": 86,
-      "ابراهيم حسن": 82,
+      "محمد دفع الله": 88,
+      "مالك عمر": 92,
+      "إبراهيم أبو روياس": 90,
     };
     const v = map[name] ?? 82;
     return Math.min(95, Math.max(75, v));
   };
   const credFor = (name: string) => {
     const map: Record<string, string> = {
-      "Khaled Omer": isRTL ? "14 سنة" : "14y",
-      "Mohamed Dafallah": isRTL ? "10 سنوات" : "10y",
-      "Malik Omer": isRTL ? "8 سنوات" : "8y",
-      "Ibrahim Hassan": isRTL ? "6 سنوات" : "6y",
-      "خالد عمر": isRTL ? "14 سنة" : "14y",
+      "Khaled Omar": isRTL ? "25 سنة" : "25y",
+      "Mohammed Dafallah": isRTL ? "10 سنوات" : "10y",
+      "Malik Omar": isRTL ? "18 سنة" : "18y",
+      "Ibrahim Abu Ruyas": isRTL ? "15 سنة" : "15y",
+      "خالد عمر": isRTL ? "25 سنة" : "25y",
       "محمد دفع الله": isRTL ? "10 سنوات" : "10y",
-      "مالك عمر": isRTL ? "8 سنوات" : "8y",
-      "ابراهيم حسن": isRTL ? "6 سنوات" : "6y",
+      "مالك عمر": isRTL ? "18 سنة" : "18y",
+      "إبراهيم أبو روياس": isRTL ? "15 سنة" : "15y",
     };
     return map[name] ?? (isRTL ? "5 سنوات" : "5y");
+  };
+  const regionsFor = (name: string) => {
+    const ar = (arr: string[]) => arr;
+    const en = (arr: string[]) => arr;
+    const map: Record<string, string[]> = {
+      "Khaled Omar": isRTL ? ar(["الإمارات","السعودية","مصر","الخليج"]) : en(["UAE","Saudi Arabia","Egypt","GCC"]),
+      "Mohammed Dafallah": isRTL ? ar(["الإمارات","مصر","الخليج"]) : en(["UAE","Egypt","GCC"]),
+      "Malik Omar": isRTL ? ar(["الإمارات","مصر","الخليج"]) : en(["United Arab Emirates","Egypt","GCC"]),
+      "Ibrahim Abu Ruyas": isRTL ? ar(["الإمارات","جنوب مصر","مصر"]) : en(["United Arab Emirates","Southern Egypt","Egypt"]),
+      "خالد عمر": ar(["الإمارات","السعودية","مصر","الخليج"]),
+      "محمد دفع الله": ar(["الإمارات","مصر","الخليج"]),
+      "مالك عمر": ar(["الإمارات","مصر","الخليج"]),
+      "إبراهيم أبو روياس": ar(["الإمارات","جنوب مصر","مصر"]),
+    };
+    return map[name] ?? (isRTL ? ["الإمارات","الخليج"] : ["UAE","GCC"]);
   };
   return (
     <div className="about-team-grid mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -122,8 +137,9 @@ export default function AboutTeamGrid({ team, isRTL = false, startIndex = 0 }: {
                   <div className="mt-auto pt-3">
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="rounded-lg chip px-2 py-0.5 text-[10px] text-zinc-300">UAE</span>
-                        <span className="rounded-lg chip px-2 py-0.5 text-[10px] text-zinc-300">GCC</span>
+                        {regionsFor(p.name).map((r) => (
+                          <span key={r} className="rounded-lg chip px-2 py-0.5 text-[10px] text-zinc-300">{r}</span>
+                        ))}
                       </div>
                       <div className="inline-flex items-center gap-1 rounded-lg bg-zinc-800/60 px-2 py-0.5 text-[10px] text-zinc-200">
                         <svg aria-hidden="true" viewBox="0 0 24 24" className="h-3.5 w-3.5">
