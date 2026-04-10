@@ -109,10 +109,8 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
       fd.append("caseTitle", caseTitle);
       fd.append("caseDesc", caseDesc);
       fd.append("lang", lang);
-      fd.append("serviceType", serviceType);
       fd.append("preferredDateTime", preferredDateTime);
       fd.append("preferredContact", preferredContact);
-      fd.append("comments", comments);
       if (attachment) fd.append("attachment", attachment);
       if (attachmentNote) fd.append("attachmentNote", attachmentNote);
       const res = await fetch("/api/contact", { method: "POST", body: fd });
@@ -242,38 +240,21 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
               </span>
             </div>
           </div>
+          
           <div>
-            <label className="block text-xs font-semibold text-[var(--brand-accent)] mb-1">
-              {rtl ? "نوع الخدمة" : "Service Type"}
+            <label className="block text-xs font-semibold text-[var(--brand-accent)] mb-1 inline-flex items-center gap-2">
+              <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true"><path fill="currentColor" d="M7 2h1v2h8V2h1a2 2 0 0 1 2 2v2H5V4a2 2 0 0 1 2-2Zm13 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8h16Zm-3 4H7v2h10v-2Z"/></svg>
+              <span>{rtl ? "التاريخ والوقت المفضل" : "Preferred Date/Time"}</span>
             </label>
-            <div className="relative">
-              <select
-                value={serviceType}
-                onChange={(e) => setServiceType(e.target.value)}
-                className="themed-select w-full rounded-lg border border-[var(--panel-border)] px-3 py-2 pr-10 text-white"
-              >
-                <option value="">{rtl ? "اختياري" : "Optional"}</option>
-                {services.map((s) => (
-                  <option key={s} value={s}>{s}</option>
-                ))}
-              </select>
-              <span className={`pointer-events-none absolute inset-y-0 ${rtl ? "left-3" : "right-3"} flex items-center`}>
-                <svg width="16" height="16" viewBox="0 0 20 20" aria-hidden="true" className="text-[var(--brand-accent)]">
-                  <path d="M6 8l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </span>
+            <div className="relative group">
+              <input
+                type="datetime-local"
+                value={preferredDateTime}
+                onChange={(e) => setPreferredDateTime(e.target.value)}
+                className="w-full rounded-lg bg-black/30 border border-[var(--panel-border)] pl-3 pr-10 py-2 text-white placeholder:text-zinc-500 focus-visible:outline-none"
+              />
+              <svg viewBox="0 0 24 24" className="pointer-events-none absolute inset-y-0 right-2 my-auto h-4 w-4 text-[var(--brand-accent)] group-focus-within:text-[var(--accent-hover)]" aria-hidden="true"><path fill="currentColor" d="M7 2h1v2h8V2h1a2 2 0 0 1 2 2v2H5V4a2 2 0 0 1 2-2Zm13 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8h16Zm-3 4H7v2h10v-2Z"/></svg>
             </div>
-          </div>
-          <div>
-            <label className="block text-xs font-semibold text-[var(--brand-accent)] mb-1">
-              {rtl ? "التاريخ والوقت المفضل" : "Preferred Date/Time"}
-            </label>
-            <input
-              type="datetime-local"
-              value={preferredDateTime}
-              onChange={(e) => setPreferredDateTime(e.target.value)}
-              className="w-full rounded-lg bg-black/30 border border-[var(--panel-border)] px-3 py-2 text-white placeholder:text-zinc-500"
-            />
           </div>
           <div>
             <label className="block text-xs font-semibold text-[var(--brand-accent)] mb-1">
@@ -298,16 +279,7 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
               </span>
             </div>
           </div>
-          <div className="md:col-span-2">
-            <label className="block text-xs font-semibold text-[var(--brand-accent)] mb-1">{t.comments}</label>
-            <textarea
-              value={comments}
-              onChange={(e) => setComments(e.target.value)}
-              rows={4}
-              className="w-full rounded-lg bg-black/30 border border-[var(--panel-border)] px-3 py-2 text-white placeholder:text-zinc-500"
-              placeholder={rtl ? "أدخل أي معلومات إضافية" : "Add any additional information"}
-            />
-          </div>
+          
           <div>
             <label className="block text-xs font-semibold text-[var(--brand-accent)] mb-1">{t.caseTitle}</label>
             <input value={caseTitle} onChange={(e) => setCaseTitle(e.target.value)} placeholder={rtl ? "عنوان موجز للقضية" : "Brief case title"} className="w-full rounded-lg bg-black/30 border border-[var(--panel-border)] px-3 py-2 text-white placeholder:text-zinc-500" />
