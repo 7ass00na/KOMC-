@@ -48,11 +48,15 @@ export default function HomeHero({
   const { dir, t } = useLanguage();
   const isAr = dir === "rtl";
   const [isEditor, setIsEditor] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
   useEffect(() => {
     try {
       const qs = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
       setIsEditor(Boolean(qs && qs.get("editor") === "1"));
     } catch {}
+  }, []);
+  useEffect(() => {
+    setHydrated(true);
   }, []);
   const data = useMemo<SlideData[]>(
     () =>
@@ -261,7 +265,7 @@ export default function HomeHero({
 
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
-          key={activeSlide?.id}
+          key={String(activeSlide?.id) + (hydrated ? "-on" : "-off")}
           className="absolute inset-0 pointer-events-none"
           initial={{ opacity: 0, scale: 1.08 }}
           animate={{ opacity: 1, scale: 1.0 }}
@@ -272,11 +276,16 @@ export default function HomeHero({
             className="absolute -inset-6 md:-inset-4 lg:-inset-6"
             initial={false}
             animate={
-              reduce
-                ? { scale: 1.0 }
-                : { scale: [1.0, 1.08], x: [0, direction * -20, 0], y: [0, 10, 0] }
+              hydrated && !reduce
+                ? { scale: [1.0, 1.08], x: [0, direction * -20, 0], y: [0, 10, 0] }
+                : { scale: 1.0, x: 0, y: 0 }
             }
-            transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
+            transition={{
+              duration: 16,
+              repeat: hydrated && !reduce ? Infinity : 0,
+              repeatType: "mirror",
+              ease: "easeInOut",
+            }}
             style={{ willChange: "transform", y: parallaxY as any }}
           >
             <Image

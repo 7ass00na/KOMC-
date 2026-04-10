@@ -299,6 +299,22 @@
 .scroll-xy::-webkit-scrollbar-track {
   background: transparent;
 }
+@media (max-width: 1024px) {
+  .col-scroll {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    touch-action: pan-y;
+  }
+}
+.cta-sticky {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  background: linear-gradient(to top, color-mix(in oklab, var(--panel-bg), black 10%) 65%, transparent);
+  backdrop-filter: saturate(110%) blur(0.1px);
+  border-top: 1px solid var(--panel-border);
+}
 @media (max-width: 768px) {
   .team-card-front .team-photo {
     object-fit: cover !important;

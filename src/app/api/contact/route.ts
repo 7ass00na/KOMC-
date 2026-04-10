@@ -52,7 +52,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: "INVALID_EMAIL" }, { status: 400 });
   }
   if (file && file.size > 25 * 1024 * 1024) {
-    return NextResponse.json({ ok: false, error: "ATTACHMENT_TOO_LARGE", detail: "Max 25MB" }, { status: 413 });
+    return NextResponse.json({ ok: false, error: "ATTACHMENT_TOO_LARGE" }, { status: 413 });
   }
 
   const to = "ahmedhussan068@gmail.com";
@@ -181,18 +181,36 @@ IP ${ip} · ${ts}
     }
     try {
       await transporter.verify();
-    } catch (e: any) {
-      console.error("[contact] SMTP verify failed", e?.code || "", e?.message || e);
-      return NextResponse.json({ ok: false, error: "SMTP_VERIFY_FAILED", detail: e?.message || "verify failed" }, { status: 502 });
+    } catch (e) {
+      console.error("[contact] SMTP verify failed", (e as any)?.message || e);
+      return NextResponse.json({ ok: false, error: "SMTP_VERIFY_FAILED" }, { status: 502 });
     }
-    await transporter.sendMail(mail);
+    // Retry with exponential backoff on transient failures
+    const transient = new Set(["ETIMEDOUT", "ECONNRESET", "EAI_AGAIN", "ESOCKET", "ETIME"]);
+    const delays = [500, 1500, 3000];
+    let sent = false;
+    for (let attempt = 0; attempt < delays.length && !sent; attempt++) {
+      try {
+        await transporter.sendMail(mail);
+        sent = true;
+      } catch (e: any) {
+        const code = e?.code || e?.responseCode || "";
+        const isTransient =
+          transient.has(String(code)) ||
+          (typeof code === "number" && code >= 400 && code < 500);
+        console.error("[contact] sendMail error", { attempt: attempt + 1, code, message: e?.message || e });
+        if (attempt < delays.length - 1 && isTransient) {
+          await new Promise((r) => setTimeout(r, delays[attempt]));
+          continue;
+        }
+        throw e;
+      }
+    }
     console.info("[contact] email delivered", { to, subject, ts, ip });
     return NextResponse.json({ ok: true, queued: true });
-  } catch (err: any) {
-    const code = err?.code || err?.name || "EMAIL_SEND_FAILED";
-    const msg = err?.message || String(err);
-    console.error("[contact] Failed to send email", code, msg);
-    return NextResponse.json({ ok: false, error: code, detail: msg }, { status: 500 });
+  } catch (err) {
+    console.error("[contact] Failed to send email", err);
+    return NextResponse.json({ ok: false, error: "EMAIL_SEND_FAILED" }, { status: 500 });
   }
 }
 

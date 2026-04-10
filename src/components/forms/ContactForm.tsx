@@ -15,11 +15,11 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
   const [attachment, setAttachment] = useState<File | null>(null);
   const [attachmentNote, setAttachmentNote] = useState("");
   const [attachmentError, setAttachmentError] = useState<string | null>(null);
-  const [errorDetail, setErrorDetail] = useState<string | null>(null);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [showThanks, setShowThanks] = useState(false);
   const [showError, setShowError] = useState(false);
   const [loadingShownAt, setLoadingShownAt] = useState<number | null>(null);
+  const [errorDetail, setErrorDetail] = useState<string>("");
   const [preferredDateTime, setPreferredDateTime] = useState("");
   const [preferredContact, setPreferredContact] = useState<"phone" | "email" | "either" | "">("");
 
@@ -118,21 +118,25 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
       if (attachment) fd.append("attachment", attachment);
       if (attachmentNote) fd.append("attachmentNote", attachmentNote);
       const res = await fetch("/api/contact", { method: "POST", body: fd });
-      let detail: string | null = null;
+      let next: "success" | "error" = res.ok ? "success" : "error";
       if (!res.ok) {
         try {
-          const data = await res.json();
-          detail = data?.detail || data?.error || JSON.stringify(data);
-        } catch {
-          try {
+          const ct = res.headers.get("content-type") || "";
+          let detail = `HTTP ${res.status} ${res.statusText}`;
+          if (ct.includes("application/json")) {
+            const j = await res.json();
+            if (j?.error) detail += ` – ${j.error}`;
+          } else {
             const txt = await res.text();
-            detail = txt?.slice(0, 200) || String(res.status);
-          } catch {
-            detail = String(res.status);
+            if (txt) detail += ` – ${txt.substring(0, 240)}`;
           }
+          setErrorDetail(detail);
+        } catch {
+          setErrorDetail(`HTTP ${res.status} ${res.statusText}`);
         }
+      } else {
+        setErrorDetail("");
       }
-      const next = res.ok ? "success" as const : "error" as const;
       const elapsed = loadingShownAt ? Date.now() - loadingShownAt : 0;
       const delay = Math.max(0, 1000 - elapsed);
       setTimeout(() => {
@@ -140,20 +144,15 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
         if (next === "success") {
           setShowThanks(true);
         } else {
-          setErrorDetail(detail);
           setShowError(true);
         }
       }, delay);
     } catch (e: any) {
+      setErrorDetail(e?.message ? String(e.message) : "Network error");
       const elapsed = loadingShownAt ? Date.now() - loadingShownAt : 0;
       const delay = Math.max(0, 1000 - elapsed);
       setTimeout(() => {
         setStatus("error");
-        try {
-          const code = e?.code || e?.name || "NETWORK_ERROR";
-          const msg = e?.message || String(e);
-          setErrorDetail(`${code}: ${msg}`.slice(0, 240));
-        } catch {}
         setShowError(true);
       }, delay);
     }
@@ -299,7 +298,7 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
             <textarea value={caseDesc} onChange={(e) => setCaseDesc(e.target.value)} rows={6} placeholder={rtl ? "صف بإيجاز الوقائع والوثائق المتاحة ونطاق المطلوب." : "Briefly describe facts, available documents, and the scope sought."} className="w-full rounded-lg bg-black/30 border border-[var(--panel-border)] px-3 py-2 text-white placeholder:text-zinc-500" />
           </div>
           <div className="md:col-span-2 mt-4 mb-6 md:mb-8">
-            <label className="block text-xs font-semibold text-[var(--brand-accent)] mb-1">{t.attachLabel} <span className="text-[var(--text-secondary)]">({t.attachHelp})</span></label>
+            <label className="block text-xs font-semibold text-[var(--brand-accent)] mb-1">{t.attachLabel} <span className="text-[var(--text-secondary)]">(Max 25 MB)</span></label>
             <div className="grid gap-3 md:grid-cols-3">
               <input
                 type="file"
@@ -325,7 +324,7 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
               </div>
             ) : (
               <div className="mt-1 text-xs text-zinc-500">
-                {rtl ? "الملفات المسموح بها: PDF, DOC(X), صور، ZIP (حتى 10 ميجابايت)" : "Allowed: PDF, DOC(X), images, ZIP (up to 10 MB)"}
+                {rtl ? "الملفات المسموح بها: PDF, DOC(X), صور، ZIP (حتى 25 ميجابايت)" : "Allowed: PDF, DOC(X), images, ZIP (up to 25 MB)"}
               </div>
             )}
             {attachmentError ? null : null}
@@ -400,7 +399,8 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
             <div className="mt-3 text-2xl font-extrabold text-[var(--brand-accent)]">{t.errorTitle}</div>
             <div className="mx-auto mt-2 h-px w-24 bg-gradient-to-r from-transparent via-[var(--brand-accent)]/70 to-transparent" />
             <div className="mt-2 text-sm text-[var(--text-secondary)]">
-              {t.errorBody}{errorDetail ? ` — ${errorDetail}` : ""}
+              {t.errorBody}
+              {errorDetail ? <div className="mt-1 text-xs text-red-300">{errorDetail}</div> : null}
             </div>
             <button
               onClick={() => {

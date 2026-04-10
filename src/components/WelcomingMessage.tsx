@@ -75,20 +75,22 @@ export default function WelcomingMessage({ lang, labels, onPrimary, labelsReady,
           ))}
         </ul>
       </div>
-      <div className="flex items-center gap-3 max-[768px]:sticky max-[768px]:bottom-0 max-[768px]:z-10 max-[768px]:py-2 max-[768px]:backdrop-blur max-[768px]:bg-[color-mix(in_oklab,var(--panel-bg),black_10%)]">
-        <button
-          onClick={onPrimary}
-          className="min-h-[44px] rounded-lg px-5 py-3 bg-[var(--brand-accent)] text-[var(--brand-primary)] font-semibold shadow hover:opacity-90"
-        >
-          {isAr ? "الانتقال إلى الصفحة الرئيسية" : "Move to Home"}
-        </button>
-        <a
-          href={isAr ? "/ar/services" : "/en/services"}
-          onClick={rememberLang}
-          className="min-h-[44px] rounded-lg px-4 py-3 ring-1 ring-[var(--panel-border)] hover:bg-[var(--panel-muted-bg)]"
-        >
-          {isAr ? "استعرض الخدمات" : "Explore Services"}
-        </a>
+      <div className="max-[1024px]:cta-sticky pt-3">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={onPrimary}
+            className="min-h-[44px] rounded-lg px-5 py-3 bg-[var(--brand-accent)] text-[var(--brand-primary)] font-semibold shadow hover:opacity-90"
+          >
+            {isAr ? "الانتقال إلى الصفحة الرئيسية" : "Move to Home"}
+          </button>
+          <a
+            href={isAr ? "/ar/services" : "/en/services"}
+            onClick={rememberLang}
+            className="min-h-[44px] rounded-lg px-4 py-3 ring-1 ring-[var(--panel-border)] hover:bg-[var(--panel-muted-bg)]"
+          >
+            {isAr ? "استعرض الخدمات" : "Explore Services"}
+          </a>
+        </div>
       </div>
       <div className="flex items-center gap-2 text-xs text-[var(--text-secondary)]">
         <span>{isAr ? "منذ 2010" : "Since 2010"}</span>

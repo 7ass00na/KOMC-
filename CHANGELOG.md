@@ -29,3 +29,9 @@
 - Tests & Coverage: Full suite executed with coverage thresholds (≥80% for core logic); added scroll guard tests and email subject tests.
 - Cleanup: Removed build artifacts, pruned/deduped dependencies; fresh install and production build validated. Lint and type checks passed.
 - Docs: Updated README and docs with SMTP configuration notes, testing/build steps, and UX changes for the welcome overlay.
+
+## Komc-BV0002
+- Hero slow-motion stability (Vercel): Ensured animation initializes only after client hydration to avoid SSR/CSR motion mismatches; added mirrored infinite keyframes and hydration-aware keys to prevent stalls in production. Verified across Chrome, Safari, and Samsung Internet.
+- SMTP reliability: Added transporter.verify() and exponential backoff retry (500ms/1500ms/3000ms) on transient errors with structured logging and safe messages; kept TLS/pooling with timeouts.
+- Contact form: Client now appends precise error details to the friendly message; attachment cap raised to 25 MB with clear UI guidance; server responds 413 when exceeded.
+- Mobile welcome card: Separated scroll layer for text/buttons with pinned image column; CTAs sticky inside the scroll pane for guaranteed reachability; momentum/touch scroll tuned.
