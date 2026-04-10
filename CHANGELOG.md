@@ -14,3 +14,9 @@
 - Enhanced contact form to include service type and preferred date/time fields with client-side validation.
 - API contact route: added serviceType and preferredDateTime to emails, appended request timestamp and client IP, and added simple rate limiting by IP.
 - Completed dependency cleanup and rebuilt production bundle; tests pass with coverage thresholds enforced.
+
+## ConsFormUPD
+- Footer: Updated bilingual legal bar text per specification while preserving all links.
+- Contact form: Added preferred contact method and additional comments fields, with validation.
+- Email pipeline: Localized subjects, salutations, and section headers; included timestamp and requester IP in emails; honeypot and email format checks added; delivery success logging.
+- Tests: Added unit test for email subject generation across languages.

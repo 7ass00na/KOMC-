@@ -20,6 +20,8 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
   const [loadingShownAt, setLoadingShownAt] = useState<number | null>(null);
   const [serviceType, setServiceType] = useState("");
   const [preferredDateTime, setPreferredDateTime] = useState("");
+  const [preferredContact, setPreferredContact] = useState<"phone" | "email" | "either" | "">("");
+  const [comments, setComments] = useState("");
 
   const t = {
     title: rtl ? "نموذج الاستشارة" : "Consultation Form",
@@ -45,6 +47,11 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
     errorBody: rtl ? "حدث خطأ أثناء الإرسال. حاول مرة أخرى لاحقًا." : "An error occurred during submission. Please try again later.",
     processingTitle: rtl ? "جاري إرسال الطلب" : "Submitting request",
     processingBody: rtl ? "يرجى الانتظار لحظات قليلة..." : "Please wait a moment...",
+    preferredContact: rtl ? "طريقة التواصل المفضلة" : "Preferred Contact Method",
+    contactPhone: rtl ? "الهاتف" : "Phone",
+    contactEmail: rtl ? "البريد الإلكتروني" : "Email",
+    contactEither: rtl ? "أي منهما" : "Either",
+    comments: rtl ? "ملاحظات إضافية" : "Additional Comments",
   };
 
   const formatBytes = (bytes: number) => {
@@ -91,6 +98,8 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
     }
     try {
       const fd = new FormData();
+      // honeypot
+      fd.append("company", "");
       fd.append("fullName", fullName);
       fd.append("gender", gender);
       fd.append("email", email);
@@ -102,6 +111,8 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
       fd.append("lang", lang);
       fd.append("serviceType", serviceType);
       fd.append("preferredDateTime", preferredDateTime);
+      fd.append("preferredContact", preferredContact);
+      fd.append("comments", comments);
       if (attachment) fd.append("attachment", attachment);
       if (attachmentNote) fd.append("attachmentNote", attachmentNote);
       const res = await fetch("/api/contact", { method: "POST", body: fd });
@@ -251,6 +262,39 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
               value={preferredDateTime}
               onChange={(e) => setPreferredDateTime(e.target.value)}
               className="w-full rounded-lg bg-black/30 border border-[var(--panel-border)] px-3 py-2 text-white placeholder:text-zinc-500"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-[var(--brand-accent)] mb-1">
+              {t.preferredContact} <span aria-hidden="true" className="text-[var(--brand-accent)]">*</span>
+            </label>
+            <div className="relative">
+              <select
+                required
+                value={preferredContact}
+                onChange={(e) => setPreferredContact(e.target.value as any)}
+                className="themed-select w-full rounded-lg border border-[var(--panel-border)] px-3 py-2 pr-10 text-white"
+              >
+                <option value="">{rtl ? "اختر طريقة التواصل" : "Select a method"}</option>
+                <option value="phone">{t.contactPhone}</option>
+                <option value="email">{t.contactEmail}</option>
+                <option value="either">{t.contactEither}</option>
+              </select>
+              <span className={`pointer-events-none absolute inset-y-0 ${rtl ? "left-3" : "right-3"} flex items-center`}>
+                <svg width="16" height="16" viewBox="0 0 20 20" aria-hidden="true" className="text-[var(--brand-accent)]">
+                  <path d="M6 8l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </span>
+            </div>
+          </div>
+          <div className="md:col-span-2">
+            <label className="block text-xs font-semibold text-[var(--brand-accent)] mb-1">{t.comments}</label>
+            <textarea
+              value={comments}
+              onChange={(e) => setComments(e.target.value)}
+              rows={4}
+              className="w-full rounded-lg bg-black/30 border border-[var(--panel-border)] px-3 py-2 text-white placeholder:text-zinc-500"
+              placeholder={rtl ? "أدخل أي معلومات إضافية" : "Add any additional information"}
             />
           </div>
           <div>

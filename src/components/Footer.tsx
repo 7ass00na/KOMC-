@@ -542,16 +542,16 @@ export default function Footer() {
           <div className="text-center md:text-left">
             {lang === "ar" ? (
               <span>
-                خالد عمر للاستشارات البحرية{" "}
-                <Link href={`${base}/login`} className="hover:underline font-semibold">( KOMC )</Link>
-                {" - جميع الحقوق محفوظة @ 2026 - الإنشاء والتطوير بواسطة "}
+                شركة خالد عمر للاستشارات البحرية{" "}
+                <Link href={`${base}/login`} className="hover:underline font-semibold">(KOMC)</Link>
+                {" - تأسست عام 2010 - جميع الحقوق محفوظة © 2026 - تصميم وتطوير "}
                 <a href="mailto:ahmedhussan068@gmail.com" className="hover:underline font-semibold">DevOps</a>
               </span>
             ) : (
               <span>
-                Khaled Omer Maritime Consultancy{" "}
-                <Link href={`${base}/login`} className="hover:underline font-semibold">( KOMC )</Link>
-                {" - All rights reserved @ 2026 - Designed & Dev by "}
+                Khaled Omar Marine Consulting Company{" "}
+                <Link href={`${base}/login`} className="hover:underline font-semibold">(KOMC)</Link>
+                {" - Established 2010 - All rights reserved © 2026 - Designed and developed by "}
                 <a href="mailto:ahmedhussan068@gmail.com" className="hover:underline font-semibold">DevOps</a>
               </span>
             )}
