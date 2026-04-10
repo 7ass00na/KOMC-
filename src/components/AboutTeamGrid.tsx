@@ -248,7 +248,7 @@ export default function AboutTeamGrid({ team, isRTL = false, startIndex = 0 }: {
       if (number === 4) {
         return {
           ...p,
-          name: "عيسى القيدي",
+          name: "عيسى القايدي",
           role: "محامٍ معتمد ومستشار قانوني",
           focus: "قانون عام، منازعات معقدة",
           bio: "مستشار موثوق في جميع أنواع القضايا القانونية",
