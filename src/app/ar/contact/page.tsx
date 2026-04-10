@@ -4,6 +4,7 @@ import { ContactForm } from "@/components/forms/ContactForm";
 import ContactHero from "@/components/ContactHero";
 import Image from "next/image";
 import Reveal from "@/components/Reveal";
+import SuccessBanner from "@/components/SuccessBanner";
 
 export const metadata = {
   alternates: {
@@ -17,6 +18,7 @@ export default function Page() {
     <div className="min-h-screen hero-bg">
       <Header />
       <main>
+        <SuccessBanner />
         <div className="about-hero-scope">
           <ContactHero isRTL title="ابدأ استشارة سرية" subtitle="أخبرنا عن قضيتك. سنرد بسرعة وبسرية." kicker="تواصل مع KOMC" overlay="medium" />
         </div>

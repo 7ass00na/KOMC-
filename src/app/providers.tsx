@@ -1,6 +1,7 @@
 'use client';
 import { LanguageProvider, useLanguage } from "@/context/LanguageContext";
 import { ThemeProvider } from "@/context/ThemeContext";
+import { NotificationProvider } from "@/context/NotificationContext";
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 
@@ -69,9 +70,11 @@ export default function Providers({
   return (
     <LanguageProvider initialLang={initialLang}>
       <ThemeProvider>
-        <DirController />
-        <LangAutoDetect />
-        {children}
+        <NotificationProvider>
+          <DirController />
+          <LangAutoDetect />
+          {children}
+        </NotificationProvider>
       </ThemeProvider>
     </LanguageProvider>
   );

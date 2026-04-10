@@ -123,6 +123,17 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
         setStatus(next);
         if (next === "success") {
           setShowThanks(true);
+          try {
+            const msg = rtl ? "شكرًا لرسالتك! سنتواصل معك قريبًا." : "Thank you for your message! We'll get back to you soon.";
+            // lazy import to avoid circular
+            import("@/context/NotificationContext").then((m) => {
+              try { (m as any).useNotifications && (m as any); } catch {}
+            });
+            // Dispatch event so banner can be shown by a listener
+            if (typeof window !== "undefined") {
+              window.dispatchEvent(new CustomEvent("komc-contact-success", { detail: { message: msg } }));
+            }
+          } catch {}
         } else {
           setShowError(true);
         }
@@ -151,7 +162,7 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
 
   return (
     <div dir={rtl ? "rtl" : "ltr"}>
-      <form onSubmit={onSubmit} className="rounded-2xl surface p-6 md:p-8 h-full min-h-[420px] flex flex-col">
+      <form onSubmit={onSubmit} className="rounded-2xl surface p-6 md:p-8 h-full min-h-[420px] flex flex-col" aria-describedby="contact-success-banner">
         <div className="flex items-center justify-center gap-2 text-[var(--brand-accent)] font-extrabold text-lg uppercase">
           <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5">
             <path d="M4 4h12l4 4v12H4z" fill="none" stroke="currentColor" strokeWidth="1.6" />

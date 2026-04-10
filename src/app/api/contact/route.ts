@@ -146,11 +146,17 @@ IP ${ip} · ${ts}
     }
 
     const transporter = nodemailer.createTransport({
+      pool: true,
       host,
       port,
-      secure: port === 465,
+      secure: (process.env.SMTP_SECURE === "true") || port === 465,
       auth: { user, pass },
-    });
+      maxConnections: parseInt(process.env.SMTP_MAX_CONNECTIONS || "3", 10),
+      maxMessages: parseInt(process.env.SMTP_MAX_MESSAGES || "50", 10),
+      tls: { rejectUnauthorized: true },
+      connectionTimeout: parseInt(process.env.SMTP_CONN_TIMEOUT || "10000", 10),
+      socketTimeout: parseInt(process.env.SMTP_SOCKET_TIMEOUT || "20000", 10),
+    } as any);
 
     const mail: any = {
       from,
