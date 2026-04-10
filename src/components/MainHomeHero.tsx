@@ -49,6 +49,7 @@ export default function HomeHero({
   const isAr = dir === "rtl";
   const [isEditor, setIsEditor] = useState(false);
   const [hydrated, setHydrated] = useState(false);
+  const [imgReadyId, setImgReadyId] = useState<number | null>(null);
   useEffect(() => {
     try {
       const qs = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
@@ -276,13 +277,13 @@ export default function HomeHero({
             className="absolute -inset-6 md:-inset-4 lg:-inset-6"
             initial={false}
             animate={
-              hydrated && !reduce
+              hydrated && !reduce && activeSlide?.id === imgReadyId
                 ? { scale: [1.0, 1.08], x: [0, direction * -20, 0], y: [0, 10, 0] }
                 : { scale: 1.0, x: 0, y: 0 }
             }
             transition={{
               duration: 16,
-              repeat: hydrated && !reduce ? Infinity : 0,
+              repeat: hydrated && !reduce && activeSlide?.id === imgReadyId ? Infinity : 0,
               repeatType: "mirror",
               ease: "easeInOut",
             }}
@@ -296,6 +297,7 @@ export default function HomeHero({
               className="object-cover"
               sizes="100vw"
               draggable={false}
+              onLoadingComplete={() => setImgReadyId(activeSlide?.id ?? null)}
               style={{ backfaceVisibility: "hidden", transform: "translateZ(0)", objectPosition: activeSlide?.id === 1 ? "50% 30%" : "50% 50%" }}
             />
           </motion.div>

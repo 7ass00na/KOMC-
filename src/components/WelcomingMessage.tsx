@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { WelcomeLabels } from "@/lib/welcomeLabels";
+import styles from "./welcome-card.module.css";
 
 type Props = {
   lang: "ar" | "en";
@@ -75,7 +76,7 @@ export default function WelcomingMessage({ lang, labels, onPrimary, labelsReady,
           ))}
         </ul>
       </div>
-      <div className="max-[1024px]:cta-sticky pt-3">
+      <div className={styles.ctaDock + " pt-3"}>
         <div className="flex items-center gap-3">
           <button
             onClick={onPrimary}

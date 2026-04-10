@@ -35,3 +35,9 @@
 - SMTP reliability: Added transporter.verify() and exponential backoff retry (500ms/1500ms/3000ms) on transient errors with structured logging and safe messages; kept TLS/pooling with timeouts.
 - Contact form: Client now appends precise error details to the friendly message; attachment cap raised to 25 MB with clear UI guidance; server responds 413 when exceeded.
 - Mobile welcome card: Separated scroll layer for text/buttons with pinned image column; CTAs sticky inside the scroll pane for guaranteed reachability; momentum/touch scroll tuned.
+
+## Komc-VB0003
+- Hero: Added image-on-load gating (onLoadingComplete) for the active slide so slow-motion begins only when the hero image is ready in production; combined with hydration gating and mirrored animation loops for consistent playback on Vercel.
+- Welcome Card: Introduced scoped styles (welcome-card.module.css) for sticky media, independent scroll pane, and CTA dock; preserved accessibility and momentum scroll interoperability.
+- Tests: Added Playwright config and e2e test for mobile/tablet scroll behavior and text fade. Excluded e2e and Playwright config from tsconfig to keep production builds clean.
+- Build Health: Re-verified lint, tests, and production build with strict TypeScript enabled; no errors or warnings.

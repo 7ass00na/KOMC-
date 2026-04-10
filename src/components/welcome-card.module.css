@@ -1,0 +1,27 @@
+/* Scoped styles for the Welcome Card only */
+
+@media (max-width: 1024px) {
+  .stickyMedia {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    will-change: transform;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+  }
+  .scrollPane {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    touch-action: pan-y;
+    max-height: calc(100svh - 96px);
+  }
+  .ctaDock {
+    position: sticky;
+    bottom: 0;
+    z-index: 5;
+    background: linear-gradient(to top, color-mix(in oklab, var(--panel-bg), black 10%) 65%, transparent);
+    border-top: 1px solid var(--panel-border);
+  }
+}
+

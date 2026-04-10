@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useLanguage } from "@/context/LanguageContext";
 import { useRouter } from "next/navigation";
 import WelcomingMessage from "./WelcomingMessage";
+import styles from "./welcome-card.module.css";
 import { deriveLabels, track, type WelcomeLabels } from "@/lib/welcomeLabels";
 
 export default function IntroOverlay() {
@@ -144,6 +145,17 @@ export default function IntroOverlay() {
   useEffect(() => {
     const el = msgRef.current || cardRef.current;
     if (!el) return;
+    const reduce =
+      typeof window !== "undefined" &&
+      window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) {
+      try {
+        el.style.setProperty("--welcomeFade", "1");
+        el.style.setProperty("--welcomeShift", "0px");
+      } catch {}
+      return;
+    }
     let ticking = false;
     const onScroll = () => {
       if (ticking) return;
@@ -151,7 +163,8 @@ export default function IntroOverlay() {
       requestAnimationFrame(() => {
         try {
           const st = el.scrollTop || 0;
-          const fade = Math.max(0, Math.min(1, 1 - st / 180));
+          const thresh = Math.max(120, Math.floor((el.clientHeight || 1) * 0.3));
+          const fade = Math.max(0, Math.min(1, 1 - st / thresh));
           const shift = -Math.min(24, st * 0.15);
           el.style.setProperty("--welcomeFade", fade.toFixed(3));
           el.style.setProperty("--welcomeShift", `${shift.toFixed(2)}px`);
@@ -161,7 +174,6 @@ export default function IntroOverlay() {
       });
     };
     el.addEventListener("scroll", onScroll, { passive: true });
-    // initialize once
     onScroll();
     return () => el.removeEventListener("scroll", onScroll as any);
   }, [mode]);
@@ -277,7 +289,7 @@ export default function IntroOverlay() {
                 initial={{ opacity: 0, y: 10, scale: 0.98 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ duration: 0.35, ease: "easeOut" }}
-                className="md:basis-[36%] lg:basis-[38%] max-[1024px]:basis-full grid place-items-center self-stretch max-[1024px]:sticky max-[1024px]:top-0 max-[1024px]:z-10"
+                className={`md:basis-[36%] lg:basis-[38%] max-[1024px]:basis-full grid place-items-center self-stretch ${styles.stickyMedia}`}
               >
                 <div className="relative w-full max-w-none max-[1024px]:aspect-[4/3] md:h-full md:max-w-none rounded-xl overflow-hidden ring-1 ring-[var(--panel-border)] shadow-sm">
                   <Image
@@ -297,7 +309,7 @@ export default function IntroOverlay() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, ease: "easeOut", delay: 0.12 }}
-                className="md:basis-[64%] lg:basis-[62%] max-[1024px]:basis-full max-[1024px]:max-h-[calc(100svh-96px)] max-[1024px]:col-scroll"
+                className={`md:basis-[64%] lg:basis-[62%] max-[1024px]:basis-full ${styles.scrollPane}`}
                 ref={msgRef}
               >
                 {labels && (
