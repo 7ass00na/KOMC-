@@ -7,6 +7,7 @@ import Reveal from "@/components/Reveal";
 import IntroPreview from "@/components/IntroPreview";
 import VideoPlayerDemo from "@/components/VideoPlayerDemo";
 import ZipPackGenerator from "@/components/ZipPackGenerator";
+import WelcomeCardDemo from "./WelcomeCardDemo";
 
 export const metadata = {
   title: "Demo | KOMC",
@@ -21,6 +22,7 @@ export default function Page() {
     <div className="min-h-screen hero-bg">
       <Header />
       <main className="pt-[80px] md:pt-[96px] lg:pt-[112px]">
+        <WelcomeCardDemo />
         <section className="section mx-auto max-w-7xl px-5 py-10">
           <h2 className="text-3xl md:text-4xl font-extrabold text-[var(--brand-accent)]">Intro Video Preview</h2>
           <p className="mt-2 text-zinc-300">15s cinematic cut • Click Next or wait for auto progression.</p>

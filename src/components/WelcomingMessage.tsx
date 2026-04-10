@@ -6,9 +6,10 @@ type Props = {
   labels: WelcomeLabels;
   onPrimary: () => void;
   labelsReady?: boolean;
+  onChangeLang?: (next: "ar" | "en") => void;
 };
 
-export default function WelcomingMessage({ lang, labels, onPrimary, labelsReady }: Props) {
+export default function WelcomingMessage({ lang, labels, onPrimary, labelsReady, onChangeLang }: Props) {
   const isAr = lang === "ar";
   const headline =
     labels.variant === "A"
@@ -24,13 +25,25 @@ export default function WelcomingMessage({ lang, labels, onPrimary, labelsReady 
 
   return (
     <div dir={isAr ? "rtl" : "ltr"} className={"grid gap-5 " + (isAr ? "text-right" : "text-left")}>
-      <div className="flex items-center gap-3">
-        <div className="h-10 w-10 logo-bg overflow-hidden">
-          <Image src="/main_logo.svg" alt={isAr ? "الشعار" : "Logo"} width={40} height={40} className="object-contain logo-anim" />
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="h-10 w-10 logo-bg overflow-hidden">
+            <Image src="/main_logo.svg" alt={isAr ? "الشعار" : "Logo"} width={40} height={40} className="object-contain logo-anim" />
+          </div>
+          <div className="text-xs text-[var(--text-secondary)]">
+            {isAr ? "مرحبًا بكم" : "Welcome"}{labelsReady ? " — " + labels.welcomeType : ""}
+          </div>
         </div>
-        <div className="text-xs text-[var(--text-secondary)]">
-          {isAr ? "مرحبًا بكم" : "Welcome"}{labelsReady ? " — " + labels.welcomeType : ""}
-        </div>
+        {onChangeLang && (
+          <button
+            onClick={() => onChangeLang(isAr ? "en" : "ar")}
+            className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 ring-1 ring-[var(--panel-border)] hover:bg-[var(--panel-muted-bg)] text-xs font-semibold"
+            aria-label={isAr ? "التبديل إلى الإنجليزية" : "Switch to Arabic"}
+          >
+            <Image src="/globe.svg" alt="" width={14} height={14} />
+            <span>{isAr ? "EN" : "AR"}</span>
+          </button>
+        )}
       </div>
       <h1 className="text-2xl md:text-3xl font-extrabold text-[var(--brand-accent)] tracking-tight">{headline}</h1>
       <p className="text-sm md:text-base text-[var(--text-secondary)] leading-relaxed">{sub}</p>

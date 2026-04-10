@@ -21,10 +21,40 @@ export default function AboutTeamGrid({ team, isRTL = false, startIndex = 0 }: {
   const toggleFlip = (idx: number) => setFlipped((v) => (v === idx ? null : idx));
   const scoreFor = (p: TeamMember) => p.rating ?? 82;
   const normalize = (s: string) => s.trim().toLowerCase();
+  const mappedImages: Record<number, string> = {
+    1: "/images/team/T01.jpeg",
+    2: "/images/team/T02.jpeg",
+    3: "/images/team/T03.jpeg",
+    4: "/images/team/T04.jpeg",
+    5: "/images/team/T05.jpeg",
+    6: "/images/team/T06.jpeg",
+    7: "/images/team/T07.jpeg",
+    8: "/images/team/T08.jpeg",
+    9: "/images/team/T09.jpeg",
+    10: "/images/team/T010.jpeg",
+    11: "/images/team/T011.jpeg",
+    12: "/images/team/T012.jpeg",
+    13: "/images/team/T013.jpeg",
+    14: "/images/team/T014.jpeg",
+    15: "/images/team/T015.jpeg",
+    16: "/images/team/T016.jpeg",
+  };
   const teamData = team.map((p, idx) => {
     const n = normalize(p.name);
     const number = idx + 1 + startIndex;
     if (!isRTL) {
+      if (number === 4) {
+        return {
+          ...p,
+          name: "Aisaa AL-Qaydi",
+          role: "Certified Lawyer & Legal Consultant",
+          focus: "General Law, Complex Disputes",
+          bio: "Trusted Consultant in all kind of Legal Cases",
+          regions: "UAE/GCC",
+          experience: "17yrs",
+          rating: 90,
+        };
+      }
       if (n === "khaled omer") {
         return {
           ...p,
@@ -215,6 +245,18 @@ export default function AboutTeamGrid({ team, isRTL = false, startIndex = 0 }: {
         };
       }
     } else {
+      if (number === 4) {
+        return {
+          ...p,
+          name: "عيسى القيدي",
+          role: "محامٍ معتمد ومستشار قانوني",
+          focus: "قانون عام، منازعات معقدة",
+          bio: "مستشار موثوق في جميع أنواع القضايا القانونية",
+          regions: "UAE/GCC",
+          experience: "17 سنة",
+          rating: 90,
+        };
+      }
       if (n === "خالد عمر") {
         return {
           ...p,
@@ -420,8 +462,12 @@ export default function AboutTeamGrid({ team, isRTL = false, startIndex = 0 }: {
           <div className="block relative" data-flipped={flipped === idx}>
             <div className="flip-inner h-80 md:h-64 lg:h-72">
               <div className="flip-front team-card-photo team-card-front relative h-80 md:h-64 lg:h-72 overflow-hidden">
+                {(() => {
+                  const cardNumber = idx + 1 + startIndex;
+                  const imgSrc = mappedImages[cardNumber] || p.src;
+                  return (
                 <Image
-                  src={p.src}
+                  src={imgSrc}
                   alt={isRTL ? `صورة ${p.name}` : `${p.name} portrait`}
                   fill
                   className="team-photo object-cover object-center w-full h-full"
@@ -430,6 +476,8 @@ export default function AboutTeamGrid({ team, isRTL = false, startIndex = 0 }: {
                   priority={false}
                   style={p.mobileFocal ? { objectPosition: p.mobileFocal, ["--mobile-focal" as any]: p.mobileFocal } : undefined}
                 />
+                  );
+                })()}
                 <div className="absolute inset-0 gradient-overlay bg-gradient-to-t from-black/40 to-transparent" />
                 <div className="absolute top-2 left-2 z-20">
                   <span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-zinc-700/40 text-[10px] font-extrabold text-zinc-500 transition-colors duration-200 group-hover:text-[var(--brand-accent)] group-hover:border-[var(--brand-accent)]/60 group-hover:bg-[var(--brand-accent)]/10">

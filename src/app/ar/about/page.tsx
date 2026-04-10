@@ -53,6 +53,12 @@ export default async function Page() {
     { name: "Mohamed Sobihi", role: "محامٍ مساعد", focus: "امتثال، توثيق", bio: "توثيق امتثال وإعداد مستندات قانونية.", src: withV("/images/team/T011.jpeg"), tags: ["امتثال", "توثيق"], mobileFocal: "50% 22%" },
     { name: "Nadia Ali", role: "محامٍ مساعد", focus: "تحكيم، تجارة", bio: "تنسيق تحكيم التجارة ودعم القضايا.", src: withV("/images/team/T012.jpeg"), tags: ["تحكيم", "تجارة"], mobileFocal: "50% 22%" },
   ];
+  const teamQuaternary = [
+    { name: "عضو 13", role: "محامٍ مساعد", focus: "متنوع", bio: "صورة تعريفية", src: withV("/images/team/T05.jpeg"), tags: ["قانون"], mobileFocal: "50% 22%" },
+    { name: "عضو 14", role: "محامٍ مساعد", focus: "متنوع", bio: "صورة تعريفية", src: withV("/images/team/T06.jpeg"), tags: ["قانون"], mobileFocal: "50% 22%" },
+    { name: "عضو 15", role: "محامٍ مساعد", focus: "متنوع", bio: "صورة تعريفية", src: withV("/images/team/T07.jpeg"), tags: ["قانون"], mobileFocal: "50% 22%" },
+    { name: "عضو 16", role: "محامٍ مساعد", focus: "متنوع", bio: "صورة تعريفية", src: withV("/images/team/T08.jpeg"), tags: ["قانون"], mobileFocal: "50% 22%" },
+  ];
   if (pageDown) {
     return (
       <div className="min-h-screen hero-bg site-content" style={style}>
@@ -132,6 +138,9 @@ export default async function Page() {
           </div>
           <div className="mt-8">
             <AboutTeamGrid team={teamTertiary} isRTL startIndex={8} />
+          </div>
+          <div className="mt-8">
+            <AboutTeamGrid team={teamQuaternary} isRTL startIndex={12} />
           </div>
         </section>
         </Reveal>

@@ -53,6 +53,12 @@ export default async function Page() {
     { name: "Mohamed Sobihi", role: "Associate", focus: "Compliance, Documentation", bio: "Compliance documentation and legal drafting.", src: withV("/images/team/T011.jpeg"), tags: ["Compliance", "Drafting"], mobileFocal: "50% 22%" },
     { name: "Nadia Ali", role: "Associate", focus: "Arbitration, Trade", bio: "Trade arbitration coordination and case support.", src: withV("/images/team/T012.jpeg"), tags: ["Arbitration", "Trade"], mobileFocal: "50% 22%" },
   ];
+  const teamQuaternary = [
+    { name: "Member 13", role: "Associate", focus: "Various", bio: "Placeholder", src: withV("/images/team/T05.jpeg"), tags: ["Legal"], mobileFocal: "50% 22%" },
+    { name: "Member 14", role: "Associate", focus: "Various", bio: "Placeholder", src: withV("/images/team/T06.jpeg"), tags: ["Legal"], mobileFocal: "50% 22%" },
+    { name: "Member 15", role: "Associate", focus: "Various", bio: "Placeholder", src: withV("/images/team/T07.jpeg"), tags: ["Legal"], mobileFocal: "50% 22%" },
+    { name: "Member 16", role: "Associate", focus: "Various", bio: "Placeholder", src: withV("/images/team/T08.jpeg"), tags: ["Legal"], mobileFocal: "50% 22%" },
+  ];
   if (pageDown) {
     return (
       <div className="min-h-screen hero-bg site-content" style={style}>
@@ -131,6 +137,9 @@ export default async function Page() {
             </div>
             <div className="mt-8">
               <AboutTeamGrid team={teamTertiary} startIndex={8} />
+            </div>
+            <div className="mt-8">
+              <AboutTeamGrid team={teamQuaternary} startIndex={12} />
             </div>
           </section>
         </Reveal>

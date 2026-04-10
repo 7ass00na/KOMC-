@@ -15,6 +15,7 @@ export default function IntroOverlay() {
   const vidRef = useRef<HTMLVideoElement | null>(null);
   const router = useRouter();
   const [labels, setLabels] = useState<WelcomeLabels | null>(null);
+  const [selectedLang, setSelectedLang] = useState<"ar" | "en">(lang);
 
   useEffect(() => {
     try {
@@ -239,7 +240,7 @@ export default function IntroOverlay() {
                 <div className="relative w-full max-w-none max-[1024px]:aspect-[4/3] md:h-full md:max-w-none rounded-xl overflow-hidden ring-1 ring-[var(--panel-border)] shadow-sm">
                   <Image
                     src="/images/team/khaled-omer.png"
-                    alt={lang === "ar" ? "المدير التنفيذي" : "CEO"}
+                    alt={selectedLang === "ar" ? "المدير التنفيذي" : "CEO"}
                     fill
                     sizes="(max-width: 480px) 100vw, (max-width: 1024px) 90vw, 480px"
                     className="object-cover"
@@ -265,7 +266,7 @@ export default function IntroOverlay() {
                       return null;
                     })()}
                     <WelcomingMessage
-                      lang={lang}
+                      lang={selectedLang}
                       labels={labels}
                       labelsReady={true}
                       onPrimary={() => {
@@ -276,13 +277,16 @@ export default function IntroOverlay() {
                           const dur = 2000;
                           window.dispatchEvent(new CustomEvent("site-loading", { detail: { duration: dur } }) as any);
                           setTimeout(() => {
-                            router.push(lang === "ar" ? "/ar" : "/en");
+                            router.push(selectedLang === "ar" ? "/ar" : "/en");
                             setMode("hidden");
                           }, dur + 20);
                         } catch {
-                          router.push(lang === "ar" ? "/ar" : "/en");
+                          router.push(selectedLang === "ar" ? "/ar" : "/en");
                           setMode("hidden");
                         }
+                      }}
+                      onChangeLang={(next) => {
+                        setSelectedLang(next);
                       }}
                     />
                   </>
