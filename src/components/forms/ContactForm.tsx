@@ -18,6 +18,8 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
   const [showThanks, setShowThanks] = useState(false);
   const [showError, setShowError] = useState(false);
   const [loadingShownAt, setLoadingShownAt] = useState<number | null>(null);
+  const [serviceType, setServiceType] = useState("");
+  const [preferredDateTime, setPreferredDateTime] = useState("");
 
   const t = {
     title: rtl ? "نموذج الاستشارة" : "Consultation Form",
@@ -70,6 +72,9 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
   const inquiries = rtl
     ? ["القانون بحري", "القانون المدني", "القانون الجنائي", "القانون التجاري", "قانون العمل", "القانون العقاري", "قانون الأسرة", "أخرى"]
     : ["Maritime Law", "Civil law", "Criminal law", "Commercial law", "Labor law", "Real estate law", "Family law", "Other"];
+  const services = rtl
+    ? ["استشارة عامة", "قانون بحري", "قانون تجاري", "قانون عمل", "قانون عقاري", "قانون أسرة"]
+    : ["General Consultation", "Maritime Law", "Commercial Law", "Labor Law", "Real Estate Law", "Family Law"];
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -95,6 +100,8 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
       fd.append("caseTitle", caseTitle);
       fd.append("caseDesc", caseDesc);
       fd.append("lang", lang);
+      fd.append("serviceType", serviceType);
+      fd.append("preferredDateTime", preferredDateTime);
       if (attachment) fd.append("attachment", attachment);
       if (attachmentNote) fd.append("attachmentNote", attachmentNote);
       const res = await fetch("/api/contact", { method: "POST", body: fd });
@@ -212,6 +219,39 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
                 </svg>
               </span>
             </div>
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-[var(--brand-accent)] mb-1">
+              {rtl ? "نوع الخدمة" : "Service Type"}
+            </label>
+            <div className="relative">
+              <select
+                value={serviceType}
+                onChange={(e) => setServiceType(e.target.value)}
+                className="themed-select w-full rounded-lg border border-[var(--panel-border)] px-3 py-2 pr-10 text-white"
+              >
+                <option value="">{rtl ? "اختياري" : "Optional"}</option>
+                {services.map((s) => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
+              <span className={`pointer-events-none absolute inset-y-0 ${rtl ? "left-3" : "right-3"} flex items-center`}>
+                <svg width="16" height="16" viewBox="0 0 20 20" aria-hidden="true" className="text-[var(--brand-accent)]">
+                  <path d="M6 8l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </span>
+            </div>
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-[var(--brand-accent)] mb-1">
+              {rtl ? "التاريخ والوقت المفضل" : "Preferred Date/Time"}
+            </label>
+            <input
+              type="datetime-local"
+              value={preferredDateTime}
+              onChange={(e) => setPreferredDateTime(e.target.value)}
+              className="w-full rounded-lg bg-black/30 border border-[var(--panel-border)] px-3 py-2 text-white placeholder:text-zinc-500"
+            />
           </div>
           <div>
             <label className="block text-xs font-semibold text-[var(--brand-accent)] mb-1">{t.caseTitle}</label>

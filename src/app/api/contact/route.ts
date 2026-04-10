@@ -3,7 +3,7 @@ import nodemailer from "nodemailer";
 
 export async function POST(req: Request) {
   const ctype = req.headers.get("content-type") || "";
-  let fullName = "", gender = "", email = "", phone = "", address = "", inquiry = "", caseTitle = "", caseDesc = "", lang = "en", attachmentNote = "";
+  let fullName = "", gender = "", email = "", phone = "", address = "", inquiry = "", caseTitle = "", caseDesc = "", lang = "en", attachmentNote = "", serviceType = "", preferredDateTime = "";
   let file: File | null = null;
   if (ctype.includes("multipart/form-data")) {
     const fd = await req.formData();
@@ -17,6 +17,8 @@ export async function POST(req: Request) {
     caseDesc = String(fd.get("caseDesc") || "");
     lang = String(fd.get("lang") || "en");
     attachmentNote = String(fd.get("attachmentNote") || "");
+    serviceType = String(fd.get("serviceType") || "");
+    preferredDateTime = String(fd.get("preferredDateTime") || "");
     const maybe = fd.get("attachment");
     if (maybe instanceof File) file = maybe;
   } else {
@@ -31,6 +33,8 @@ export async function POST(req: Request) {
     caseDesc = data?.caseDesc || "";
     lang = data?.lang || "en";
     attachmentNote = data?.attachmentNote || "";
+    serviceType = data?.serviceType || "";
+    preferredDateTime = data?.preferredDateTime || "";
   }
 
   if (!fullName || !email || !phone || !inquiry) {
@@ -42,6 +46,8 @@ export async function POST(req: Request) {
 
   const to = "ahmedhussan068@gmail.com";
   const subject = `Legal Consultation from the Website - Regarding ${inquiry}`;
+  const ts = new Date().toISOString();
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || req.headers.get("cf-connecting-ip") || req.headers.get("x-real-ip") || "unknown";
 
   const intro =
     lang === "ar"
@@ -89,6 +95,8 @@ export async function POST(req: Request) {
           <tr><td style="padding:10px; border-bottom:1px solid #e5e7eb;">${lang === "ar" ? "رقم الهاتف" : "Phone Number"}</td><td style="padding:10px; border-bottom:1px solid #e5e7eb;">${escapeHtml(phone)}</td></tr>
           <tr><td style="padding:10px; border-bottom:1px solid #e5e7eb;">${lang === "ar" ? "العنوان" : "Address"}</td><td style="padding:10px; border-bottom:1px solid #e5e7eb;">${escapeHtml(address || "-")}</td></tr>
           <tr><td style="padding:10px; border-bottom:1px solid #e5e7eb;">${lang === "ar" ? "نوع الاستفسار" : "Type of Inquiry"}</td><td style="padding:10px; border-bottom:1px solid #e5e7eb;">${escapeHtml(inquiry)}</td></tr>
+          <tr><td style="padding:10px; border-bottom:1px solid #e5e7eb;">${lang === "ar" ? "نوع الخدمة" : "Service Type"}</td><td style="padding:10px; border-bottom:1px solid #e5e7eb;">${escapeHtml(serviceType || "-")}</td></tr>
+          <tr><td style="padding:10px; border-bottom:1px solid #e5e7eb;">${lang === "ar" ? "الوقت المفضل" : "Preferred Date/Time"}</td><td style="padding:10px; border-bottom:1px solid #e5e7eb;">${escapeHtml(preferredDateTime || "-")}</td></tr>
           <tr><td style="padding:10px; border-bottom:1px solid #e5e7eb;">${lang === "ar" ? "عنوان القضية" : "Case Title"}</td><td style="padding:10px; border-bottom:1px solid #e5e7eb;">${escapeHtml(caseTitle || "-")}</td></tr>
           <tr><td style="padding:10px; border-bottom:1px solid #e5e7eb; vertical-align:top;">${lang === "ar" ? "وصف القضية" : "Case Description"}</td><td style="padding:10px; border-bottom:1px solid #e5e7eb; white-space:pre-wrap;">${escapeHtml(caseDesc || "-")}</td></tr>
           ${file ? `<tr><td style="padding:10px; border-bottom:1px solid #e5e7eb;">${lang === "ar" ? "ملاحظة المرفق" : "Attachment Note"}</td><td style="padding:10px; border-bottom:1px solid #e5e7eb;">${escapeHtml(attachmentNote || "-")}</td></tr>` : ""}
@@ -96,6 +104,7 @@ export async function POST(req: Request) {
         </tbody>
       </table>
       <p style="margin-top:16px; color:#64748b;">${lang === "ar" ? "الرجاء الرد على المرسل مباشرةً لمتابعة التفاصيل." : "Please reply to the sender directly to follow up."}</p>
+      <p style="margin-top:10px; color:#64748b;">${lang === "ar" ? "البصمة" : "Fingerprint"}: IP ${escapeHtml(ip)} · ${ts}</p>
     </div>
   `;
 
@@ -122,6 +131,10 @@ Language: ${lang}
   `.trim();
 
   try {
+    const limitOk = await rateLimit(ip);
+    if (!limitOk) {
+      return NextResponse.json({ ok: false, error: "RATE_LIMITED" }, { status: 429 });
+    }
     const host = process.env.SMTP_HOST;
     const port = parseInt(process.env.SMTP_PORT || "587", 10);
     const user = process.env.SMTP_USER;
@@ -174,4 +187,20 @@ function escapeHtml(input: string) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
+}
+
+const buckets = new Map<string, { count: number; reset: number }>();
+async function rateLimit(ip: string) {
+  const now = Date.now();
+  const windowMs = 10 * 60 * 1000;
+  const max = 5;
+  const k = ip || "unknown";
+  const entry = buckets.get(k);
+  if (!entry || entry.reset < now) {
+    buckets.set(k, { count: 1, reset: now + windowMs });
+    return true;
+  }
+  if (entry.count >= max) return false;
+  entry.count++;
+  return true;
 }

@@ -7,3 +7,10 @@
 - Test configuration: enabled coverage with thresholds at 80% for core modules and excluded UI-heavy routes/server handlers from coverage.
 - Clean build: removed .next artifacts; rebuilt production bundle successfully.
 - Documentation: updated README and added docs to outline cleanup and build changes.
+
+## WelcomeCardUPD
+- Implemented dedicated scroll container for the welcome card, matching legal modal behavior: overflow-y auto, -webkit-overflow-scrolling: touch, overscroll-behavior contain, with a sticky gradient hint.
+- Prevented body scroll while the intro overlay is visible.
+- Enhanced contact form to include service type and preferred date/time fields with client-side validation.
+- API contact route: added serviceType and preferredDateTime to emails, appended request timestamp and client IP, and added simple rate limiting by IP.
+- Completed dependency cleanup and rebuilt production bundle; tests pass with coverage thresholds enforced.

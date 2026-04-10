@@ -258,6 +258,30 @@
   z-index: 10;
   pointer-events: none;
 }
+/* Scroll containers */
+.scroll-y {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+}
+.scroll-y::-webkit-scrollbar {
+  width: 8px;
+}
+.scroll-y::-webkit-scrollbar-thumb {
+  background: color-mix(in oklab, var(--brand-accent), black 45%);
+  border-radius: 8px;
+}
+.scroll-y::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scroll-hint {
+  position: sticky;
+  bottom: 0;
+  height: 36px;
+  background: linear-gradient(to top, color-mix(in oklab, var(--panel-bg), black 8%), transparent);
+  pointer-events: none;
+}
 @media (max-width: 768px) {
   .team-card-front .team-photo {
     object-fit: cover !important;

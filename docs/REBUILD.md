@@ -19,3 +19,12 @@ Intro & Welcome Validation
 - Autoplay video with poster and iOS-friendly muted + playsInline attributes.
 - Fallback flow advances to the welcome card on error or end.
 - Language-aware and accessible (aria-labels, dir) with responsive layout.
+
+Welcome Card Scroll Container
+- Added a reusable scroll-y utility with mobile touch scrolling and overscroll containment.
+- Welcome card container now uses max-height relative to viewport and enables inner scrolling, preventing body scroll bleed.
+- A sticky bottom gradient hint indicates more content is available and ensures CTAs remain accessible.
+
+Contact Form Email Pipeline
+- Client: Added service type and preferred date/time inputs with validation.
+- Server: Email includes all form fields, timestamp, request IP, and optional attachment note. Added basic IP-based rate limiting to mitigate spam.
