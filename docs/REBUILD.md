@@ -21,16 +21,16 @@ Intro & Welcome Validation
 - Language-aware and accessible (aria-labels, dir) with responsive layout.
 
 Welcome Card Scroll Container
-- Added a reusable scroll-y utility with mobile touch scrolling and overscroll containment.
-- Welcome card container now uses max-height relative to viewport and enables inner scrolling, preventing body scroll bleed.
+- Added scroll-y and scroll-xy utilities with mobile touch scrolling and overscroll containment.
+- Welcome card container uses max-height relative to viewport and enables inner scrolling (both axes), preventing body scroll bleed.
 - A sticky bottom gradient hint indicates more content is available and ensures CTAs remain accessible.
+- Sticky header on mobile/tablet keeps the image and divider pinned; parallax fade animates welcome text opacity/shift using requestAnimationFrame to ensure 60fps.
 
 Contact Form Email Pipeline
 - Client: Added service type and preferred date/time inputs with validation.
 - Server: Email includes all form fields, timestamp, request IP, and optional attachment note. Added basic IP-based rate limiting to mitigate spam.
 
-TeamFN (Final Verification)
-- Intro video and welcome overlay validated in dev and prod builds; ensured autoplay, fallback to welcome with safety timers, and proper localization.
-- Ran full unit test suite with enforced coverage thresholds on core logic.
-- Cleanbuild: removed .next and rebuilt with Next.js 16 (Turbopack). No runtime errors observed.
-- Consultation form: removed “Service Type” and “Additional Comments”; added icons to labels and themed Date/Time icon. Verified validations and submission.
+SMTP Configuration
+- Uses environment variables on Vercel: SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM.
+- Optional tuning: SMTP_SECURE, SMTP_MAX_CONNECTIONS, SMTP_MAX_MESSAGES, SMTP_TLS_REJECT_UNAUTH, SMTP_CONN_TIMEOUT, SMTP_GREET_TIMEOUT, SMTP_SOCKET_TIMEOUT.
+- TLS with connection pooling; transporter.verify() before send; structured error responses on misconfiguration.

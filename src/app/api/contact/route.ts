@@ -140,22 +140,25 @@ IP ${ip} · ${ts}
     const from = process.env.SMTP_FROM || user || "no-reply@localhost";
 
     if (!host || !user || !pass) {
-      console.warn("[contact] SMTP not configured; printing email to server logs instead.");
-      console.info({ to, subject, text, html, attachment: file ? { name: file.name, size: file.size, type: file.type } : null });
-      return NextResponse.json({ ok: true, queued: false, note: "SMTP not configured — logged only" });
+      console.warn("[contact] SMTP not configured");
+      return NextResponse.json({ ok: false, error: "SMTP_NOT_CONFIGURED" }, { status: 500 });
     }
 
     const transporter = nodemailer.createTransport({
-      pool: true,
       host,
       port,
-      secure: (process.env.SMTP_SECURE === "true") || port === 465,
+      secure: port === 465 || process.env.SMTP_SECURE === "true",
       auth: { user, pass },
-      maxConnections: parseInt(process.env.SMTP_MAX_CONNECTIONS || "3", 10),
-      maxMessages: parseInt(process.env.SMTP_MAX_MESSAGES || "50", 10),
-      tls: { rejectUnauthorized: true },
-      connectionTimeout: parseInt(process.env.SMTP_CONN_TIMEOUT || "10000", 10),
-      socketTimeout: parseInt(process.env.SMTP_SOCKET_TIMEOUT || "20000", 10),
+      pool: true,
+      maxConnections: Number(process.env.SMTP_MAX_CONNECTIONS || 5),
+      maxMessages: Number(process.env.SMTP_MAX_MESSAGES || 100),
+      tls: {
+        rejectUnauthorized: process.env.SMTP_TLS_REJECT_UNAUTH !== "false",
+        ciphers: "TLSv1.2",
+      },
+      connectionTimeout: Number(process.env.SMTP_CONN_TIMEOUT || 20000),
+      greetingTimeout: Number(process.env.SMTP_GREET_TIMEOUT || 10000),
+      socketTimeout: Number(process.env.SMTP_SOCKET_TIMEOUT || 20000),
     } as any);
 
     const mail: any = {
@@ -175,6 +178,12 @@ IP ${ip} · ${ts}
           contentType: file.type || "application/octet-stream",
         },
       ];
+    }
+    try {
+      await transporter.verify();
+    } catch (e) {
+      console.error("[contact] SMTP verify failed", (e as any)?.message || e);
+      return NextResponse.json({ ok: false, error: "SMTP_VERIFY_FAILED" }, { status: 502 });
     }
     await transporter.sendMail(mail);
     console.info("[contact] email delivered", { to, subject, ts, ip });

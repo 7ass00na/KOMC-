@@ -282,6 +282,23 @@
   background: linear-gradient(to top, color-mix(in oklab, var(--panel-bg), black 8%), transparent);
   pointer-events: none;
 }
+.scroll-xy {
+  overflow-y: auto;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  touch-action: pan-y pan-x;
+}
+.scroll-xy::-webkit-scrollbar:horizontal {
+  height: 8px;
+}
+.scroll-xy::-webkit-scrollbar-thumb {
+  background: color-mix(in oklab, var(--brand-accent), black 45%);
+  border-radius: 8px;
+}
+.scroll-xy::-webkit-scrollbar-track {
+  background: transparent;
+}
 @media (max-width: 768px) {
   .team-card-front .team-photo {
     object-fit: cover !important;

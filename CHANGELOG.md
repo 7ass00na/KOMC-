@@ -21,9 +21,11 @@
 - Email pipeline: Localized subjects, salutations, and section headers; included timestamp and requester IP in emails; honeypot and email format checks added; delivery success logging.
 - Tests: Added unit test for email subject generation across languages.
 
-## TeamFN
-- Intro video + welcome overlay: re-verified in dev and production builds; ensured autoplay, fallback, localization, and responsive behavior across viewports.
-- Global test run: executed unit/component tests with coverage thresholds enforced (80% on core logic). Verified major user paths and API endpoints with local builds.
-- Codebase cleanup: removed stale dependencies earlier; cleared `.next` before fresh production builds; confirmed no orphaned or temp files in repo (logs/tmp ignored by .gitignore).
-- Consultation form: removed “Service Type” and “Additional Comments” fields; preserved validations and submission. Added icons before labels and themed date/time icon aligned with RTL/LTR and accessibility requirements.
-- Documentation: updated rebuild notes; preserved README summary and changelog entries.
+## Komc-V001
+- Welcome Card UX: Added sticky header behavior for mobile/tablet, keeping top image/divider pinned; implemented parallax fade for text and smooth reveal of CTAs during scroll with requestAnimationFrame for 60fps.
+- Scroll Containers: Introduced `.scroll-xy` utility with momentum scrolling and overscroll containment to prevent body scroll bleed; horizontal scrollbar enabled where needed.
+- Language Defaulting: Persist language choice on CTA click via `site_lang` cookie + localStorage; routes to correct localized pages.
+- SMTP: Secure, pooled SMTP transport reading from environment variables (SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM, and optional tuning). TLS enabled, connection verification added, structured errors on failure, and non-sensitive delivery logs.
+- Tests & Coverage: Full suite executed with coverage thresholds (≥80% for core logic); added scroll guard tests and email subject tests.
+- Cleanup: Removed build artifacts, pruned/deduped dependencies; fresh install and production build validated. Lint and type checks passed.
+- Docs: Updated README and docs with SMTP configuration notes, testing/build steps, and UX changes for the welcome overlay.

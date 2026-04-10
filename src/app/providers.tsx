@@ -1,9 +1,9 @@
 'use client';
 import { LanguageProvider, useLanguage } from "@/context/LanguageContext";
 import { ThemeProvider } from "@/context/ThemeContext";
-import { NotificationProvider } from "@/context/NotificationContext";
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
+import { ensureBodyScrollable } from "@/lib/scrollGuard";
 
 function DirController() {
   const { dir, lang } = useLanguage();
@@ -17,6 +17,9 @@ function DirController() {
 function LangAutoDetect() {
   const pathname = usePathname();
   useEffect(() => {
+    try {
+      ensureBodyScrollable();
+    } catch {}
     try {
       if (typeof window === "undefined") return;
       const p = typeof pathname === "string" ? pathname : "/";
@@ -70,11 +73,9 @@ export default function Providers({
   return (
     <LanguageProvider initialLang={initialLang}>
       <ThemeProvider>
-        <NotificationProvider>
-          <DirController />
-          <LangAutoDetect />
-          {children}
-        </NotificationProvider>
+        <DirController />
+        <LangAutoDetect />
+        {children}
       </ThemeProvider>
     </LanguageProvider>
   );

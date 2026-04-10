@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { User, Mail, Phone as PhoneIcon, MapPin, HelpCircle, FileText, AlignLeft, CalendarClock } from "lucide-react";
 
 export function ContactForm({ lang }: { lang: "en" | "ar" }) {
   const rtl = lang === "ar";
@@ -18,10 +19,8 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
   const [showThanks, setShowThanks] = useState(false);
   const [showError, setShowError] = useState(false);
   const [loadingShownAt, setLoadingShownAt] = useState<number | null>(null);
-  const [serviceType, setServiceType] = useState("");
   const [preferredDateTime, setPreferredDateTime] = useState("");
   const [preferredContact, setPreferredContact] = useState<"phone" | "email" | "either" | "">("");
-  const [comments, setComments] = useState("");
 
   const t = {
     title: rtl ? "نموذج الاستشارة" : "Consultation Form",
@@ -51,7 +50,6 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
     contactPhone: rtl ? "الهاتف" : "Phone",
     contactEmail: rtl ? "البريد الإلكتروني" : "Email",
     contactEither: rtl ? "أي منهما" : "Either",
-    comments: rtl ? "ملاحظات إضافية" : "Additional Comments",
   };
 
   const formatBytes = (bytes: number) => {
@@ -79,9 +77,14 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
   const inquiries = rtl
     ? ["القانون بحري", "القانون المدني", "القانون الجنائي", "القانون التجاري", "قانون العمل", "القانون العقاري", "قانون الأسرة", "أخرى"]
     : ["Maritime Law", "Civil law", "Criminal law", "Commercial law", "Labor law", "Real estate law", "Family law", "Other"];
-  const services = rtl
-    ? ["استشارة عامة", "قانون بحري", "قانون تجاري", "قانون عمل", "قانون عقاري", "قانون أسرة"]
-    : ["General Consultation", "Maritime Law", "Commercial Law", "Labor Law", "Real Estate Law", "Family Law"];
+  const labelWrap = (icon: React.ReactNode, text: string, required?: boolean) => (
+    <span className={`inline-flex items-center gap-1.5 ${rtl ? "flex-row-reverse" : "flex-row"}`}>
+      <span className="inline-flex items-center justify-center h-4 w-4 text-[var(--brand-accent)]" aria-hidden="true">
+        {icon}
+      </span>
+      <span>{text}{required ? " " : ""}{required ? <span aria-hidden="true" className="text-[var(--brand-accent)]">*</span> : null}</span>
+    </span>
+  );
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -121,17 +124,6 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
         setStatus(next);
         if (next === "success") {
           setShowThanks(true);
-          try {
-            const msg = rtl ? "شكرًا لرسالتك! سنتواصل معك قريبًا." : "Thank you for your message! We'll get back to you soon.";
-            // lazy import to avoid circular
-            import("@/context/NotificationContext").then((m) => {
-              try { (m as any).useNotifications && (m as any); } catch {}
-            });
-            // Dispatch event so banner can be shown by a listener
-            if (typeof window !== "undefined") {
-              window.dispatchEvent(new CustomEvent("komc-contact-success", { detail: { message: msg } }));
-            }
-          } catch {}
         } else {
           setShowError(true);
         }
@@ -160,7 +152,7 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
 
   return (
     <div dir={rtl ? "rtl" : "ltr"}>
-      <form onSubmit={onSubmit} className="rounded-2xl surface p-6 md:p-8 h-full min-h-[420px] flex flex-col" aria-describedby="contact-success-banner">
+      <form onSubmit={onSubmit} className="rounded-2xl surface p-6 md:p-8 h-full min-h-[420px] flex flex-col">
         <div className="flex items-center justify-center gap-2 text-[var(--brand-accent)] font-extrabold text-lg uppercase">
           <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5">
             <path d="M4 4h12l4 4v12H4z" fill="none" stroke="currentColor" strokeWidth="1.6" />
@@ -173,7 +165,7 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
         <div className={`mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 ${rtl ? "text-right" : "text-left"} flex-1`}>
           <div className="md:col-span-1">
             <label className="block text-xs font-semibold text-[var(--brand-accent)] mb-1">
-              {t.fullName} <span aria-hidden="true" className="text-[var(--brand-accent)]">*</span>
+              {labelWrap(<User className="h-3.5 w-3.5" />, t.fullName, true)}
             </label>
             <input
               value={fullName}
@@ -186,7 +178,7 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
             />
           </div>
           <div className="md:col-span-1">
-            <label className="block text-xs font-semibold text-[var(--brand-accent)] mb-1">{t.gender}</label>
+            <label className="block text-xs font-semibold text-[var(--brand-accent)] mb-1">{labelWrap(<HelpCircle className="h-3.5 w-3.5" />, t.gender)}</label>
             <div className={`flex gap-2 ${rtl ? "justify-end" : "justify-start"}`}>
               <label className={`inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm cursor-pointer ${gender === "male" ? "border-[var(--brand-accent)] text-[var(--brand-accent)] bg-[var(--brand-accent)]/15" : "border-[var(--panel-border)] text-[var(--brand-accent)] bg-[var(--panel-bg)]/30"}`}>
                 <input type="checkbox" checked={gender === "male"} onChange={() => setGender(gender === "male" ? "unspecified" : "male")} className="accent-[var(--brand-accent)]" />
@@ -200,23 +192,23 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
           </div>
           <div>
             <label className="block text-xs font-semibold text-[var(--brand-accent)] mb-1">
-              {t.email} <span aria-hidden="true" className="text-[var(--brand-accent)]">*</span>
+              {labelWrap(<Mail className="h-3.5 w-3.5" />, t.email, true)}
             </label>
             <input value={email} onChange={(e) => setEmail(e.target.value)} onInvalid={handleInvalid} onInput={clearValidity} placeholder="you@example.com" type="email" required className="w-full rounded-lg bg-black/30 border border-[var(--panel-border)] px-3 py-2 text-white placeholder:text-zinc-500" />
           </div>
           <div>
             <label className="block text-xs font-semibold text-[var(--brand-accent)] mb-1">
-              {t.phone} <span aria-hidden="true" className="text-[var(--brand-accent)]">*</span>
+              {labelWrap(<PhoneIcon className="h-3.5 w-3.5" />, t.phone, true)}
             </label>
             <input value={phone} onChange={(e) => setPhone(e.target.value)} onInvalid={handleInvalid} onInput={clearValidity} placeholder={rtl ? "+971 5x xxx xxxx" : "+971 5x xxx xxxx"} required className="w-full rounded-lg bg-black/30 border border-[var(--panel-border)] px-3 py-2 text-white placeholder:text-zinc-500" />
           </div>
           <div className="md:col-span-2">
-            <label className="block text-xs font-semibold text-[var(--brand-accent)] mb-1">{t.address}</label>
+            <label className="block text-xs font-semibold text-[var(--brand-accent)] mb-1">{labelWrap(<MapPin className="h-3.5 w-3.5" />, t.address)}</label>
             <input value={address} onChange={(e) => setAddress(e.target.value)} placeholder={rtl ? "العنوان الكامل" : "Full address"} className="w-full rounded-lg bg-black/30 border border-[var(--panel-border)] px-3 py-2 text-white placeholder:text-zinc-500" />
           </div>
           <div>
             <label className="block text-xs font-semibold text-[var(--brand-accent)] mb-1">
-              {t.inquiry} <span aria-hidden="true" className="text-[var(--brand-accent)]">*</span>
+              {labelWrap(<HelpCircle className="h-3.5 w-3.5" />, t.inquiry, true)}
             </label>
             <div className="relative">
               <select
@@ -240,25 +232,23 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
               </span>
             </div>
           </div>
-          
           <div>
-            <label className="block text-xs font-semibold text-[var(--brand-accent)] mb-1 inline-flex items-center gap-2">
-              <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true"><path fill="currentColor" d="M7 2h1v2h8V2h1a2 2 0 0 1 2 2v2H5V4a2 2 0 0 1 2-2Zm13 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8h16Zm-3 4H7v2h10v-2Z"/></svg>
-              <span>{rtl ? "التاريخ والوقت المفضل" : "Preferred Date/Time"}</span>
+            <label className="block text-xs font-semibold text-[var(--brand-accent)] mb-1">
+              {labelWrap(<CalendarClock className="h-3.5 w-3.5" />, rtl ? "التاريخ والوقت المفضل" : "Preferred Date/Time")}
             </label>
-            <div className="relative group">
+            <div className="relative">
               <input
                 type="datetime-local"
                 value={preferredDateTime}
                 onChange={(e) => setPreferredDateTime(e.target.value)}
-                className="w-full rounded-lg bg-black/30 border border-[var(--panel-border)] pl-3 pr-10 py-2 text-white placeholder:text-zinc-500 focus-visible:outline-none"
+                className="w-full rounded-lg bg-black/30 border border-[var(--panel-border)] px-3 py-2 text-white placeholder:text-zinc-500"
               />
-              <svg viewBox="0 0 24 24" className="pointer-events-none absolute inset-y-0 right-2 my-auto h-4 w-4 text-[var(--brand-accent)] group-focus-within:text-[var(--accent-hover)]" aria-hidden="true"><path fill="currentColor" d="M7 2h1v2h8V2h1a2 2 0 0 1 2 2v2H5V4a2 2 0 0 1 2-2Zm13 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8h16Zm-3 4H7v2h10v-2Z"/></svg>
+              <CalendarClock aria-hidden="true" className={`pointer-events-none absolute top-1/2 -translate-y-1/2 ${rtl ? "left-3" : "right-3"} h-4 w-4 text-[var(--brand-accent)]`} />
             </div>
           </div>
           <div>
             <label className="block text-xs font-semibold text-[var(--brand-accent)] mb-1">
-              {t.preferredContact} <span aria-hidden="true" className="text-[var(--brand-accent)]">*</span>
+              {labelWrap(<Mail className="h-3.5 w-3.5" />, t.preferredContact, true)}
             </label>
             <div className="relative">
               <select
@@ -279,13 +269,12 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
               </span>
             </div>
           </div>
-          
           <div>
-            <label className="block text-xs font-semibold text-[var(--brand-accent)] mb-1">{t.caseTitle}</label>
+            <label className="block text-xs font-semibold text-[var(--brand-accent)] mb-1">{labelWrap(<FileText className="h-3.5 w-3.5" />, t.caseTitle)}</label>
             <input value={caseTitle} onChange={(e) => setCaseTitle(e.target.value)} placeholder={rtl ? "عنوان موجز للقضية" : "Brief case title"} className="w-full rounded-lg bg-black/30 border border-[var(--panel-border)] px-3 py-2 text-white placeholder:text-zinc-500" />
           </div>
           <div className="md:col-span-2 mt-6">
-            <label className="block text-xs font-semibold text-[var(--brand-accent)] mb-1">{t.caseDesc}</label>
+            <label className="block text-xs font-semibold text-[var(--brand-accent)] mb-1">{labelWrap(<AlignLeft className="h-3.5 w-3.5" />, t.caseDesc)}</label>
             <textarea value={caseDesc} onChange={(e) => setCaseDesc(e.target.value)} rows={6} placeholder={rtl ? "صف بإيجاز الوقائع والوثائق المتاحة ونطاق المطلوب." : "Briefly describe facts, available documents, and the scope sought."} className="w-full rounded-lg bg-black/30 border border-[var(--panel-border)] px-3 py-2 text-white placeholder:text-zinc-500" />
           </div>
           <div className="md:col-span-2 mt-4 mb-6 md:mb-8">

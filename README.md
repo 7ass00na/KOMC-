@@ -27,6 +27,12 @@ Key routes:
 - Coverage thresholds set to 80% (statements/branches/functions/lines) for covered modules.
 - UI-heavy routes and server-only handlers are excluded from coverage to focus on core logic.
 
+## SMTP Setup (Vercel)
+- Set the following Env Vars in Vercel Project Settings:
+  - SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM
+  - Optional: SMTP_SECURE, SMTP_MAX_CONNECTIONS, SMTP_MAX_MESSAGES, SMTP_TLS_REJECT_UNAUTH, SMTP_CONN_TIMEOUT, SMTP_GREET_TIMEOUT, SMTP_SOCKET_TIMEOUT
+- The contact endpoint verifies connection before sending and logs delivery status without exposing secrets.
+
 ## Notes
 - Intro video and welcome overlay are verified in both dev and prod builds.
 - RTL/LTR handled via LanguageContext with route-based detection and toggles.

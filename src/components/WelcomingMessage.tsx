@@ -23,6 +23,16 @@ export default function WelcomingMessage({ lang, labels, onPrimary, labelsReady,
     ? ["استشارة أولية واضحة", "إستراتيجية قابلة للتنفيذ", "تواصل سريع وشفاف"]
     : ["Clear initial consult", "Actionable strategy", "Fast, transparent updates"];
 
+  const rememberLang = () => {
+    try {
+      const target = isAr ? "ar" : "en";
+      document.cookie = `site_lang=${target}; max-age=${60 * 60 * 24 * 365}; path=/; samesite=lax`;
+      if (typeof window !== "undefined") {
+        localStorage.setItem("site_lang", target);
+      }
+    } catch {}
+  };
+
   return (
     <div dir={isAr ? "rtl" : "ltr"} className={"grid gap-5 " + (isAr ? "text-right" : "text-left")}>
       <div className="flex items-center justify-between gap-3">
@@ -45,16 +55,26 @@ export default function WelcomingMessage({ lang, labels, onPrimary, labelsReady,
           </button>
         )}
       </div>
-      <h1 className="text-2xl md:text-3xl font-extrabold text-[var(--brand-accent)] tracking-tight">{headline}</h1>
-      <p className="text-sm md:text-base text-[var(--text-secondary)] leading-relaxed">{sub}</p>
-      <ul className="grid gap-2">
-        {bullets.map((b) => (
-          <li key={b} className="inline-flex items-start gap-2">
-            <span className="mt-1 h-2 w-2 rounded-full bg-[var(--brand-accent)]" />
-            <span>{b}</span>
-          </li>
-        ))}
-      </ul>
+      <div
+        className="grid gap-3 will-change-[opacity,transform]"
+        style={{
+          opacity: "var(--welcomeFade, 1)",
+          transform: "translate3d(0,var(--welcomeShift,0px),0)",
+          backfaceVisibility: "hidden" as any,
+          WebkitFontSmoothing: "antialiased",
+        }}
+      >
+        <h1 className="text-2xl md:text-3xl font-extrabold text-[var(--brand-accent)] tracking-tight">{headline}</h1>
+        <p className="text-sm md:text-base text-[var(--text-secondary)] leading-relaxed">{sub}</p>
+        <ul className="grid gap-2">
+          {bullets.map((b) => (
+            <li key={b} className="inline-flex items-start gap-2">
+              <span className="mt-1 h-2 w-2 rounded-full bg-[var(--brand-accent)]" />
+              <span>{b}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
       <div className="flex items-center gap-3">
         <button
           onClick={onPrimary}
@@ -64,6 +84,7 @@ export default function WelcomingMessage({ lang, labels, onPrimary, labelsReady,
         </button>
         <a
           href={isAr ? "/ar/services" : "/en/services"}
+          onClick={rememberLang}
           className="min-h-[44px] rounded-lg px-4 py-3 ring-1 ring-[var(--panel-border)] hover:bg-[var(--panel-muted-bg)]"
         >
           {isAr ? "استعرض الخدمات" : "Explore Services"}
