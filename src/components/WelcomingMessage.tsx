@@ -75,7 +75,7 @@ export default function WelcomingMessage({ lang, labels, onPrimary, labelsReady,
           ))}
         </ul>
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 max-[768px]:sticky max-[768px]:bottom-0 max-[768px]:z-10 max-[768px]:py-2 max-[768px]:backdrop-blur max-[768px]:bg-[color-mix(in_oklab,var(--panel-bg),black_10%)]">
         <button
           onClick={onPrimary}
           className="min-h-[44px] rounded-lg px-5 py-3 bg-[var(--brand-accent)] text-[var(--brand-primary)] font-semibold shadow hover:opacity-90"

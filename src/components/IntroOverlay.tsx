@@ -16,7 +16,7 @@ export default function IntroOverlay() {
   const router = useRouter();
   const [labels, setLabels] = useState<WelcomeLabels | null>(null);
   const [selectedLang, setSelectedLang] = useState<"ar" | "en">(lang);
-  const cardRef = useRef<HTMLDivElement | null>(null);
+  const scrollColRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     try {
@@ -141,7 +141,7 @@ export default function IntroOverlay() {
   }, [mode]);
 
   useEffect(() => {
-    const el = cardRef.current;
+    const el = scrollColRef.current;
     if (!el) return;
     let ticking = false;
     const onScroll = () => {
@@ -270,13 +270,13 @@ export default function IntroOverlay() {
           dir={lang === "ar" ? "rtl" : "ltr"}
         >
           <div className="min-h-[100svh] grid place-items-center py-6 md:py-8 px-4 max-[480px]:px-6">
-          <div ref={cardRef} className="w-full max-w-5xl lg:max-w-6xl rounded-2xl surface p-6 md:p-8 max-h-[calc(100svh-96px)] md:max-h-[calc(100svh-128px)] scroll-xy" data-intro-overlay>
+          <div className="w-full max-w-5xl lg:max-w-6xl rounded-2xl surface p-6 md:p-8" data-intro-overlay>
             <div className={"flex items-center gap-6 lg:gap-8 max-[480px]:gap-4 max-[1024px]:flex-col " + (lang === "ar" ? "text-right" : "text-left")}>
               <motion.div
                 initial={{ opacity: 0, y: 10, scale: 0.98 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ duration: 0.35, ease: "easeOut" }}
-                className="md:basis-[36%] lg:basis-[38%] max-[1024px]:basis-full grid place-items-center self-stretch max-[1024px]:sticky max-[1024px]:top-0 max-[1024px]:z-10"
+                className="md:basis-[36%] lg:basis-[38%] max-[768px]:basis-full grid place-items-center self-stretch max-[768px]:sticky max-[768px]:top-0 max-[768px]:z-10"
               >
                 <div className="relative w-full max-w-none max-[1024px]:aspect-[4/3] md:h-full md:max-w-none rounded-xl overflow-hidden ring-1 ring-[var(--panel-border)] shadow-sm">
                   <Image
@@ -288,7 +288,7 @@ export default function IntroOverlay() {
                     priority
                   />
                 </div>
-                <div className="block max-[1024px]:mt-4 w-full hidden max-[1024px]:block sticky top-[calc(100%+0.5rem)]">
+                <div className="block max-[768px]:mt-4 w-full hidden max-[768px]:block sticky top-[calc(100%+0.5rem)]">
                   <div className="h-px w-full bg-gradient-to-r from-transparent via-[var(--brand-accent)]/60 to-transparent" />
                 </div>
               </motion.div>
@@ -298,46 +298,51 @@ export default function IntroOverlay() {
                 transition={{ duration: 0.35, ease: "easeOut", delay: 0.12 }}
                 className="md:basis-[64%] lg:basis-[62%] max-[1024px]:basis-full"
               >
-                {labels && (
-                  <>
-                    {(() => {
-                      try {
-                        track("welcome_impression", labels);
-                      } catch {}
-                      return null;
-                    })()}
-                    <WelcomingMessage
-                      lang={selectedLang}
-                      labels={labels}
-                      labelsReady={true}
-                      onPrimary={() => {
+                <div
+                  ref={scrollColRef}
+                  className="max-[768px]:max-h-[calc(100svh-128px)] max-[480px]:max-h-[calc(100svh-112px)] max-[768px]:pr-2 scroll-y"
+                >
+                  {labels && (
+                    <>
+                      {(() => {
                         try {
-                          const target = selectedLang === "ar" ? "ar" : "en";
-                          document.cookie = `site_lang=${target}; max-age=${60 * 60 * 24 * 365}; path=/; samesite=lax`;
-                          if (typeof window !== "undefined") localStorage.setItem("site_lang", target);
+                          track("welcome_impression", labels);
                         } catch {}
-                        try {
-                          track("welcome_cta_click", labels);
-                        } catch {}
-                        try {
-                          const dur = 2000;
-                          window.dispatchEvent(new CustomEvent("site-loading", { detail: { duration: dur } }) as any);
-                          setTimeout(() => {
+                        return null;
+                      })()}
+                      <WelcomingMessage
+                        lang={selectedLang}
+                        labels={labels}
+                        labelsReady={true}
+                        onPrimary={() => {
+                          try {
+                            const target = selectedLang === "ar" ? "ar" : "en";
+                            document.cookie = `site_lang=${target}; max-age=${60 * 60 * 24 * 365}; path=/; samesite=lax`;
+                            if (typeof window !== "undefined") localStorage.setItem("site_lang", target);
+                          } catch {}
+                          try {
+                            track("welcome_cta_click", labels);
+                          } catch {}
+                          try {
+                            const dur = 2000;
+                            window.dispatchEvent(new CustomEvent("site-loading", { detail: { duration: dur } }) as any);
+                            setTimeout(() => {
+                              router.push(selectedLang === "ar" ? "/ar" : "/en");
+                              setMode("hidden");
+                            }, dur + 20);
+                          } catch {
                             router.push(selectedLang === "ar" ? "/ar" : "/en");
                             setMode("hidden");
-                          }, dur + 20);
-                        } catch {
-                          router.push(selectedLang === "ar" ? "/ar" : "/en");
-                          setMode("hidden");
-                        }
-                      }}
-                      onChangeLang={(next) => {
-                        setSelectedLang(next);
-                      }}
-                    />
-                    <div className="scroll-hint" />
-                  </>
-                )}
+                          }
+                        }}
+                        onChangeLang={(next) => {
+                          setSelectedLang(next);
+                        }}
+                      />
+                      <div className="scroll-hint" />
+                    </>
+                  )}
+                </div>
               </motion.div>
             </div>
           </div>

@@ -15,6 +15,7 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
   const [attachment, setAttachment] = useState<File | null>(null);
   const [attachmentNote, setAttachmentNote] = useState("");
   const [attachmentError, setAttachmentError] = useState<string | null>(null);
+  const [errorDetail, setErrorDetail] = useState<string | null>(null);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [showThanks, setShowThanks] = useState(false);
   const [showError, setShowError] = useState(false);
@@ -91,11 +92,11 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
     setStatus("loading");
     setLoadingShownAt(Date.now());
     setAttachmentError(null);
-    if (attachment && attachment.size > 10 * 1024 * 1024) {
+    if (attachment && attachment.size > 25 * 1024 * 1024) {
       setStatus("idle");
-      setAttachmentError(rtl ? "حجم الملف يتجاوز 10 ميجابايت" : "File exceeds 10 MB limit");
+      setAttachmentError(rtl ? "حجم الملف يتجاوز 25 ميجابايت" : "File exceeds 25 MB limit");
       if (typeof window !== "undefined") {
-        alert(rtl ? "المرفق أكبر من 10 ميجابايت. يرجى رفع ملف أصغر لإرسال الطلب." : "The attached file exceeds 10 MB. Please upload a smaller file to send your request.");
+        alert(rtl ? "المرفق أكبر من 25 ميجابايت. يرجى رفع ملف أصغر لإرسال الطلب." : "The attached file exceeds 25 MB. Please upload a smaller file to send your request.");
       }
       return;
     }
@@ -117,6 +118,20 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
       if (attachment) fd.append("attachment", attachment);
       if (attachmentNote) fd.append("attachmentNote", attachmentNote);
       const res = await fetch("/api/contact", { method: "POST", body: fd });
+      let detail: string | null = null;
+      if (!res.ok) {
+        try {
+          const data = await res.json();
+          detail = data?.detail || data?.error || JSON.stringify(data);
+        } catch {
+          try {
+            const txt = await res.text();
+            detail = txt?.slice(0, 200) || String(res.status);
+          } catch {
+            detail = String(res.status);
+          }
+        }
+      }
       const next = res.ok ? "success" as const : "error" as const;
       const elapsed = loadingShownAt ? Date.now() - loadingShownAt : 0;
       const delay = Math.max(0, 1000 - elapsed);
@@ -125,14 +140,20 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
         if (next === "success") {
           setShowThanks(true);
         } else {
+          setErrorDetail(detail);
           setShowError(true);
         }
       }, delay);
-    } catch {
+    } catch (e: any) {
       const elapsed = loadingShownAt ? Date.now() - loadingShownAt : 0;
       const delay = Math.max(0, 1000 - elapsed);
       setTimeout(() => {
         setStatus("error");
+        try {
+          const code = e?.code || e?.name || "NETWORK_ERROR";
+          const msg = e?.message || String(e);
+          setErrorDetail(`${code}: ${msg}`.slice(0, 240));
+        } catch {}
         setShowError(true);
       }, delay);
     }
@@ -378,7 +399,9 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
             </div>
             <div className="mt-3 text-2xl font-extrabold text-[var(--brand-accent)]">{t.errorTitle}</div>
             <div className="mx-auto mt-2 h-px w-24 bg-gradient-to-r from-transparent via-[var(--brand-accent)]/70 to-transparent" />
-            <div className="mt-2 text-sm text-[var(--text-secondary)]">{t.errorBody}</div>
+            <div className="mt-2 text-sm text-[var(--text-secondary)]">
+              {t.errorBody}{errorDetail ? ` — ${errorDetail}` : ""}
+            </div>
             <button
               onClick={() => {
                 setShowError(false);

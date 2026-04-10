@@ -51,8 +51,8 @@ export async function POST(req: Request) {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return NextResponse.json({ ok: false, error: "INVALID_EMAIL" }, { status: 400 });
   }
-  if (file && file.size > 10 * 1024 * 1024) {
-    return NextResponse.json({ ok: false, error: "ATTACHMENT_TOO_LARGE" }, { status: 413 });
+  if (file && file.size > 25 * 1024 * 1024) {
+    return NextResponse.json({ ok: false, error: "ATTACHMENT_TOO_LARGE", detail: "Max 25MB" }, { status: 413 });
   }
 
   const to = "ahmedhussan068@gmail.com";
@@ -181,16 +181,18 @@ IP ${ip} · ${ts}
     }
     try {
       await transporter.verify();
-    } catch (e) {
-      console.error("[contact] SMTP verify failed", (e as any)?.message || e);
-      return NextResponse.json({ ok: false, error: "SMTP_VERIFY_FAILED" }, { status: 502 });
+    } catch (e: any) {
+      console.error("[contact] SMTP verify failed", e?.code || "", e?.message || e);
+      return NextResponse.json({ ok: false, error: "SMTP_VERIFY_FAILED", detail: e?.message || "verify failed" }, { status: 502 });
     }
     await transporter.sendMail(mail);
     console.info("[contact] email delivered", { to, subject, ts, ip });
     return NextResponse.json({ ok: true, queued: true });
-  } catch (err) {
-    console.error("[contact] Failed to send email", err);
-    return NextResponse.json({ ok: false, error: "EMAIL_SEND_FAILED" }, { status: 500 });
+  } catch (err: any) {
+    const code = err?.code || err?.name || "EMAIL_SEND_FAILED";
+    const msg = err?.message || String(err);
+    console.error("[contact] Failed to send email", code, msg);
+    return NextResponse.json({ ok: false, error: code, detail: msg }, { status: 500 });
   }
 }
 
