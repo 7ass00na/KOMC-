@@ -10,11 +10,7 @@
     transform: translateZ(0);
   }
   .scrollPane {
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
-    touch-action: pan-y;
-    max-height: calc(100svh - 96px);
+    overflow: visible;
   }
   .ctaDock {
     position: sticky;
@@ -22,6 +18,31 @@
     z-index: 5;
     background: linear-gradient(to top, color-mix(in oklab, var(--panel-bg), black 10%) 65%, transparent);
     border-top: 1px solid var(--panel-border);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
 }
 
+.langToggle {
+  color: var(--text-secondary);
+}
+:global(.dark) .langToggle {
+  color: var(--icon-primary-dark);
+}
+.badgeRow {
+  color: var(--text-secondary);
+}
+:global(.dark) .badgeRow {
+  color: var(--icon-primary-dark);
+}
+
+.messagePane {
+  background-color: var(--panel-bg);
+  color: var(--ink-primary);
+}
+@media (forced-colors: active) {
+  .messagePane {
+    background-color: Canvas;
+    color: CanvasText;
+  }
+}

@@ -283,7 +283,7 @@ export default function IntroOverlay() {
           dir={lang === "ar" ? "rtl" : "ltr"}
         >
           <div className="min-h-[100svh] grid place-items-center py-6 md:py-8 px-4 max-[480px]:px-6">
-          <div ref={cardRef} className="w-full max-w-5xl lg:max-w-6xl rounded-2xl surface p-6 md:p-8 max-h-[calc(100svh-96px)] md:max-h-[calc(100svh-128px)] overflow-hidden" data-intro-overlay>
+          <section ref={cardRef} className="w-full max-w-5xl lg:max-w-6xl p-6 md:p-8 overflow-hidden bg-[var(--panel-bg)] rounded-2xl ring-1 ring-[var(--panel-border)]" data-intro-overlay>
             <div className={"flex items-center gap-6 lg:gap-8 max-[480px]:gap-4 max-[1024px]:flex-col " + (lang === "ar" ? "text-right" : "text-left")}>
               <motion.div
                 initial={{ opacity: 0, y: 10, scale: 0.98 }}
@@ -309,7 +309,7 @@ export default function IntroOverlay() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, ease: "easeOut", delay: 0.12 }}
-                className={`md:basis-[64%] lg:basis-[62%] max-[1024px]:basis-full ${styles.scrollPane}`}
+                className={`md:basis-[64%] lg:basis-[62%] max-[1024px]:basis-full ${styles.scrollPane} ${styles.messagePane}`}
                 ref={msgRef}
               >
                 {labels && (
@@ -335,7 +335,8 @@ export default function IntroOverlay() {
                         } catch {}
                         try {
                           const dur = 2000;
-                          window.dispatchEvent(new CustomEvent("site-loading", { detail: { duration: dur } }) as any);
+                          const message = selectedLang === "ar" ? "يرجى الانتظار..." : "Please wait...";
+                          window.dispatchEvent(new CustomEvent("site-loading", { detail: { duration: dur, message } }) as any);
                           setTimeout(() => {
                             router.push(selectedLang === "ar" ? "/ar" : "/en");
                             setMode("hidden");
@@ -354,7 +355,7 @@ export default function IntroOverlay() {
                 )}
               </motion.div>
             </div>
-          </div>
+          </section>
           </div>
         </motion.div>
       )}

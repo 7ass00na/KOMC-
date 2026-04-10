@@ -6,6 +6,8 @@ export default defineConfig({
     environment: "jsdom",
     globals: true,
     setupFiles: [],
+    include: ["src/**/__tests__/**/*.{test,spec}.{ts,tsx}"],
+    exclude: ["e2e/**", "playwright.config.*", "node_modules/**"],
     coverage: {
       enabled: true,
       provider: "v8",

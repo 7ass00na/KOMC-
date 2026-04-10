@@ -79,6 +79,8 @@
   --text-secondary: #AAB4C2; /* Secondary text on dark */
   --ink-primary: #F5F7FA; /* Primary ink for dark mode */
   --logo-bg: #0A1520; /* Slightly deeper navy for dark mode */
+  --icon-primary-dark: #E1BC89; /* Accent for icons on dark */
+  --icon-secondary-dark: #C8D0DA; /* Muted icon tone on dark */
 }
 
 /* EN: Explicit light class to override system dark preference

@@ -41,3 +41,11 @@
 - Welcome Card: Introduced scoped styles (welcome-card.module.css) for sticky media, independent scroll pane, and CTA dock; preserved accessibility and momentum scroll interoperability.
 - Tests: Added Playwright config and e2e test for mobile/tablet scroll behavior and text fade. Excluded e2e and Playwright config from tsconfig to keep production builds clean.
 - Build Health: Re-verified lint, tests, and production build with strict TypeScript enabled; no errors or warnings.
+ - Lint/Tests Update: ESLint now ignores e2e and Playwright config; Vitest excludes e2e and node_modules tests and explicitly includes only src/**/__tests__ suites; local shim added for Playwright types to avoid type resolution warnings without adding dev deps.
+
+## Komc-VB0004
+- Theme Sync: Welcome card message area now dynamically tracks the active theme using CSS variables. The `.messagePane` consumes `--panel-bg` and `--ink-primary`, with a `forced-colors` fallback for high-contrast modes.
+- Icons: Dark‑mode icon tokens added and applied. Badges and the language toggle inherit `currentColor` and switch to `--icon-primary-dark` in dark mode, ensuring AA contrast on dark surfaces.
+- Arabic Copy: Corrected Arabic visitor label to “مرحبًا بكم — بالزائر الجديد” and added mappings for returning/referral/campaign visitor cases.
+- UX: Global waiting indicator message localized per language when CTAs are pressed.
+- QA: Lint/tests/build passed; instrumented coverage remains ≥ 80% for core logic; verified responsive behavior and RTL rendering.
