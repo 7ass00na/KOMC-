@@ -35,14 +35,3 @@
 :global(.dark) .badgeRow {
   color: var(--icon-primary-dark);
 }
-
-.messagePane {
-  background-color: var(--panel-bg);
-  color: var(--ink-primary);
-}
-@media (forced-colors: active) {
-  .messagePane {
-    background-color: Canvas;
-    color: CanvasText;
-  }
-}

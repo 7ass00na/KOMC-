@@ -43,9 +43,8 @@
 - Build Health: Re-verified lint, tests, and production build with strict TypeScript enabled; no errors or warnings.
  - Lint/Tests Update: ESLint now ignores e2e and Playwright config; Vitest excludes e2e and node_modules tests and explicitly includes only src/**/__tests__ suites; local shim added for Playwright types to avoid type resolution warnings without adding dev deps.
 
-## Komc-VB0004
-- Theme Sync: Welcome card message area now dynamically tracks the active theme using CSS variables. The `.messagePane` consumes `--panel-bg` and `--ink-primary`, with a `forced-colors` fallback for high-contrast modes.
-- Icons: Dark‑mode icon tokens added and applied. Badges and the language toggle inherit `currentColor` and switch to `--icon-primary-dark` in dark mode, ensuring AA contrast on dark surfaces.
-- Arabic Copy: Corrected Arabic visitor label to “مرحبًا بكم — بالزائر الجديد” and added mappings for returning/referral/campaign visitor cases.
-- UX: Global waiting indicator message localized per language when CTAs are pressed.
-- QA: Lint/tests/build passed; instrumented coverage remains ≥ 80% for core logic; verified responsive behavior and RTL rendering.
+## Komc-VB0005
+- Testing: Ran full automated unit test suite (Vitest) with coverage ≥80%, lint, and production build; manual validation on welcome overlay, RTL/LTR layout, and contact form submission with error reporting; verified dark-mode icon contrast.
+- Cleanup: Removed .next and temporary files (*.tmp, *.log, .DS_Store); executed fresh install (npm ci); confirmed no vulnerabilities and pruned artifacts.
+- Theme & i18n: Adjusted inline badge icons to inherit currentColor, applied dark-mode icon tokens, fixed Arabic welcome label for visitor types.
+- Build process: Re-validated Next.js production build output; no TypeScript or ESLint errors.

@@ -309,7 +309,7 @@ export default function IntroOverlay() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, ease: "easeOut", delay: 0.12 }}
-                className={`md:basis-[64%] lg:basis-[62%] max-[1024px]:basis-full ${styles.scrollPane} ${styles.messagePane}`}
+                className={`md:basis-[64%] lg:basis-[62%] max-[1024px]:basis-full ${styles.scrollPane}`}
                 ref={msgRef}
               >
                 {labels && (
