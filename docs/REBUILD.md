@@ -28,3 +28,9 @@ Welcome Card Scroll Container
 Contact Form Email Pipeline
 - Client: Added service type and preferred date/time inputs with validation.
 - Server: Email includes all form fields, timestamp, request IP, and optional attachment note. Added basic IP-based rate limiting to mitigate spam.
+
+TeamFN (Final Verification)
+- Intro video and welcome overlay validated in dev and prod builds; ensured autoplay, fallback to welcome with safety timers, and proper localization.
+- Ran full unit test suite with enforced coverage thresholds on core logic.
+- Cleanbuild: removed .next and rebuilt with Next.js 16 (Turbopack). No runtime errors observed.
+- Consultation form: removed “Service Type” and “Additional Comments”; added icons to labels and themed Date/Time icon. Verified validations and submission.
