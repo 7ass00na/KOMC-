@@ -41,6 +41,29 @@ export default function Page() {
                     </div>
                   </div>
                 </div>
+                <div className="mt-6 rounded-2xl surface p-6 md:p-8">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="text-sm font-semibold text-[var(--brand-accent)]">موقع المكتب</div>
+                    <a
+                      href="https://www.google.com/maps/search/?api=1&query=%D8%A7%D9%84%D8%B7%D8%A7%D8%A8%D9%82%20%D8%A7%D9%84%D8%AB%D8%A7%D9%84%D8%AB%D8%8C%20%D9%85%D8%A8%D9%86%D9%89%20%D8%A7%D9%84%D9%86%D9%88%D8%AE%D8%B0%D8%A9%D8%8C%20%D9%85%D9%8A%D9%86%D8%A7%D8%A1%20%D8%A7%D9%84%D8%AD%D9%85%D8%B1%D9%8A%D8%A9%D8%8C%20%D8%AF%D8%A8%D9%8A%D8%8C%20%D8%A7%D9%84%D8%A5%D9%85%D8%A7%D8%B1%D8%A7%D8%AA%20%D8%A7%D9%84%D8%B9%D8%B1%D8%A8%D9%8A%D8%A9%20%D8%A7%D9%84%D9%85%D8%AA%D8%AD%D8%AF%D8%A9"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs font-semibold text-[var(--brand-accent)] hover:underline"
+                    >
+                      فتح على خرائط Google
+                    </a>
+                  </div>
+                  <div className="mt-3 relative h-64 md:h-72 overflow-hidden rounded-xl border border-[var(--panel-border)] bg-black/20">
+                    <iframe
+                      title="موقع مكتب KOMC"
+                      src="https://www.google.com/maps?q=%D8%A7%D9%84%D8%B7%D8%A7%D8%A8%D9%82%20%D8%A7%D9%84%D8%AB%D8%A7%D9%84%D8%AB%D8%8C%20%D9%85%D8%A8%D9%86%D9%89%20%D8%A7%D9%84%D9%86%D9%88%D8%AE%D8%B0%D8%A9%D8%8C%20%D9%85%D9%8A%D9%86%D8%A7%D8%A1%20%D8%A7%D9%84%D8%AD%D9%85%D8%B1%D9%8A%D8%A9%D8%8C%20%D8%AF%D8%A8%D9%8A%D8%8C%20%D8%A7%D9%84%D8%A5%D9%85%D8%A7%D8%B1%D8%A7%D8%AA%20%D8%A7%D9%84%D8%B9%D8%B1%D8%A8%D9%8A%D8%A9%20%D8%A7%D9%84%D9%85%D8%AA%D8%AD%D8%AF%D8%A9&output=embed"
+                      className="absolute inset-0 h-full w-full"
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      allowFullScreen={true}
+                    />
+                  </div>
+                </div>
               </div>
               <div className="h-full">
                 <ContactForm lang="ar" />

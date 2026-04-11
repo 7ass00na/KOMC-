@@ -489,7 +489,19 @@ export default function Footer() {
             <ul className="space-y-2 text-sm text-[var(--text-secondary)] dark:text-[color-mix(in_oklab,var(--text-on-dark),transparent_20%)] contact-list">
               <li className="flex items-start gap-2">
                 <span>📍</span>
-                <span>{t("footerAddress")}</span>
+                {lang === "ar" ? (
+                  <a
+                    className="footer-link"
+                    href="https://www.google.com/maps/search/?api=1&query=%D8%A7%D9%84%D8%B7%D8%A7%D8%A8%D9%82%20%D8%A7%D9%84%D8%AB%D8%A7%D9%84%D8%AB%D8%8C%20%D9%85%D8%A8%D9%86%D9%89%20%D8%A7%D9%84%D9%86%D9%88%D8%AE%D8%B0%D8%A9%D8%8C%20%D9%85%D9%8A%D9%86%D8%A7%D8%A1%20%D8%A7%D9%84%D8%AD%D9%85%D8%B1%D9%8A%D8%A9%D8%8C%20%D8%AF%D8%A8%D9%8A%D8%8C%20%D8%A7%D9%84%D8%A5%D9%85%D8%A7%D8%B1%D8%A7%D8%AA%20%D8%A7%D9%84%D8%B9%D8%B1%D8%A8%D9%8A%D8%A9%20%D8%A7%D9%84%D9%85%D8%AA%D8%AD%D8%AF%D8%A9"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="افتح الموقع على خرائط Google"
+                  >
+                    {t("footerAddress")}
+                  </a>
+                ) : (
+                  <span>{t("footerAddress")}</span>
+                )}
               </li>
               <li className="flex items-start gap-2">
                 <span>📞</span>

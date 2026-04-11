@@ -41,6 +41,29 @@ export default function Page() {
                     </div>
                   </div>
                 </div>
+                <div className="mt-6 rounded-2xl surface p-6 md:p-8">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="text-sm font-semibold text-[var(--brand-accent)]">Visit Our Office</div>
+                    <a
+                      href="https://www.google.com/maps/search/?api=1&query=Al%20Nokhatha%20Building%20Hamriya%20Port%20Dubai%20UAE"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs font-semibold text-[var(--brand-accent)] hover:underline"
+                    >
+                      Open in Google Maps
+                    </a>
+                  </div>
+                  <div className="mt-3 relative h-64 md:h-72 overflow-hidden rounded-xl border border-[var(--panel-border)] bg-black/20">
+                    <iframe
+                      title="KOMC Office Location"
+                      src="https://www.google.com/maps?q=Al%20Nokhatha%20Building%20Hamriya%20Port%20Dubai%20UAE&output=embed"
+                      className="absolute inset-0 h-full w-full"
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      allowFullScreen={true}
+                    />
+                  </div>
+                </div>
               </div>
               <div className="h-full">
                 <ContactForm lang="en" />

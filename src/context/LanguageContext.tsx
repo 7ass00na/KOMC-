@@ -208,7 +208,7 @@ const translations: Record<Lang, Record<string, string>> = {
     footerTerms: "الشروط والأحكام",
     footerDisclaimer: "إخلاء المسؤولية القانونية",
     footerAddress:
-      "الطابق الثالث، مبنى النخثة، ميناء الحمرية، دبي، الإمارات العربية المتحدة.",
+      "الطابق الثالث، مبنى النوخذة، ميناء الحمرية، دبي، الإمارات العربية المتحدة.",
     footerPhone: "+971 55 194 9881",
     footerEmail: "info@khaledomer.ae",
     footerHours: "الاثنين إلى الجمعة: 9:00 ص - 6:00 م",

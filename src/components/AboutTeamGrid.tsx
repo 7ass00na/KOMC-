@@ -187,7 +187,7 @@ export default function AboutTeamGrid({ team, isRTL = false, startIndex = 0 }: {
       if (number === 12) {
         return {
           ...p,
-          name: "Aya Khaled",
+          name: "Haya Khaled",
           role: "Lawyer and Legal Advisor",
           focus: "Various Legal Consultations",
           bio: "Trusted Consultant in media and real estate cases.",
@@ -389,7 +389,7 @@ export default function AboutTeamGrid({ team, isRTL = false, startIndex = 0 }: {
       if (number === 12) {
         return {
           ...p,
-          name: "آية خالد",
+          name: "هيا خالد",
           role: "محامية ومستشارة قانونية",
           focus: "استشارات قانونية متنوعة",
           bio: "مستشارة موثوقة في قضايا الإعلام والعقارات.",
