@@ -83,8 +83,10 @@ export default function Header() {
       return () => clearTimeout(t);
     }
     function onSiteLoading(e: Event) {
-      // @ts-ignore
-      const ms = Number(e?.detail?.duration ?? 2500);
+      const d = (e as any)?.detail;
+      const welcome = !!d?.welcome;
+      if (welcome) return;
+      const ms = Number(d?.duration ?? 2500);
       beginTimedLoading(ms);
     }
     function onSiteLoadingShort() {
@@ -191,12 +193,12 @@ export default function Header() {
   // AR: إنشاء عناصر الملاحة ثنائية اللغة حسب اللغة الحالية
   const navItems = useMemo(
     () => [
-      { id: "home", label: t("navHome"), href: lang === "ar" ? "/ar" : "/en" },
-      { id: "about", label: t("navAbout"), href: `/${lang}/about` },
+      { id: "home", label: t("navHome"), href: `/${lang}/home` },
+      { id: "about", label: t("navAbout"), href: `/${lang}/about-us` },
       { id: "services", label: t("navServices"), href: `/${lang}/services` },
       { id: "cases", label: t("navCases"), href: `/${lang}/cases` },
       { id: "news", label: t("navNews"), href: `/${lang}/news` },
-      { id: "contact", label: t("navContact"), href: `/${lang}/contact` },
+      { id: "contact", label: t("navContact"), href: `/${lang}/contact-us` },
     ],
     [t, lang]
   );
@@ -268,7 +270,7 @@ export default function Header() {
           {navItems.map((item) => {
             const isActive =
               pathname === item.href ||
-              (item.id === "home" && (pathname === "/" || pathname === "/en" || pathname === "/ar")) ||
+              (item.id === "home" && (pathname === "/" || pathname === "/en" || pathname === "/ar" || pathname === "/en/home" || pathname === "/ar/home")) ||
               (item.id !== "home" && pathname?.startsWith(item.href));
             return (
               <Link
@@ -399,7 +401,7 @@ export default function Header() {
           ) : null}
           {/* Theme toggle moved to footer */}
           <Link
-            href={lang === "ar" ? "/ar/contact" : "/en/contact"}
+            href={lang === "ar" ? "/ar/contact-us" : "/en/contact-us"}
             prefetch
             onClick={withWait()}
             className={[
@@ -480,7 +482,7 @@ export default function Header() {
             {navItems.map((item) => {
               const isActive =
                 pathname === item.href ||
-                (item.id === "home" && (pathname === "/" || pathname === "/en" || pathname === "/ar")) ||
+                  (item.id === "home" && (pathname === "/" || pathname === "/en" || pathname === "/ar" || pathname === "/en/home" || pathname === "/ar/home")) ||
                 (item.id !== "home" && pathname?.startsWith(item.href));
               return (
                 <Link
@@ -539,7 +541,7 @@ export default function Header() {
             {/* EN: Mobile contact CTA */}
             {/* AR: زر تواصل للجوال */}
             <Link
-              href={lang === "ar" ? "/ar/contact" : "/en/contact"}
+              href={lang === "ar" ? "/ar/contact-us" : "/en/contact-us"}
               onClick={() => setMobileOpen(false)}
               prefetch
               className="mt-2 w-full text-center rounded-lg bg-[var(--brand-accent)] text-[var(--brand-primary)] px-3 py-3 min-h-[44px] text-sm font-semibold transition-transform duration-200 will-change-transform hover:-translate-y-0.5 active:scale-95 shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-accent)]"

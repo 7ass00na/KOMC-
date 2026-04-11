@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { WelcomeLabels } from "@/lib/welcomeLabels";
 import styles from "./welcome-card.module.css";
+import Link from "next/link";
 
 type Props = {
   lang: "ar" | "en";
@@ -54,9 +55,8 @@ export default function WelcomingMessage({ lang, labels, onPrimary, labelsReady,
   };
   const announceWaiting = () => {
     try {
-      const message = isAr ? "يرجى الانتظار..." : "Please wait...";
-      const dur = 2000;
-      window.dispatchEvent(new CustomEvent("site-loading", { detail: { duration: dur, message } }) as any);
+      const dur = 3000;
+      window.dispatchEvent(new CustomEvent("site-loading", { detail: { duration: dur, welcome: true, lang: isAr ? "ar" : "en" } }) as any);
     } catch {}
   };
 
@@ -112,18 +112,19 @@ export default function WelcomingMessage({ lang, labels, onPrimary, labelsReady,
             onClick={onPrimary}
             className="min-h-[44px] rounded-lg px-5 py-3 bg-[var(--brand-accent)] text-[var(--brand-primary)] font-semibold shadow hover:opacity-90"
           >
-            {isAr ? "الانتقال إلى الصفحة الرئيسية" : "Move to Home"}
+            {isAr ? "الذهاب الي الصفحة الرئيسية" : "Go to Home Page"}
           </button>
-          <a
-            href={isAr ? "/ar/services" : "/en/services"}
-            onClick={(e) => {
+          <Link
+            href={isAr ? "/ar/service" : "/en/service"}
+            onClick={() => {
               rememberLang();
               announceWaiting();
             }}
+            data-skip-loading-cursor
             className="min-h-[44px] rounded-lg px-4 py-3 ring-1 ring-[var(--panel-border)] hover:bg-[var(--panel-muted-bg)]"
           >
-            {isAr ? "استعرض الخدمات" : "Explore Services"}
-          </a>
+            {isAr ? "استكشف خدماتنا" : "Explore Our Services"}
+          </Link>
         </div>
       </div>
       <div className={`mt-3 flex items-center justify-center gap-4 text-xs ${styles.badgeRow}`}>

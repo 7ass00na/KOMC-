@@ -53,14 +53,14 @@ describe("Onboarding sequential loading flow", () => {
     await act(async () => {
       vi.advanceTimersByTime(2050); // secondary wait to welcome
     });
-    const moveBtn = screen.getByRole("button", { name: /Move to Home/i });
+    const moveBtn = screen.getByRole("button", { name: /Go to Home Page/i });
     expect(moveBtn).toBeTruthy();
 
     fireEvent.click(moveBtn);
     await act(async () => {
       vi.advanceTimersByTime(2050); // final wait to home
     });
-    const moveBtnGone = screen.queryByRole("button", { name: /Move to Home/i });
+    const moveBtnGone = screen.queryByRole("button", { name: /Go to Home Page/i });
     expect(moveBtnGone).toBeNull();
   }, 15000);
 });

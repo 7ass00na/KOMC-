@@ -74,6 +74,7 @@ export default function GlobalLoadingOverlay() {
       if (!target) return;
       const a = target.closest('a[href]') as HTMLAnchorElement | null;
       if (!a) return;
+      if (a.hasAttribute('data-skip-loading-cursor')) return;
       if (a.target === '_blank' || a.rel?.includes('external') || a.hasAttribute('download')) return;
       const href = a.getAttribute('href') || '';
       if (isInternal(href)) showShort();
@@ -88,7 +89,7 @@ export default function GlobalLoadingOverlay() {
     };
     const onCustomTimed = (e: Event) => {
       // @ts-ignore
-      const ms = Math.max(0, Number(e?.detail?.duration ?? 2500));
+      let ms = Math.max(0, Number(e?.detail?.duration ?? 2500));
       // @ts-ignore
       const welcome = !!e?.detail?.welcome;
       // @ts-ignore
@@ -96,6 +97,7 @@ export default function GlobalLoadingOverlay() {
       if (welcome) {
         setVariant('welcome');
         if (l) setEventLang(l);
+        ms = 3000;
       } else {
         setVariant('default');
         setEventLang(null);

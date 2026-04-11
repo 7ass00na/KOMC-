@@ -48,3 +48,11 @@
 - Cleanup: Removed .next and temporary files (*.tmp, *.log, .DS_Store); executed fresh install (npm ci); confirmed no vulnerabilities and pruned artifacts.
 - Theme & i18n: Adjusted inline badge icons to inherit currentColor, applied dark-mode icon tokens, fixed Arabic welcome label for visitor types.
 - Build process: Re-validated Next.js production build output; no TypeScript or ESLint errors.
+- Routing & SEO: Added /en/home and /ar/home home routes with redirects from /en and /ar, plus cookie-based root redirect via middleware to avoid duplicate content and support language-preference navigation.
+- Security & Docs: Added CSP report-only and security headers; added ExternalLink component and external linking strategy documentation.
+
+## Komc-VB0006
+- Loading Cursor: Removed duplicate loading cursor behavior in welcome CTA flow by skipping global auto link-triggered loading for welcome CTAs and preventing header-level loading animation for welcome events; enforced a single global waiting cursor for exactly 3 seconds with no flicker.
+- Welcome CTA Flow: Standardized bilingual CTA labels and routing for home/services (AR: /ar/home, /ar/service; EN: /en/home, /en/service) while keeping the address bar domain-only during intro and welcome.
+- Routing: Added 301 normalization for localized routes (case normalization + legacy /about and /contact redirects to /about-us and /contact-us) and set Content-Language header for localized pages.
+- QA: Re-ran lint, unit tests with coverage, and production build successfully.

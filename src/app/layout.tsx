@@ -39,12 +39,12 @@ export const metadata: Metadata = {
     "Arabic",
     "English",
   ],
-  metadataBase: new URL("https://www.example.com"),
+  metadataBase: new URL("https://DN.com"),
   alternates: {
-    canonical: "/en",
+    canonical: "/",
     languages: {
-      "en": "/en",
-      "ar": "/ar",
+      en: "/en/home",
+      ar: "/ar/home",
     },
   },
   icons: {
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
       "KOMC | Legal & Maitime Consultation UAE",
     description:
       "Specialized in Admiralty, Commercial Shipping, Contracts, Disputes, and Compliance across the UAE & GCC.",
-    url: "https://www.example.com/en",
+    url: "https://DN.com",
     siteName: "KOMC",
     locale: "en_US",
     type: "website",

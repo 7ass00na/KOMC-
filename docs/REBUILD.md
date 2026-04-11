@@ -34,3 +34,13 @@ SMTP Configuration
 - Uses environment variables on Vercel: SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM.
 - Optional tuning: SMTP_SECURE, SMTP_MAX_CONNECTIONS, SMTP_MAX_MESSAGES, SMTP_TLS_REJECT_UNAUTH, SMTP_CONN_TIMEOUT, SMTP_GREET_TIMEOUT, SMTP_SOCKET_TIMEOUT.
 - TLS with connection pooling; transporter.verify() before send; structured error responses on misconfiguration.
+
+Design Tokens (Dark Mode Icons)
+- --icon-primary-dark: #E1BC89
+- --icon-secondary-dark: #C8D0DA
+
+External Links
+- Standardized external linking behavior and security/accessibility requirements are documented in docs/external-linking-strategy.md.
+
+Site Origin
+- Production metadataBase defaults to https://DN.com. Set NEXT_PUBLIC_BASE_URL to your deployed origin on Vercel to enable absolute server-side fetches where needed.

@@ -34,7 +34,7 @@ export default function AboutTrustBand({
   const tBadges =
     badges ??
     (isRTL ? ["منذ 2010", "تركيز بحري", "حضور عالمي"] : ["Since 2010", "Maritime Focus", "Global Reach"]);
-  const tCtaHref = ctaHref ?? (isRTL ? "/ar/contact" : "/en/contact");
+  const tCtaHref = ctaHref ?? (isRTL ? "/ar/contact-us" : "/en/contact-us");
   const tCtaLabel = ctaLabel ?? (isRTL ? "تواصل معنا" : "Work with us");
 
   return (

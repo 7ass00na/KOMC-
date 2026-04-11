@@ -16,6 +16,7 @@ function DirController() {
 
 function LangAutoDetect() {
   const pathname = usePathname();
+  const { setLang } = useLanguage();
   useEffect(() => {
     try {
       ensureBodyScrollable();
@@ -23,7 +24,15 @@ function LangAutoDetect() {
     try {
       if (typeof window === "undefined") return;
       const p = typeof pathname === "string" ? pathname : "/";
-      if (p.startsWith("/en") || p.startsWith("/ar")) return;
+      if (p === "/") return;
+      if (p.startsWith("/en") || p.startsWith("/ar")) {
+        const next = p.startsWith("/ar") ? "ar" : "en";
+        setLang(next);
+        try {
+          document.cookie = `site_lang=${next}; max-age=${60 * 60 * 24 * 365}; path=/; samesite=lax`;
+        } catch {}
+        return;
+      }
       const alreadyRedirected = sessionStorage.getItem("komc_lang_redirected") === "1";
       if (alreadyRedirected) return;
       const cookieLang = document.cookie.match(/(?:^|; )site_lang=(ar|en)/)?.[1];

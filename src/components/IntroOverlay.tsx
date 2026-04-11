@@ -22,6 +22,26 @@ export default function IntroOverlay() {
 
   useEffect(() => {
     try {
+      const fromCookie = typeof document !== "undefined" ? document.cookie.match(/(?:^|;\s*)site_lang=(en|ar)/)?.[1] : null;
+      const fromStorage = typeof window !== "undefined" ? window.localStorage.getItem("site_lang") : null;
+      const next = (fromStorage === "ar" || fromStorage === "en" ? fromStorage : fromCookie) as "ar" | "en" | null;
+      if (next) setSelectedLang(next);
+    } catch {}
+  }, []);
+
+  useEffect(() => {
+    try {
+      if (mode === "hidden") return;
+      if (typeof window === "undefined") return;
+      const p = window.location.pathname;
+      const eligible = p === "/" || p === "/en" || p === "/ar" || p === "/en/home" || p === "/ar/home";
+      if (!eligible) return;
+      if (p !== "/") window.history.replaceState(null, "", "/");
+    } catch {}
+  }, [mode]);
+
+  useEffect(() => {
+    try {
       const ts = Number(localStorage.getItem("komc_intro_ts") || 0);
       const now = Date.now();
       if (ts && now - ts < 24 * 60 * 60 * 1000) {
@@ -334,15 +354,12 @@ export default function IntroOverlay() {
                           track("welcome_cta_click", labels);
                         } catch {}
                         try {
-                          const dur = 2000;
-                          const message = selectedLang === "ar" ? "يرجى الانتظار..." : "Please wait...";
-                          window.dispatchEvent(new CustomEvent("site-loading", { detail: { duration: dur, message } }) as any);
-                          setTimeout(() => {
-                            router.push(selectedLang === "ar" ? "/ar" : "/en");
-                            setMode("hidden");
-                          }, dur + 20);
+                          const dur = 3000;
+                          window.dispatchEvent(new CustomEvent("site-loading", { detail: { duration: dur, welcome: true, lang: selectedLang } }) as any);
+                          router.push(selectedLang === "ar" ? "/ar/home" : "/en/home");
+                          setMode("hidden");
                         } catch {
-                          router.push(selectedLang === "ar" ? "/ar" : "/en");
+                          router.push(selectedLang === "ar" ? "/ar/home" : "/en/home");
                           setMode("hidden");
                         }
                       }}

@@ -9,8 +9,8 @@ import Reveal from "@/components/Reveal";
 
 export const metadata = {
   alternates: {
-    canonical: "/ar/about",
-    languages: { en: "/en/about", ar: "/ar/about" },
+    canonical: "/ar/about-us",
+    languages: { en: "/en/about-us", ar: "/ar/about-us" },
   },
 };
 

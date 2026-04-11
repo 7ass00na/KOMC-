@@ -7,8 +7,8 @@ import Reveal from "@/components/Reveal";
 
 export const metadata = {
   alternates: {
-    canonical: "/en/contact",
-    languages: { en: "/en/contact", ar: "/ar/contact" },
+    canonical: "/en/contact-us",
+    languages: { en: "/en/contact-us", ar: "/ar/contact-us" },
   },
 };
 
