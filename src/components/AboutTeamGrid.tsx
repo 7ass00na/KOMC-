@@ -224,7 +224,7 @@ export default function AboutTeamGrid({ team, isRTL = false, startIndex = 0 }: {
         return {
           ...p,
           name: "Ibrahim Abu Roais",
-          role: "Business Advisor",
+          role: "Operation Manager",
           focus: "Various business and corporate consultations",
           bio: "Trusted Consultant in business and corporate cases.",
           regions: "UAE/EGP/GCC",
@@ -426,7 +426,7 @@ export default function AboutTeamGrid({ team, isRTL = false, startIndex = 0 }: {
         return {
           ...p,
           name: "إبراهيم أبو رويص",
-          role: "مستشار أعمال",
+          role: "مدير التسغيل",
           focus: "استشارات أعمال وشركات",
           bio: "مستشار موثوق في قضايا الأعمال والشركات.",
           regions: "UAE/EGP/GCC",

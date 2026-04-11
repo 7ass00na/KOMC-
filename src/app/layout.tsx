@@ -80,14 +80,15 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  let initialLang: "en" | "ar" = "en";
+  let initialLang: "en" | "ar" = "ar";
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || ""}/api/admin/theme`, { cache: "no-store" });
-    const d = await res.json();
-    if (d?.defaultLang === "ar" || d?.defaultLang === "en") initialLang = d.defaultLang;
+    const { headers } = await import("next/headers");
+    const h = await headers();
+    const fromHeader = h.get("x-site-lang");
+    if (fromHeader === "ar" || fromHeader === "en") initialLang = fromHeader;
   } catch {}
   return (
-    <html lang="en">
+    <html lang={initialLang} dir={initialLang === "ar" ? "rtl" : "ltr"}>
       <head>
         <meta name="extension-detection" content="no-transform" />
         <meta name="format-detection" content="telephone=no,address=no,email=no" />

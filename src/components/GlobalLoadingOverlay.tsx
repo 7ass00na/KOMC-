@@ -159,8 +159,8 @@ export default function GlobalLoadingOverlay() {
                 transition={{ repeat: Infinity, duration: 2.2, ease: 'linear' }}
               />
               {variant === 'welcome' ? (
-                <div className="absolute inset-0 flex items-center justify-center" aria-hidden="true">
-                  <img src="/icon.svg" alt="" className="h-9 w-9" />
+                <div className="absolute inset-0 flex items-center justify-center text-[var(--brand-accent)]" data-global-cursor-icon aria-hidden="true">
+                  <ScalesIcon />
                 </div>
               ) : (
                 <div className="absolute inset-0 flex items-center justify-center text-[var(--brand-accent)]" data-global-cursor-icon>
@@ -175,8 +175,8 @@ export default function GlobalLoadingOverlay() {
                 dir={(eventLang || lang) === 'ar' ? 'rtl' : 'ltr'}
               >
                 {(eventLang || lang) === 'ar'
-                  ? 'مرحبًا بكم في مكتب خالد عمر للمحاماة والاستشارات البحرية. يسعدنا دائمًا خدمتكم ونأمل أن نحظى برضاكم. 😊'
-                  : 'Welcome to Khaled Omar Law and Maritime Consulting Office. We are always happy to serve you and hope to earn your satisfaction. 😊'}
+                  ? 'مرحبًا بكم في مكتب خالد عمر للمحاماة والاستشارات البحرية. يسعدنا دائمًا خدمتكم ونأمل أن نحظى برضاكم.'
+                  : 'Welcome to Khaled Omar Law and Maritime Consulting Office. We are always happy to serve you and hope to earn your satisfaction.'}
               </div>
             )}
             {variant !== 'welcome' && (<div

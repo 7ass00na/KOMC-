@@ -56,3 +56,9 @@
 - Welcome CTA Flow: Standardized bilingual CTA labels and routing for home/services (AR: /ar/home, /ar/service; EN: /en/home, /en/service) while keeping the address bar domain-only during intro and welcome.
 - Routing: Added 301 normalization for localized routes (case normalization + legacy /about and /contact redirects to /about-us and /contact-us) and set Content-Language header for localized pages.
 - QA: Re-ran lint, unit tests with coverage, and production build successfully.
+
+## Komc-VB0007
+- Welcome Language Sync: Fixed the edge case where the intro controls were in English but the welcome card remained Arabic by syncing welcome-card language to the active route language unless the user manually switches it.
+- Root Locale Redirect: Root route now redirects to /{lang}/home on first visit using Accept-Language (cookie overrides), ensuring Arabic users land on /ar/home and English users land on /en/home.
+- Loader Visual Consistency: Unified global loading icon across welcome/default variants and removed secondary header loading cursor/spinner behavior to ensure a single consistent cursor.
+- Dependency Cleanup: Removed unused dependencies flagged by depcheck (@ai-sdk/react, eslint-config-next, eslint-plugin-no-unsanitized, eslint-plugin-security, @testing-library/jest-dom); refreshed lockfile and validated clean installs.

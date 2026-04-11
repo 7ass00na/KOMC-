@@ -16,7 +16,6 @@ export default function Header() {
   const { t, lang, setLang } = useLanguage();
   const { toggleDark, dark } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [introPlaying, setIntroPlaying] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const langMenuRef = useRef<HTMLDivElement | null>(null);
@@ -77,32 +76,6 @@ export default function Header() {
   }, []);
 
   useEffect(() => {
-    function beginTimedLoading(ms: number) {
-      setIsLoading(true);
-      const t = setTimeout(() => setIsLoading(false), Math.max(500, ms));
-      return () => clearTimeout(t);
-    }
-    function onSiteLoading(e: Event) {
-      const d = (e as any)?.detail;
-      const welcome = !!d?.welcome;
-      if (welcome) return;
-      const ms = Number(d?.duration ?? 2500);
-      beginTimedLoading(ms);
-    }
-    function onSiteLoadingShort() {
-      beginTimedLoading(2000);
-    }
-    if (typeof window !== "undefined") {
-      window.addEventListener("site-loading" as any, onSiteLoading as any);
-      window.addEventListener("site-loading-short" as any, onSiteLoadingShort as any);
-      return () => {
-        window.removeEventListener("site-loading" as any, onSiteLoading as any);
-        window.removeEventListener("site-loading-short" as any, onSiteLoadingShort as any);
-      };
-    }
-  }, []);
-
-  useEffect(() => {
     function onIntroStart() {
       setIntroPlaying(true);
     }
@@ -157,17 +130,7 @@ export default function Header() {
   }, []);
 
   const withWait = (fn?: () => void) => {
-    const enabled = settings?.pageLoadingCursor;
-    return () => {
-      if (enabled && typeof document !== "undefined") {
-        const prev = document.body.style.cursor;
-        document.body.style.cursor = "progress";
-        setTimeout(() => {
-          document.body.style.cursor = prev;
-        }, 900);
-      }
-      fn?.();
-    };
+    return () => fn?.();
   };
 
   useEffect(() => {
@@ -554,41 +517,19 @@ export default function Header() {
               </span>
             </Link>
             <div className="mt-4 flex items-center justify-center">
-              <div className="relative h-16 w-16">
-                <motion.div
-                  className="absolute inset-0 rounded-full border-2"
-                  style={{ borderColor: "rgba(255,255,255,0.12)" }}
-                  animate={isLoading ? { rotate: 360 } : undefined}
-                  transition={{ repeat: Infinity, duration: 2.8, ease: "linear" }}
+              {header?.published_logo || header?.logo ? (
+                <Image
+                  src={(header?.published_logo || header?.logo) as string}
+                  alt={lang === "ar" ? "شعار الشركة" : "Company logo"}
+                  width={48}
+                  height={48}
+                  className="h-12 w-12 object-contain"
+                  sizes="48px"
+                  priority={true}
                 />
-                <motion.div
-                  className="absolute inset-0 rounded-full border-2 border-t-transparent"
-                  style={{ borderColor: "var(--brand-accent)" }}
-                  data-mobile-menu-cursor-line
-                  animate={isLoading ? { rotate: -360 } : undefined}
-                  transition={{ repeat: Infinity, duration: 2.2, ease: "linear" }}
-                />
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.88 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.4, ease: "easeOut" }}
-                  className="absolute inset-0 flex items-center justify-center"
-                >
-                  {header?.published_logo || header?.logo ? (
-                    <Image
-                      src={(header?.published_logo || header?.logo) as string}
-                      alt={lang === "ar" ? "شعار الشركة" : "Company logo"}
-                      width={32}
-                      height={32}
-                      className="h-8 w-8 object-contain"
-                      sizes="32px"
-                      priority={true}
-                    />
-                  ) : (
-                    <Image src="/main_logo.svg" alt={lang === "ar" ? "الشعار" : "Logo"} width={32} height={32} className="h-8 w-8 object-contain" sizes="32px" priority />
-                  )}
-                </motion.div>
-              </div>
+              ) : (
+                <Image src="/main_logo.svg" alt={lang === "ar" ? "الشعار" : "Logo"} width={48} height={48} className="h-12 w-12 object-contain" sizes="48px" priority />
+              )}
             </div>
             <div className="mt-3 rounded-lg border border-[var(--panel-border)] bg-[var(--panel-bg)] p-3 text-xs text-[var(--text-secondary)]">
               {lang === "ar"

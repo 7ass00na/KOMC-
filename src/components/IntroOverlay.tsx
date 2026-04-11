@@ -17,28 +17,14 @@ export default function IntroOverlay() {
   const router = useRouter();
   const [labels, setLabels] = useState<WelcomeLabels | null>(null);
   const [selectedLang, setSelectedLang] = useState<"ar" | "en">(lang);
+  const userSelectedLangRef = useRef(false);
   const cardRef = useRef<HTMLDivElement | null>(null);
   const msgRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    try {
-      const fromCookie = typeof document !== "undefined" ? document.cookie.match(/(?:^|;\s*)site_lang=(en|ar)/)?.[1] : null;
-      const fromStorage = typeof window !== "undefined" ? window.localStorage.getItem("site_lang") : null;
-      const next = (fromStorage === "ar" || fromStorage === "en" ? fromStorage : fromCookie) as "ar" | "en" | null;
-      if (next) setSelectedLang(next);
-    } catch {}
-  }, []);
-
-  useEffect(() => {
-    try {
-      if (mode === "hidden") return;
-      if (typeof window === "undefined") return;
-      const p = window.location.pathname;
-      const eligible = p === "/" || p === "/en" || p === "/ar" || p === "/en/home" || p === "/ar/home";
-      if (!eligible) return;
-      if (p !== "/") window.history.replaceState(null, "", "/");
-    } catch {}
-  }, [mode]);
+    if (userSelectedLangRef.current) return;
+    setSelectedLang(lang);
+  }, [lang]);
 
   useEffect(() => {
     try {
@@ -47,14 +33,7 @@ export default function IntroOverlay() {
       if (ts && now - ts < 24 * 60 * 60 * 1000) {
         setMode("hidden");
       } else {
-        const dur = 2000;
-        if (typeof window !== "undefined") {
-          window.dispatchEvent(new CustomEvent("site-loading", { detail: { duration: dur } }) as any);
-        }
-        const t = setTimeout(() => {
-          setMode("video");
-        }, dur + 50);
-        return () => clearTimeout(t);
+        setMode("video");
       }
     } catch {}
   }, []);
@@ -364,6 +343,7 @@ export default function IntroOverlay() {
                         }
                       }}
                       onChangeLang={(next) => {
+                        userSelectedLangRef.current = true;
                         setSelectedLang(next);
                       }}
                     />

@@ -75,13 +75,13 @@ export default function TeamOverview() {
           { name: "خالد عمر", role: "مستشار معتمد في الشؤون البحرية والقانونية", tags: ["بحري", "منازعات معقدة"], slug: "khaled-omer", focus: "بحري، منازعات معقدة", bio: "مستشار موثوق في الشؤون البحرية والمسائل عالية المخاطر.", regions: "UAE/SUD/EGP/GCC", experience: "25 سنة", rating: 95 },
           { name: "محمد دفع الله", role: "مدير المكتب", tags: ["تجاري", "عمل"], slug: "Mohamed Dafallah", focus: "استشارات قانونية متنوعة", bio: "مستشار موثوق في القضايا التجارية والعمالية.", regions: "UAE/EGP/GCC", experience: "10 سنة خبرة", rating: 88 },
           { name: "مالك عمر", role: "قبطان بحري سابق", tags: ["بحري", "تجاري"], slug: "Malik Omer", focus: "قائد سفينة سابق، مختص في الشؤون البحرية التجارية", bio: "مستشار موثوق في القضايا البحرية والتجارية المعقدة.", regions: "UAE/EGP/GCC", experience: "18 سنة خبرة", rating: 92 },
-          { name: "إبراهيم أبو رويص", role: "مدير تجاري", tags: ["أعمال", "إدارة"], slug: "nour-hassan", focus: "أعمال، إدارة", bio: "مستشار موثوق في القضايا البحرية والتجارية المعقدة.", regions: "UAE/EGP/SUD", experience: "15 سنة خبرة", rating: 90 },
+          { name: "إبراهيم أبو رويص", role: "مدير التشغيل", tags: ["أعمال", "إدارة"], slug: "nour-hassan", focus: "أعمال، إدارة", bio: "مستشار موثوق في القضايا البحرية والتجارية المعقدة.", regions: "UAE/EGP/SUD", experience: "15 سنة خبرة", rating: 90 },
         ]
       : [
           { name: "Khaled Omer", role: "Certified Maritime & Legal Consultant", tags: ["Maritime", "Complex Disputes"], slug: "khaled-omer", focus: "Maritime, Complex Disputes", bio: "Trusted Advisor on Maritime and High-Risk Matters.", regions: "UAE/SUD/EGP/GCC", experience: "25 yrs", rating: 95 },
           { name: "Mohammed Dafaallah", role: "Office Manager", tags: ["Commercial", "Labor"], slug: "Mohamed Dafallah", focus: "Diverse Legal Advice", bio: "Trusted Advisor on Commercial and Labor Matters.", regions: "UAE/EGP/GCC", experience: "10 yrs", rating: 88 },
           { name: "Malik Omer", role: "Former Ship Captain", tags: ["Maritime", "Commercial"], slug: "Malik Omer", focus: "Former Ship Captain, specializing in commercial maritime matters", bio: "Trusted Consultant in Complex Maritime and Commercial Matters.", regions: "UAE/EGP/GCC", experience: "18 yrs", rating: 92 },
-          { name: "Ibrahim Abu Roais", role: "Commercial Manager", tags: ["Business", "Management"], slug: "nour-hassan", focus: "Business, Management", bio: "Trusted Consultant in Complex Maritime and Commercial Matters.", regions: "UAE/ EGP / SUD", experience: "15 yrs", rating: 90 },
+          { name: "Ibrahim Abu Roais", role: "Operation Manager", tags: ["Business", "Management"], slug: "nour-hassan", focus: "Business, Management", bio: "Trusted Consultant in Complex Maritime and Commercial Matters.", regions: "UAE/ EGP / SUD", experience: "15 yrs", rating: 90 },
         ];
   const teamLines =
     lang === "ar"
