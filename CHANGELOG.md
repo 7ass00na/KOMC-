@@ -62,3 +62,4 @@
 - Root Locale Redirect: Root route now redirects to /{lang}/home on first visit using Accept-Language (cookie overrides), ensuring Arabic users land on /ar/home and English users land on /en/home.
 - Loader Visual Consistency: Unified global loading icon across welcome/default variants and removed secondary header loading cursor/spinner behavior to ensure a single consistent cursor.
 - Dependency Cleanup: Removed unused dependencies flagged by depcheck (@ai-sdk/react, eslint-config-next, eslint-plugin-no-unsanitized, eslint-plugin-security, @testing-library/jest-dom); refreshed lockfile and validated clean installs.
+- Return Visits: Added cookie-based last-visited route tracking and root redirect logic so repeat visits within 24 hours go directly to the previously visited page without replaying the intro/welcome; after 24 hours the intro/welcome flow runs again.

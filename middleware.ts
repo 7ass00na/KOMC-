@@ -30,6 +30,19 @@ function detectPreferredLang(req: NextRequest): "ar" | "en" {
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   if (pathname === "/") {
+    const withinDay = !!req.cookies.get("komc_intro_ts")?.value;
+    if (withinDay) {
+      const raw = req.cookies.get("komc_last_path")?.value || "";
+      try {
+        const decoded = decodeURIComponent(raw);
+        const valid = /^\/(ar|en)(\/|$)/.test(decoded) && !decoded.includes("//") && !decoded.includes("\\");
+        if (valid) {
+          const res = NextResponse.redirect(new URL(decoded, req.url), 302);
+          res.headers.set("Vary", "Cookie");
+          return res;
+        }
+      } catch {}
+    }
     const lang = detectPreferredLang(req);
     const res = NextResponse.redirect(new URL(`/${lang}/home`, req.url), 302);
     res.headers.set("Vary", "Accept-Language, Cookie");

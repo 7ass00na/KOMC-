@@ -72,6 +72,19 @@ function LangAutoDetect() {
   return null;
 }
 
+function LastVisitedTracker() {
+  const pathname = usePathname();
+  useEffect(() => {
+    try {
+      if (typeof document === "undefined") return;
+      const p = typeof pathname === "string" ? pathname : "/";
+      if (!(p.startsWith("/en") || p.startsWith("/ar"))) return;
+      document.cookie = `komc_last_path=${encodeURIComponent(p)}; max-age=${60 * 60 * 24 * 30}; path=/; samesite=lax`;
+    } catch {}
+  }, [pathname]);
+  return null;
+}
+
 export default function Providers({
   children,
   initialLang,
@@ -84,6 +97,7 @@ export default function Providers({
       <ThemeProvider>
         <DirController />
         <LangAutoDetect />
+        <LastVisitedTracker />
         {children}
       </ThemeProvider>
     </LanguageProvider>
