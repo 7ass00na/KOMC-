@@ -1,0 +1,449 @@
+Explanation of KOMC WebApp Components and Features
+=================================================
+
+ENGLISH (Client Presentation)
+-----------------------------
+
+1) Website Contents (Main Pages + Structure)
+
+KOMC is a bilingual (English + Arabic) website built with a modern, performance-focused architecture. The primary public website experience is organized around 6 core pages (per language):
+
+English Routes (LTR)
+- Home: /en/home
+- About Us: /en/about-us
+- Services: /en/services
+- Cases: /en/cases
+- News/Articles: /en/news (+ /en/news/[slug])
+- Contact Us: /en/contact-us
+
+Arabic Routes (RTL)
+- Home: /ar/home
+- About Us: /ar/about-us
+- Services: /ar/services
+- Cases: /ar/cases
+- News/Articles: /ar/news (+ /ar/news/[slug])
+- Contact Us: /ar/contact-us
+
+Additional pages (supporting user trust and operations)
+- Privacy Policy: /en/privacy, /ar/privacy
+- Terms: /en/terms, /ar/terms
+- Team: /en/team, /ar/team
+- Admin/Editor tools (internal): /en/admin, /ar/admin and /en/editor/*, /ar/editor/*
+
+Home Page Sections (Preview-style “single page overview”)
+The Home page is intentionally structured as a conversion-first hub that previews the core pages, with clear CTAs:
+
+1. Hero Section
+- Goal: immediate positioning + credibility + a clear call-to-action.
+- Strength: strong visual hierarchy, premium typography, and animation that supports (not distracts from) key messaging.
+
+2. Trusted / Clients Section
+- Goal: show trust signals and geographic/market coverage in the UAE.
+- Strength: reinforces authority and reduces friction before conversion actions.
+
+3. Services Overview
+- Goal: highlight top practice areas/services with a short, scannable layout.
+- Strength: supports SEO via semantic content blocks and supports conversions via clear service discovery.
+
+4. Cases Overview
+- Goal: demonstrate outcomes and experience through curated examples.
+- Strength: builds proof and reduces decision hesitation.
+
+5. Team Section
+- Goal: introduce the team/leadership and credibility.
+- Strength: humanizes the brand and increases trust.
+
+6. News / Articles
+- Goal: SEO-driven content + thought leadership + regular freshness for crawlers.
+- Strength: provides internal linking paths and content marketing foundation.
+
+7. Trust Band / CTA Section
+- Goal: strong final CTA and reassurance.
+- Strength: captures users who scroll and need one more trust signal to convert.
+
+Each dedicated page (About Us, Services, Cases, News, Contact Us) follows the same story order as the Home page but expands with full details, making the site consistent and predictable.
+
+
+2) Design & UX Features (What the client sees and why it matters)
+
+Color System
+- Uses a premium dark-forward palette with an accent color for CTAs and highlights.
+- Tokens (CSS variables) control surfaces, borders, and icon colors to stay consistent across the site.
+
+Display Method (Layout + Motion)
+- Mobile-first responsive design with component-based sections.
+- Framer Motion is used for micro-interactions and controlled transitions (smooth and performant).
+- Next.js Image Optimization is used for responsive images and better loading behavior.
+
+Multilingual Support (English + Arabic)
+- Fully bilingual content paths (/en/* and /ar/*).
+- Automatic LTR/RTL direction:
+  - English pages render LTR.
+  - Arabic pages render RTL.
+- The UI adapts alignment, spacing, and direction-aware layout consistently (header, footer, cards, forms, and overlays).
+
+Introductory Video (Daily-first-visit onboarding)
+- The intro video is a branded “first impression” layer that runs on first visit within a 24-hour window.
+- After 24 hours, the site treats the next visit as a fresh “new visit”, and the intro/welcome flow runs again.
+- Repeat visits within the same day skip the intro/welcome and go straight to the last visited page for speed and convenience.
+
+Welcome Message Card (Language choice + quick navigation)
+- Appears after the intro and acts as a “decision point”:
+  - Arabic CTAs route to Arabic pages.
+  - English CTAs route to English pages.
+- Language defaults to the detected route language (so first-visit English users see the card in English).
+
+Loading Mode Between Pages (Global Loading Cursor)
+- A single global waiting cursor/overlay provides:
+  - consistent feedback during navigation,
+  - language-correct messaging (Arabic/English),
+  - and a fixed 3-second display for welcome CTA transitions.
+- This improves perceived performance and reduces confusion during route changes.
+
+Light/Dark Mode
+- Theme toggle is supported (light/dark) using shared design tokens.
+- Icons, text, and surfaces maintain contrast and readability in both modes.
+
+
+3) Communication & Conversion Technologies
+
+Consultation Form (Contact Page)
+- The consultation form collects structured intake information.
+- Submission is validated and sent server-side (email pipeline), supporting attachments and clear error handling.
+- The Contact page also includes a dedicated “Visit our office” map section and Google Maps links.
+
+WhatsApp Communication
+- The site supports WhatsApp contact via “wa.me” links and optional UI toggles (configurable in settings).
+- This supports fast conversions for mobile-first users.
+
+AI Assistant (UAE-focused, bilingual)
+- A floating AI assistant (chat) is available to help visitors understand general processes and requirements.
+- It provides high-level guidance only, with a clear disclaimer that it is not legal advice.
+- It can stream responses (when enabled) and supports Arabic/English system prompts.
+
+
+4) Search Engine Features & Optimizations (SEO)
+
+How language is selected for “first visit”
+- Search engines do not reliably pass “search query language” to the site.
+- The most reliable signal is the visitor’s browser preference (Accept-Language header), plus stored cookies:
+  1) If the user already chose a language before, the cookie “site_lang” determines default.
+  2) If it’s a first-time visit, the server chooses Arabic or English using Accept-Language.
+
+SEO-Friendly URL structure
+- Clean language-prefixed routes: /en/* and /ar/*
+- Canonical + hreflang alternates are configured so crawlers understand the bilingual equivalents.
+- Case normalization redirects ensure one canonical URL per page (improves crawl efficiency and avoids duplicates).
+
+Keywords that typically surface in search engines
+English example keyword themes:
+- “Khaled Omar Marine Consulting”
+- “UAE maritime law”
+- “shipping disputes UAE”
+- “admiralty lawyer Dubai”
+- “marine insurance claims UAE”
+- “contracts and compliance UAE”
+
+Arabic example keyword themes:
+- “خالد عمر للاستشارات البحرية”
+- “محامي بحري دبي”
+- “قانون بحري الإمارات”
+- “منازعات الشحن”
+- “التأمين البحري”
+- “عقود وامتثال الإمارات”
+
+SEO improvement plan (short, practical roadmap)
+- Content:
+  - Publish consistent bilingual News/Articles targeting long-tail queries (FAQs, case studies, procedures, timelines).
+  - Add internal linking between services ↔ cases ↔ articles ↔ contact.
+- Technical:
+  - Keep page titles/descriptions unique per language.
+  - Ensure indexable pages have stable canonicals.
+  - Improve Core Web Vitals by keeping media optimized and minimizing third-party scripts.
+- Local SEO:
+  - Google Business Profile optimization (categories, services, Q&A, photos).
+  - Consistent NAP (name, address, phone) across directories in both languages.
+- Authority:
+  - Earn backlinks via maritime industry associations, partners, news mentions, and legal directories.
+
+
+5) Digital Marketing Plan (Best Practices: Google + Social + TikTok)
+
+A) Measurement & Tracking (foundation)
+- Define conversion events:
+  - Consultation form submit
+  - WhatsApp click
+  - Phone click
+  - Email click
+  - AI assistant engagement (optional)
+- UTM standards:
+  - Always tag campaigns with utm_source, utm_medium, utm_campaign, utm_content.
+- Dashboards:
+  - Weekly report: leads, cost per lead, lead quality, top pages, top queries.
+
+B) Google Strategy (Search + Local + Display/Retargeting)
+- Search campaigns:
+  - Build bilingual ad groups by intent (maritime disputes, contracts, compliance, insurance, shipping).
+  - Use location targeting for UAE + relevant GCC geos.
+  - Use call extensions + sitelinks (Services, Cases, Contact).
+- Landing pages:
+  - Send each ad group to the most relevant service page (not always the homepage).
+  - Ensure the CTA is above the fold and repeated after trust sections.
+- Retargeting:
+  - Show reminder ads to visitors who viewed services/cases but didn’t contact.
+
+C) Meta (Facebook/Instagram) Strategy
+- Campaign types:
+  - Lead generation (form)
+  - Traffic to service pages
+  - Retargeting: page visitors + video viewers
+- Creative system:
+  - Short proof-focused claims, testimonials, “what we handle” carousels.
+  - Arabic and English variants.
+
+D) TikTok Strategy (Awareness + Education)
+- Content pillars:
+  - “Maritime myth vs fact”
+  - “Common mistakes in shipping contracts”
+  - “How disputes typically proceed in UAE (high-level)”
+  - “When to consult a lawyer (timing + documents)”
+- Best practices:
+  - 15–35 seconds for top funnel, 45–90 seconds for educational clips.
+  - Clear CTA: “Book a consultation” + “WhatsApp available”.
+
+E) Content Calendar (recommended cadence)
+- 2 short videos/week (TikTok + IG Reels)
+- 1 bilingual article/week (News/Articles)
+- 1 case highlight/month (anonymized) for credibility
+
+F) Conversion Optimization (CRO)
+- Make CTAs consistent:
+  - “Book a consultation” primary CTA
+  - “Explore services” secondary CTA
+- Use trust elements:
+  - testimonials, stats, badges, jurisdiction coverage
+- Reduce friction:
+  - fast-loading pages, clear form guidance, inline validation, visible contact options
+
+
+------------------------------------------------------------
+
+العربية (عرض للعميل)
+--------------------
+
+1) محتوى الموقع (الصفحات الرئيسية + الهيكل)
+
+موقع KOMC هو موقع ثنائي اللغة (العربية + الإنجليزية) مبني بتقنيات حديثة تركّز على الأداء وتجربة المستخدم. التجربة العامة للموقع منظمة حول 6 صفحات أساسية لكل لغة:
+
+المسارات الإنجليزية (LTR)
+- الرئيسية: /en/home
+- من نحن: /en/about-us
+- الخدمات: /en/services
+- القضايا: /en/cases
+- الأخبار/المقالات: /en/news (+ /en/news/[slug])
+- تواصل معنا: /en/contact-us
+
+المسارات العربية (RTL)
+- الرئيسية: /ar/home
+- من نحن: /ar/about-us
+- الخدمات: /ar/services
+- القضايا: /ar/cases
+- الأخبار/المقالات: /ar/news (+ /ar/news/[slug])
+- تواصل معنا: /ar/contact-us
+
+صفحات إضافية (لدعم الثقة والعمليات)
+- سياسة الخصوصية: /en/privacy, /ar/privacy
+- الشروط والأحكام: /en/terms, /ar/terms
+- فريق العمل: /en/team, /ar/team
+- أدوات الإدارة/التحرير (داخلية): /en/admin, /ar/admin و /en/editor/*, /ar/editor/*
+
+أقسام الصفحة الرئيسية (عرض مُختصر لباقي الصفحات)
+تم تصميم الصفحة الرئيسية لتكون نقطة تحويل عالية (Conversion) مع معاينات للصفحات الأساسية وبنفس ترتيب القصة:
+
+1. قسم البطل (Hero)
+- الهدف: تعريف سريع بالمكتب وقيمته مع دعوة واضحة لاتخاذ إجراء (CTA).
+- القوة: هرمية بصرية قوية وخطوط احترافية وحركة هادئة تدعم الرسالة.
+
+2. قسم الثقة/العملاء (Trusted)
+- الهدف: عرض عناصر الثقة وتغطية الإمارات.
+- القوة: يقلل التردد ويرفع المصداقية قبل التواصل.
+
+3. قسم الخدمات (Services)
+- الهدف: إبراز الخدمات الرئيسية بشكل سريع وسهل القراءة.
+- القوة: يدعم السيو (SEO) عبر محتوى دلالي ومنظم + يساعد المستخدم على اكتشاف الخدمات.
+
+4. قسم القضايا (Cases)
+- الهدف: إبراز الخبرة والنتائج من خلال أمثلة مختارة.
+- القوة: إثبات اجتماعي/مهني يرفع الثقة.
+
+5. قسم الفريق (Team)
+- الهدف: عرض الفريق/القيادة وتعزيز الثقة.
+- القوة: “إنسنة” العلامة وبناء علاقة مع العميل.
+
+6. قسم الأخبار/المقالات (News)
+- الهدف: محتوى مستمر لتحسين السيو وبناء قيادة فكرية.
+- القوة: يوفر روابط داخلية ويزيد فرص الظهور في البحث.
+
+7. شريط الثقة/الدعوة (Trust Band / CTA)
+- الهدف: دعوة قوية في نهاية الصفحة مع تطمينات.
+- القوة: يلتقط المستخدمين الذين وصلوا لآخر الصفحة ويحتاجون دفعه أخيرة.
+
+وكل صفحة مخصصة (من نحن، الخدمات، القضايا، الأخبار، تواصل معنا) تتبع نفس ترتيب القصة مع تفاصيل أعمق، مما يجعل التجربة متسقة وسهلة.
+
+
+2) ميزات التصميم وتجربة المستخدم
+
+نظام الألوان
+- ألوان احترافية تميل للوضع الداكن مع لون تمييز واضح للأزرار والعناوين المهمة.
+- استخدام متغيرات CSS (Tokens) لضمان اتساق الخلفيات والحدود والأيقونات عبر الموقع.
+
+طريقة العرض (Layout + Motion)
+- تصميم Mobile-first مع استجابة كاملة لجميع الشاشات.
+- استخدام Framer Motion للحركات الدقيقة والانتقالات السلسة بدون إثقال الأداء.
+- استخدام تحسين الصور في Next.js لتحميل الصور بشكل مناسب لكل جهاز.
+
+دعم لغتين (العربية والإنجليزية)
+- مسارات منفصلة للغتين: /en/* و /ar/*
+- تفعيل تلقائي لاتجاه الصفحة:
+  - الإنجليزية LTR
+  - العربية RTL
+- تكيّف كامل للمحاذاة والعناصر (الهيدر، الفوتر، البطاقات، النماذج، الطبقات).
+
+الفيديو التعريفي (Intro) وتجربة “الزيارة الأولى”
+- الفيديو التعريفي يعمل كطبقة انطباع أول في “الزيارة الأولى” ضمن نافذة زمنية 24 ساعة.
+- بعد مرور 24 ساعة، يتم اعتبار الزيارة “زيارة جديدة” ويُعاد عرض الفيديو وبطاقة الترحيب.
+- الزيارات المتكررة في نفس اليوم (أو إعادة التحميل) تتجاوز الفيديو وبطاقة الترحيب وتذهب مباشرة لآخر صفحة زارها المستخدم لسرعة أكبر.
+
+بطاقة الترحيب (Welcome Card)
+- تظهر بعد الفيديو وتُستخدم كخطوة قرار:
+  - أزرار العربية تقود لمسارات عربية
+  - أزرار الإنجليزية تقود لمسارات إنجليزية
+- لغة البطاقة تتبع لغة المسار الحالي تلقائيًا (مثلاً مستخدم إنجليزي يرى البطاقة بالإنجليزية).
+
+وضع التحميل أثناء التنقل (Global Loading Cursor)
+- مؤشر تحميل/طبقة واحدة عالمية:
+  - توحيد تجربة الانتظار
+  - لغة مناسبة (عربي/إنجليزي)
+  - عرض ثابت 3 ثوانٍ عند الضغط على أزرار بطاقة الترحيب
+
+الوضع الليلي/النهاري
+- دعم Dark/Light عبر Tokens لضمان وضوح وقراءة مناسبة.
+- الأيقونات والنصوص والخلفيات تحافظ على التباين (WCAG).
+
+
+3) تقنيات التواصل والتحويل
+
+نموذج الاستشارة (صفحة التواصل)
+- نموذج لجمع بيانات الاستشارة بشكل منظم.
+- التحقق من المدخلات وإرسال الطلب من الخادم (Email pipeline) مع دعم المرفقات ومعالجة أخطاء واضحة.
+- صفحة التواصل تتضمن قسم مستقل لعرض موقع المكتب عبر خرائط Google وروابط مباشرة.
+
+التواصل عبر واتساب
+- دعم رابط مباشر عبر wa.me ويمكن تفعيله/تعطيله من الإعدادات.
+- يساعد في التحويل السريع خاصة لمستخدمي الهاتف.
+
+المساعد الذكي (AI) ثنائي اللغة
+- زر عائم (Floating) يظهر للمستخدم ويقدم إرشادًا عامًا حول الإجراءات والمتطلبات في الإمارات.
+- مع تنبيه واضح: هذا ليس بديلاً عن الاستشارة القانونية الرسمية.
+- يدعم العربية والإنجليزية.
+
+
+4) ميزات وتحسينات لمحركات البحث (SEO)
+
+كيف يتم اختيار لغة “الزيارة الأولى”
+- محركات البحث غالبًا لا ترسل “لغة كلمة البحث” للموقع بشكل موثوق.
+- الإشارة الأقوى هي تفضيل لغة المتصفح (Accept-Language) بالإضافة للكوكيز:
+  1) إذا سبق للمستخدم اختيار لغة، يتم احترام site_lang.
+  2) إذا كانت زيارة أولى، يتم اختيار اللغة من تفضيل المتصفح.
+
+هيكل روابط مناسب للسيو
+- مسارات واضحة: /en/* و /ar/*
+- إعداد Canonical + hreflang لتوضيح نسخ اللغات لمحركات البحث.
+- توحيد شكل الروابط عبر تحويلات (redirects) لمنع التكرار.
+
+أمثلة كلمات مفتاحية تظهر في البحث
+إنجليزي:
+- “Khaled Omar Marine Consulting”
+- “UAE maritime law”
+- “admiralty lawyer Dubai”
+- “shipping disputes UAE”
+- “marine insurance claims UAE”
+
+عربي:
+- “خالد عمر للاستشارات البحرية”
+- “محامي بحري دبي”
+- “قانون بحري الإمارات”
+- “منازعات الشحن”
+- “التأمين البحري”
+
+خطة سريعة لتحسين ترتيب الموقع
+- المحتوى:
+  - نشر مقالات أسبوعية ثنائية اللغة (أسئلة شائعة + إجراءات + متطلبات + دراسات حالة).
+  - ربط داخلي بين الخدمات ↔ القضايا ↔ المقالات ↔ التواصل.
+- التقني:
+  - عناوين ووصف فريد لكل صفحة ولكل لغة.
+  - Canonical ثابت للصفحات القابلة للفهرسة.
+  - تحسين Core Web Vitals وتقليل سكربتات الطرف الثالث.
+- السيو المحلي:
+  - تحسين ملف Google Business Profile وإكمال الخدمات والصور والأسئلة.
+  - توحيد الاسم/العنوان/الهاتف في الدلائل.
+- بناء المصداقية:
+  - روابط خلفية من جهات بحرية ومواقع شركاء ودلائل قانونية.
+
+
+5) خطة تسويق رقمي (أفضل الممارسات: Google + السوشيال + TikTok)
+
+أ) القياس والتتبع (الأساس)
+- أحداث التحويل:
+  - إرسال نموذج الاستشارة
+  - ضغط واتساب
+  - ضغط اتصال/بريد
+  - تفاعل المساعد الذكي (اختياري)
+- استخدام UTM موحد لكل الحملات.
+- تقارير أسبوعية: عدد العملاء المحتملين، تكلفة العميل، جودة العميل، أفضل الصفحات، أفضل الكلمات.
+
+ب) خطة Google (بحث + محلي + إعادة استهداف)
+- حملات بحث:
+  - مجموعات إعلانية حسب نية المستخدم (منازعات بحرية، عقود، امتثال، تأمين، شحن).
+  - استهداف الإمارات + دول خليج حسب الحاجة.
+  - إضافات إعلان (اتصال، روابط خدمات، صفحة التواصل).
+- صفحات هبوط:
+  - توجيه كل حملة لأقرب صفحة خدمة بدل الاكتفاء بالصفحة الرئيسية.
+  - CTA واضح أعلى الصفحة ومعزز بعناصر الثقة.
+- إعادة الاستهداف:
+  - إعلانات للزوار الذين شاهدوا الخدمات/القضايا ولم يتواصلوا.
+
+ج) Meta (فيسبوك/انستغرام)
+- أنواع حملات:
+  - توليد عملاء محتملين
+  - زيارات لصفحات الخدمات
+  - إعادة استهداف (زوار الموقع + مشاهدي الفيديو)
+- المحتوى الإعلاني:
+  - شهادات، نقاط قوة، “ما الذي نتولاه؟”، نسخة عربية وإنجليزية.
+
+د) TikTok (وعي + تثقيف)
+- محاور المحتوى:
+  - “معلومة سريعة في القانون البحري”
+  - “أخطاء شائعة في عقود الشحن”
+  - “متى يجب طلب استشارة؟”
+  - “وثائق مهمة قبل رفع نزاع”
+- أفضل الممارسات:
+  - 15–35 ثانية للتوعية، 45–90 ثانية للتثقيف.
+  - CTA واضح: “احجز استشارة” + “متاح واتساب”.
+
+هـ) جدول محتوى مقترح
+- فيديوهان أسبوعيًا (TikTok + Reels)
+- مقال أسبوعي ثنائي اللغة
+- حالة نجاح شهريًا (مع إخفاء بيانات العملاء)
+
+و) تحسين التحويل (CRO)
+- توحيد CTAs:
+  - “احجز استشارة” زر أساسي
+  - “استكشف الخدمات” زر ثانوي
+- تعزيز الثقة:
+  - شهادات، إحصائيات، شارات، تغطية الإمارات
+- تقليل الاحتكاك:
+  - سرعة تحميل، إرشاد واضح داخل النموذج، خيارات تواصل مباشرة
+
+
+End of document.

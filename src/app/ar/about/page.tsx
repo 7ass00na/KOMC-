@@ -4,6 +4,7 @@ import AboutHero from "@/components/AboutHero";
 import AboutMissionValuesSection from "@/components/AboutMissionValuesSection";
 import AboutApproachZill from "@/components/AboutApproachZill";
 import AboutTeamGrid from "@/components/AboutTeamGrid";
+import AboutPhotoLibrary from "@/components/AboutPhotoLibrary";
 import AboutTrustBand from "@/components/AboutTrustBand";
 import Reveal from "@/components/Reveal";
 
@@ -143,6 +144,10 @@ export default async function Page() {
             <AboutTeamGrid team={teamQuaternary} isRTL startIndex={12} />
           </div>
         </section>
+        </Reveal>
+
+        <Reveal>
+          <AboutPhotoLibrary lang="ar" />
         </Reveal>
 
         <Reveal>

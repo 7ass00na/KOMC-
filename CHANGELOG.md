@@ -63,3 +63,10 @@
 - Loader Visual Consistency: Unified global loading icon across welcome/default variants and removed secondary header loading cursor/spinner behavior to ensure a single consistent cursor.
 - Dependency Cleanup: Removed unused dependencies flagged by depcheck (@ai-sdk/react, eslint-config-next, eslint-plugin-no-unsanitized, eslint-plugin-security, @testing-library/jest-dom); refreshed lockfile and validated clean installs.
 - Return Visits: Added cookie-based last-visited route tracking and root redirect logic so repeat visits within 24 hours go directly to the previously visited page without replaying the intro/welcome; after 24 hours the intro/welcome flow runs again.
+
+## Komc-VB0008 (DevOps-01)
+- QA: Ran fresh install (npm ci), lint, unit tests with coverage, production build, and production server smoke tests across key bilingual routes and core API endpoints.
+- Security: Confirmed npm audit reports 0 high-severity vulnerabilities; CSP remains in report-only mode for safe rollout.
+- Build Hygiene: Cleaned build artifacts and temporary files; ensured repo remains reproducible via clean/build scripts.
+- Tooling: Added @playwright/test as a dev dependency to satisfy e2e/test config references (e2e runs remain opt-in).
+- Docs: Added docs/DEVOPS-01_TEST_REPORT.md with detailed verification outputs and manual cross-browser checklist.
