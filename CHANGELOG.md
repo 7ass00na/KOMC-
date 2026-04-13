@@ -70,3 +70,7 @@
 - Build Hygiene: Cleaned build artifacts and temporary files; ensured repo remains reproducible via clean/build scripts.
 - Tooling: Added @playwright/test as a dev dependency to satisfy e2e/test config references (e2e runs remain opt-in).
 - Docs: Added docs/DEVOPS-01_TEST_REPORT.md with detailed verification outputs and manual cross-browser checklist.
+
+## Komc-VB0009
+- Photo Library UX: Improved mobile/tablet controls to keep tabs and sort aligned on one line without wrapping; enhanced modal stacking and added touch-first closing (tap outside, large close button, swipe-down to close with smooth transitions).
+- QA: Re-ran lint, unit tests with coverage, and production build successfully after the UI changes.

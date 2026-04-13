@@ -152,11 +152,11 @@ export default function AboutPhotoLibrary({ lang }: { lang: "ar" | "en" }) {
         </div>
       </div>
 
-      <div className="mt-6 flex items-center justify-between gap-3 flex-nowrap">
+      <div className="mt-6 flex items-center justify-between gap-3 flex-nowrap max-[768px]:gap-2">
         <div
           role="tablist"
           aria-label={rtl ? "تبويبات مكتبة الصور" : "Photo library tabs"}
-          className="flex-1 min-w-0 flex items-center gap-1 overflow-x-auto no-scrollbar rounded-xl border border-[var(--panel-border)] bg-[var(--panel-bg)] p-1"
+          className="flex-1 min-w-0 max-w-full flex items-center gap-1 overflow-x-auto no-scrollbar rounded-xl border border-[var(--panel-border)] bg-[var(--panel-bg)] p-1"
         >
           {tabs.map((t, i) => {
             const selected = t.key === tab;
@@ -171,7 +171,7 @@ export default function AboutPhotoLibrary({ lang }: { lang: "ar" | "en" }) {
                 onClick={() => setTab(t.key)}
                 onKeyDown={(e) => onTabKeyDown(e, i)}
                 className={[
-                  "min-h-[44px] px-4 rounded-lg text-sm font-semibold transition-colors duration-300 outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-accent)]",
+                  "min-h-[44px] px-4 rounded-lg text-sm font-semibold whitespace-nowrap transition-colors duration-300 outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-accent)]",
                   selected ? "bg-[var(--brand-accent)] text-[var(--brand-primary)]" : "text-[var(--text-secondary)] hover:bg-[var(--panel-muted-bg)]",
                 ].join(" ")}
               >
@@ -180,13 +180,14 @@ export default function AboutPhotoLibrary({ lang }: { lang: "ar" | "en" }) {
             );
           })}
         </div>
-        <div className="flex items-center gap-3 flex-shrink-0">
-          <label className="text-xs font-semibold text-[var(--text-secondary)]" htmlFor="photo-lib-sort">
+        <div className="flex items-center gap-2 flex-shrink-0 whitespace-nowrap">
+          <label className="text-xs font-semibold text-[var(--text-secondary)] max-[768px]:sr-only" htmlFor="photo-lib-sort">
             {rtl ? "الترتيب" : "Sort"}
           </label>
           <select
             id="photo-lib-sort"
-            className="themed-select rounded-lg px-3 py-2 text-sm ring-1 ring-[var(--panel-border)] bg-[var(--panel-bg)] text-[var(--ink-primary)]"
+            aria-label={rtl ? "الترتيب" : "Sort"}
+            className="themed-select rounded-lg px-3 py-2 text-sm ring-1 ring-[var(--panel-border)] bg-[var(--panel-bg)] text-[var(--ink-primary)] max-[768px]:w-[140px]"
             value={sort}
             onChange={(e) => setSort(e.target.value as any)}
           >
@@ -234,7 +235,7 @@ export default function AboutPhotoLibrary({ lang }: { lang: "ar" | "en" }) {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
               {filtered.map((m) => (
-                <MediaCard key={m.id} item={m} lang={lang} onOpen={() => setActiveId(m.id)} />
+                <MediaCard key={m.id} item={m} lang={lang} active={activeId === m.id} onOpen={() => setActiveId(m.id)} />
               ))}
             </div>
           )}
@@ -258,7 +259,7 @@ export default function AboutPhotoLibrary({ lang }: { lang: "ar" | "en" }) {
   );
 }
 
-function MediaCard({ item, lang, onOpen }: { item: MediaItem; lang: "ar" | "en"; onOpen: () => void }) {
+function MediaCard({ item, lang, onOpen, active }: { item: MediaItem; lang: "ar" | "en"; onOpen: () => void; active: boolean }) {
   const rtl = lang === "ar";
   const reduce = useReducedMotion();
   const [loaded, setLoaded] = useState(false);
@@ -269,6 +270,7 @@ function MediaCard({ item, lang, onOpen }: { item: MediaItem; lang: "ar" | "en";
     <button
       type="button"
       onClick={onOpen}
+      style={active ? { zIndex: 30 } : undefined}
       className="group relative w-full text-left rounded-xl overflow-hidden ring-1 ring-[var(--panel-border)] bg-[var(--panel-bg)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-accent)]"
       aria-label={rtl ? "فتح الوسائط" : "Open media"}
     >
@@ -339,6 +341,8 @@ function MediaModal({
   const dragRef = useRef<{ x: number; y: number; tx: number; ty: number } | null>(null);
   const pointers = useRef<Map<number, { x: number; y: number }>>(new Map());
   const pinchBase = useRef<{ dist: number; scale: number } | null>(null);
+  const swipeRef = useRef<{ id: number | null; sx: number; sy: number; active: boolean }>({ id: null, sx: 0, sy: 0, active: false });
+  const [swipeY, setSwipeY] = useState(0);
 
   const resetView = () => {
     setScale(1);
@@ -425,25 +429,72 @@ function MediaModal({
     }
   };
 
+  const onSwipePointerDown = (e: React.PointerEvent) => {
+    if (e.pointerType !== "touch") return;
+    if (item.type === "photo") {
+      if (pointers.current.size > 0) return;
+      if (scale > 1.01) return;
+    }
+    try {
+      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    } catch {}
+    swipeRef.current = { id: e.pointerId, sx: e.clientX, sy: e.clientY, active: false };
+  };
+
+  const onSwipePointerMove = (e: React.PointerEvent) => {
+    if (e.pointerType !== "touch") return;
+    if (swipeRef.current.id !== e.pointerId) return;
+    const dx = e.clientX - swipeRef.current.sx;
+    const dy = e.clientY - swipeRef.current.sy;
+    if (dy < 0) return;
+    if (!swipeRef.current.active) {
+      if (Math.abs(dy) > 8 && Math.abs(dy) > Math.abs(dx)) swipeRef.current.active = true;
+      else return;
+    }
+    e.preventDefault();
+    setSwipeY(dy);
+  };
+
+  const onSwipePointerUp = (e: React.PointerEvent) => {
+    if (e.pointerType !== "touch") return;
+    if (swipeRef.current.id !== e.pointerId) return;
+    const shouldClose = swipeRef.current.active && swipeY >= 50;
+    swipeRef.current = { id: null, sx: 0, sy: 0, active: false };
+    if (shouldClose) {
+      onClose();
+      return;
+    }
+    setSwipeY(0);
+  };
+
   return (
     <motion.div
-      className="fixed inset-0 z-[70]"
+      className="fixed inset-0 z-[90]"
       initial={reduce ? { opacity: 1 } : { opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={reduce ? { opacity: 1 } : { opacity: 0 }}
-      transition={{ duration: 0.2 }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
       aria-modal="true"
       role="dialog"
       dir={rtl ? "rtl" : "ltr"}
     >
       <button type="button" aria-label={rtl ? "إغلاق" : "Close"} className="absolute inset-0 bg-black/80" onClick={onClose} />
 
-      <div className="absolute inset-0 p-4 md:p-8">
+      <motion.div
+        className="absolute inset-0 p-4 md:p-8 touch-none"
+        style={{ y: swipeY }}
+        animate={swipeRef.current.active ? undefined : { y: 0 }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
+        onPointerDown={onSwipePointerDown}
+        onPointerMove={onSwipePointerMove}
+        onPointerUp={onSwipePointerUp}
+        onPointerCancel={onSwipePointerUp}
+      >
         <div className="relative mx-auto max-w-5xl h-full grid place-items-center">
           <button
             type="button"
             onClick={onClose}
-            className="absolute top-2 right-2 z-10 h-11 w-11 rounded-full bg-black/50 ring-1 ring-white/20 grid place-items-center text-white hover:bg-black/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-accent)]"
+            className="absolute top-2 right-2 z-10 h-12 w-12 rounded-full bg-black/50 ring-1 ring-white/20 grid place-items-center text-white hover:bg-black/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-accent)]"
             aria-label={rtl ? "إغلاق" : "Close"}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
@@ -502,7 +553,7 @@ function MediaModal({
             </motion.div>
           )}
         </div>
-      </div>
+      </motion.div>
     </motion.div>
   );
 }
