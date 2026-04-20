@@ -221,7 +221,7 @@ const translations: Record<Lang, Record<string, string>> = {
     newsletterSuccessBody: "شكرًا لك على الاشتراك. سنبقيك مطلعًا على أحدث الأخبار القانونية.",
     footerCopyright:
       "خالد عمر للاستشارات البحرية. جميع الحقوق محفوظة @ 2026 - تصميم وتطوير بواسطة 7assona",
-    footerTheme: "السمة",
+    footerTheme: "تصميم النظام",
     badgeLegalMaritime: "الاستشارات القانونية والبحرية",
     badgeUAEShippingTrade: "الإمارات · الشحن والتجارة",
     badgeRiskComplianceGovernance: "المخاطر · الامتثال · الحوكمة",

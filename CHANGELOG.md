@@ -76,5 +76,6 @@
 - QA: Re-ran lint, unit tests with coverage, and production build successfully after the UI changes.
 
 ## Komc-VB0010
-- Header Stability: Moved the header rendering into a top-level portal attached to document.body to prevent fixed-position behavior being affected by transformed ancestors; header now remains stationary at the top of the viewport across all pages and languages.
-- QA: Re-ran lint, unit tests with coverage, and production build successfully after the header fix.
+- Header Stability: Fixed persistent header motion by moving the fixed header into a portal on `document.body`, eliminating ancestor layout/transform influence and keeping the header visually static during scrolling across pages.
+- Footer i18n: Updated the Arabic footer theme label to `تصميم النظام` and switched the footer to the dedicated `footerTheme` translation key.
+- QA & Build: Re-ran clean install, dependency analysis, lint, unit tests with coverage, production build, security audit, and production smoke checks for key bilingual routes and APIs.

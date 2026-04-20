@@ -400,7 +400,7 @@ export default function Footer() {
               {settings?.themeToggle !== false ? (
                 <div>
                   <div className="text-xs font-semibold footer-title mb-1">
-                    {t("Site Theme") ?? (lang === "ar" ? "تصميم الموقع" : "Theme")}
+                    {t("footerTheme")}
                   </div>
                   <div className="inline-flex items-center rounded-full border border-[var(--panel-border)] dark:border-white/15 bg-[var(--panel-bg)] px-1 py-1 gap-1 ui-pill">
                     <button
