@@ -390,6 +390,10 @@
   }
 }
 
+html {
+  scrollbar-gutter: stable;
+}
+
 body {
   /* EN: Base document styles — background, text color, and font
      AR: أنماط المستند الأساسية — الخلفية، لون النص، والخط */
@@ -397,9 +401,23 @@ body {
   color: var(--foreground);
   font-family: var(--font-en), Arial, Helvetica, sans-serif;
   transition: color 240ms ease, background-color 240ms ease;
+  overflow-y: scroll;
 }
 header, .surface, .section, .footer-premier {
   transition: color 240ms ease, background-color 240ms ease, border-color 240ms ease;
+}
+
+header[data-site-header] {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  transform: none !important;
+  will-change: auto !important;
+  contain: layout paint;
+  z-index: 70;
 }
 /* Typography system */
 .typography-root h1 { font-size: var(--fs-h1) !important; line-height: var(--lh-title) !important; margin-block: 0.8em 0.4em; }
