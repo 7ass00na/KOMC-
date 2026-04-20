@@ -74,3 +74,7 @@
 ## Komc-VB0009
 - Photo Library UX: Improved mobile/tablet controls to keep tabs and sort aligned on one line without wrapping; enhanced modal stacking and added touch-first closing (tap outside, large close button, swipe-down to close with smooth transitions).
 - QA: Re-ran lint, unit tests with coverage, and production build successfully after the UI changes.
+
+## Komc-VB0010
+- Header Stability: Moved the header rendering into a top-level portal attached to document.body to prevent fixed-position behavior being affected by transformed ancestors; header now remains stationary at the top of the viewport across all pages and languages.
+- QA: Re-ran lint, unit tests with coverage, and production build successfully after the header fix.
