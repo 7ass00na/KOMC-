@@ -184,7 +184,7 @@ export default function Header() {
   const scrolledVisual = isMobileTablet ? false : scrolled;
 
   return (
-    <header ref={headerRef} className="fixed top-0 w-full z-[70]" suppressHydrationWarning>
+    <header ref={headerRef} data-site-header="true" className="fixed top-0 w-full z-[70]" suppressHydrationWarning>
       <div className="mx-auto max-w-7xl px-5 py-2">
         <div
           className={
@@ -200,8 +200,8 @@ export default function Header() {
           {/* AR: حاوية شريط الرأس الثابت */}
           <div className="flex-1 px-3 py-2 flex items-center justify-between">
         <motion.div
-          initial={{ opacity: 0, y: -6 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           className="flex items-center gap-3"
         >
           {/* EN: Brand mark and name */}
