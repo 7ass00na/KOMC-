@@ -184,7 +184,7 @@ export default function Header() {
   const scrolledVisual = isMobileTablet ? false : scrolled;
 
   return (
-    <header ref={headerRef} data-site-header className="fixed top-0 w-full z-[70]" suppressHydrationWarning>
+    <header ref={headerRef} className="fixed top-0 w-full z-[70]" suppressHydrationWarning>
       <div className="mx-auto max-w-7xl px-5 py-2">
         <div
           className={
