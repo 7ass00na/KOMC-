@@ -398,14 +398,6 @@ body {
   font-family: var(--font-en), Arial, Helvetica, sans-serif;
   transition: color 240ms ease, background-color 240ms ease;
 }
-.site-fixed-header {
-  left: 0;
-  right: 0;
-  top: 0;
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-}
 header, .surface, .section, .footer-premier {
   transition: color 240ms ease, background-color 240ms ease, border-color 240ms ease;
 }

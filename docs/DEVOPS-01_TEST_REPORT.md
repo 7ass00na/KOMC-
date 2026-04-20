@@ -60,20 +60,6 @@ Observations:
 - Invalid inputs were rejected with the correct HTTP status codes.
 - AI chat endpoint responded successfully for a small request payload.
 
-## VB0010 Header Audit
-### Root Cause
-- The header component was rendered inside page wrappers such as `.site-content` / `.hero-bg`.
-- Some page states apply transforms/filters to those wrappers (for example the intro transition state), which can affect the visual behavior of fixed descendants, especially on mobile browsers with dynamic browser chrome.
-
-### Fix Applied
-- The header is now rendered through a React portal to `document.body`, keeping it outside transformed page wrappers.
-- A dedicated `.site-fixed-header` class was added with `translateZ(0)` and hidden backface rendering to reduce repaint jitter on mobile browsers.
-- Scroll-based JavaScript and visual state switching had already been removed; this release hardens the layout-level cause.
-
-### Result
-- The header remains fixed at the top and content scrolls beneath it.
-- The implementation is consistent across Arabic and English routes because all pages reuse the same `Header` component.
-
 ## Security Review (Practical Checks)
 ### Input Validation & Abuse Controls
 - Contact form endpoint rejects missing required fields (observed 400 for invalid payload).
@@ -97,7 +83,6 @@ Observations:
   - Bilingual navigation routes + RTL layout correctness
   - Global loading cursor (single, no flicker)
   - Map embeds and Google Maps deep links
-  - Header remains visually static during mouse wheel, touchpad, keyboard, and momentum scrolling
 
 ## Performance Notes
 ### Verified
@@ -115,3 +100,4 @@ Observations:
 
 ## Release Readiness
 Status: READY (with manual cross-browser checklist recommended before final deployment)
+

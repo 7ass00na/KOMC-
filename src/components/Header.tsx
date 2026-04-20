@@ -4,31 +4,51 @@
 import { useLanguage } from "@/context/LanguageContext";
 import { useTheme } from "@/context/ThemeContext";
 import { Home as HomeIcon, Info, Scale, Gavel, Newspaper, Mail } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import Link from "next/link";
 import { useEffect, useMemo, useState, useRef } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { createPortal } from "react-dom";
 
 export default function Header() {
   // EN: Read current language and theme state
   // AR: قراءة حالة اللغة والسمة الحالية
   const { t, lang, setLang } = useLanguage();
-  const { dark } = useTheme();
+  const { toggleDark, dark } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [introPlaying, setIntroPlaying] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const langMenuRef = useRef<HTMLDivElement | null>(null);
   const pathname = usePathname();
+  const [scrolled, setScrolled] = useState(false);
+  const [isMobileTablet, setIsMobileTablet] = useState(false);
   const headerRef = useRef<HTMLElement | null>(null);
   const [headerH, setHeaderH] = useState<number>(64);
-  const [mounted, setMounted] = useState(false);
   const [settings, setSettings] = useState<{ languageToggle: boolean; pageLoadingCursor: boolean } | null>(null);
   const [header, setHeader] = useState<{ siteName_en?: string; siteName_ar?: string; logo?: string; published_siteName_en?: string; published_siteName_ar?: string; published_logo?: string } | null>(null);
+  const reduce = useReducedMotion();
 
   useEffect(() => {
-    setMounted(true);
+    if (typeof window === "undefined") return;
+    const mq = window.matchMedia("(max-width: 1024px)");
+    const onChange = () => setIsMobileTablet(mq.matches);
+    onChange();
+    mq.addEventListener ? mq.addEventListener("change", onChange) : mq.addListener(onChange);
+    const onScroll = () => {
+      if (!mq.matches) {
+        setScrolled(window.scrollY > 8);
+      } else {
+        setScrolled(false);
+      }
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      mq.removeEventListener ? mq.removeEventListener("change", onChange) : mq.removeListener(onChange);
+    };
   }, []);
+
   useEffect(() => {
     if (!headerRef.current || typeof window === "undefined") return;
     const el = headerRef.current;
@@ -53,6 +73,23 @@ export default function Header() {
       window.removeEventListener("resize", onResize);
       window.removeEventListener("orientationchange", onResize as any);
     };
+  }, []);
+
+  useEffect(() => {
+    function onIntroStart() {
+      setIntroPlaying(true);
+    }
+    function onIntroStop() {
+      setIntroPlaying(false);
+    }
+    if (typeof window !== "undefined") {
+      window.addEventListener("intro-video-start", onIntroStart as any);
+      window.addEventListener("intro-video-stop", onIntroStop as any);
+      return () => {
+        window.removeEventListener("intro-video-start", onIntroStart as any);
+        window.removeEventListener("intro-video-stop", onIntroStop as any);
+      };
+    }
   }, []);
 
   useEffect(() => {
@@ -144,11 +181,20 @@ export default function Header() {
     return () => document.removeEventListener("click", onDocClick);
   }, []);
 
-  const headerMarkup = (
-    <header ref={headerRef} className="site-fixed-header fixed inset-x-0 top-0 w-full z-[70]" suppressHydrationWarning>
+  const scrolledVisual = isMobileTablet ? false : scrolled;
+
+  return (
+    <header ref={headerRef} className="fixed top-0 w-full z-[70]" suppressHydrationWarning>
       <div className="mx-auto max-w-7xl px-5 py-2">
         <div
-          className="relative flex items-center justify-between rounded-2xl border border-transparent bg-transparent backdrop-blur shadow-none"
+          className={
+            "relative flex items-center justify-between rounded-2xl border backdrop-blur transition-all duration-300 " +
+            (scrolledVisual
+              ? (dark
+                  ? "bg-[color-mix(in_oklab,var(--brand-primary),white_10%)]/85 border-black/25 shadow-[0_6px_28px_rgba(0,0,0,0.25)]"
+                  : "bg-[color-mix(in_oklab,#ffffff,transparent_0%)]/40 border-black/10 shadow-[0_6px_22px_rgba(0,0,0,0.06)]")
+              : "bg-transparent border-transparent shadow-none")
+          }
         >
           {/* EN: Sticky header bar container */}
           {/* AR: حاوية شريط الرأس الثابت */}
@@ -166,11 +212,15 @@ export default function Header() {
           <div className={
             "text-[13px] md:text-sm font-bold " +
             (dark
-              ? "text-[var(--brand-accent)]"
-              : "text-transparent bg-clip-text bg-gradient-to-r from-white/60 via-white to-white/60 bg-center")
+              ? (scrolledVisual
+                  ? "text-transparent bg-clip-text bg-gradient-to-r from-white/60 via-white to-white/60 bg-center"
+                  : "text-[var(--brand-accent)]")
+              : (!scrolledVisual
+                  ? "text-transparent bg-clip-text bg-gradient-to-r from-white/60 via-white to-white/60 bg-center"
+                  : "text-transparent bg-clip-text bg-gradient-to-r from-[#132437] via-[color-mix(in_oklab,#132437,white_18%)] to-[#132437] bg-center"))
           }>
             <span className="md:hidden" data-edit-key="brand-name-mobile">
-              {lang === "ar" ? "خالد عمر للإستشارات البحرية" : "Khaled Omer "}
+              {lang === "ar" ? "خـالـد عـمـر" : "Khaled Omer"}
             </span>
             <span className="hidden md:inline" data-edit-key="brand-name-desktop">
               {lang === "ar" ? "خالد عمر للإستشارات البحرية" : "Khaled Omer Maritime Consultancy"}
@@ -200,7 +250,9 @@ export default function Header() {
                        "absolute inset-0 rounded-lg border " +
                        (dark
                          ? "border-white/10 bg-white/10"
-                        : "border-white/15 bg-white/10")
+                        : scrolledVisual
+                           ? "border-transparent bg-[var(--brand-accent)]"
+                           : "border-white/15 bg-white/10")
                     }
                   />
                 ) : null}
@@ -208,8 +260,12 @@ export default function Header() {
                   className={
                 "relative z-10 block px-3 py-1.5 " +
                      (dark
-                       ? "text-[var(--brand-accent)] hover:text-[var(--brand-accent)]"
-                       : "text-[#ffffff] font-bold hover:text-[#ffffff]") +
+                       ? (scrolledVisual
+                           ? "text-[#ffffff]"
+                           : "text-[var(--brand-accent)] hover:text-[var(--brand-accent)]")
+                       : scrolledVisual
+                         ? (isActive ? "text-[#ffffff] font-bold hover:text-[#ffffff]" : "text-[var(--ink-primary)] font-bold hover:text-[var(--ink-primary)]")
+                         : "text-[#ffffff] font-bold hover:text-[#ffffff]") +
                     (isActive ? " font-bold" : "")
                   }
                   whileHover={{ y: -1 }}
@@ -331,7 +387,7 @@ export default function Header() {
             aria-expanded={mobileOpen}
             className={
                "md:hidden ml-2 h-11 w-11 rounded-lg border flex items-center justify-center " +
-               (dark ? "border-white/10 bg-white/10" : "border-black/10 bg-black/5 hover:bg-black/10")
+               (dark ? "border-white/10 bg-white/10" : (scrolledVisual ? "border-transparent bg-[var(--brand-accent)]" : "border-black/10 bg-black/5 hover:bg-black/10"))
             }
           >
             {mobileOpen ? (
@@ -340,9 +396,9 @@ export default function Header() {
               </svg>
             ) : (
               <div className="flex flex-col gap-1.5">
-                <span className={"block h-0.5 w-5 " + (dark ? "bg-[var(--brand-accent)]" : "bg-[#ffffff]")} />
-                <span className={"block h-0.5 w-5 " + (dark ? "bg-[var(--brand-accent)]" : "bg-[#ffffff]")} />
-                <span className={"block h-0.5 w-5 " + (dark ? "bg-[var(--brand-accent)]" : "bg-[#ffffff]")} />
+                <span className={"block h-0.5 w-5 " + (dark ? (scrolledVisual ? "bg-white" : "bg-[var(--brand-accent)]") : "bg-[#ffffff]")} />
+                <span className={"block h-0.5 w-5 " + (dark ? (scrolledVisual ? "bg-white" : "bg-[var(--brand-accent)]") : "bg-[#ffffff]")} />
+                <span className={"block h-0.5 w-5 " + (dark ? (scrolledVisual ? "bg-white" : "bg-[var(--brand-accent)]") : "bg-[#ffffff]")} />
               </div>
             )}
           </button>
@@ -486,7 +542,4 @@ export default function Header() {
       )}
     </header>
   );
-
-  if (!mounted || typeof document === "undefined") return headerMarkup;
-  return createPortal(headerMarkup, document.body);
 }

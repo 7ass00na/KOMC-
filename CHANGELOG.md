@@ -76,6 +76,5 @@
 - QA: Re-ran lint, unit tests with coverage, and production build successfully after the UI changes.
 
 ## Komc-VB0010
-- Header Stability: Fixed persistent header motion by moving the fixed header into a portal on `document.body`, eliminating ancestor layout/transform influence and keeping the header visually static during scrolling across pages.
-- Footer i18n: Updated the Arabic footer theme label to `تصميم النظام` and switched the footer to the dedicated `footerTheme` translation key.
-- QA & Build: Re-ran clean install, dependency analysis, lint, unit tests with coverage, production build, security audit, and production smoke checks for key bilingual routes and APIs.
+- Footer: Updated the footer theme label to bilingual text with `Website Theme` in English and `تصميم الموقع` in Arabic while preserving existing footer styling and RTL/LTR behavior.
+- QA: Re-ran cleanup, fresh install, audit, lint, unit tests with coverage, production build, and production smoke checks on key public routes and validation-heavy API endpoints.
