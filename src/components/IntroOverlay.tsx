@@ -80,7 +80,6 @@ export default function IntroOverlay() {
       ensureRate();
       try { v.muted = true; v.play()?.catch(() => {}); } catch {}
     };
-    const onPlay = () => ensureRate();
     const onRateChange = () => ensureRate();
     const onPlayStart = () => {
       if (typeof window !== "undefined") {

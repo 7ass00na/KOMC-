@@ -14,7 +14,7 @@ export default function NewsOverview() {
             tag: "قانون بحري",
             date: "2026-02-01",
             readTime: "8 دقائق قراءة",
-            image: "/images/Case/shiping%20cont.jpg",
+            image: "/images/News/N01.jpg",
           },
           {
             title: "الامتثال التجاري في 2026: أهم التغييرات",
@@ -22,7 +22,7 @@ export default function NewsOverview() {
             tag: "امتثال",
             date: "2026-01-20",
             readTime: "5 دقائق قراءة",
-            image: "/images/Services/Trade1.jpg",
+            image: "/images/News/N02.jpg",
           },
           {
             title: "حل نزاعات التجارة الدولية",
@@ -30,7 +30,7 @@ export default function NewsOverview() {
             tag: "تحكيم",
             date: "2026-01-05",
             readTime: "6 دقائق قراءة",
-            image: "/images/Services/Insurance.jpg",
+            image: "/images/News/N03.jpg",
           },
         ]
       : [
@@ -40,7 +40,7 @@ export default function NewsOverview() {
             tag: "Maritime Law",
             date: "2026-02-01",
             readTime: "8 min read",
-            image: "/images/Case/shiping%20cont.jpg",
+            image: "/images/News/N01.jpg",
           },
           {
             title: "Corporate Compliance in 2026: Key Changes",
@@ -48,7 +48,7 @@ export default function NewsOverview() {
             tag: "Compliance",
             date: "2026-01-20",
             readTime: "5 min read",
-            image: "/images/Services/Trade1.jpg",
+            image: "/images/News/N02.jpg",
           },
           {
             title: "Resolving International Trade Disputes",
@@ -56,7 +56,7 @@ export default function NewsOverview() {
             tag: "Arbitration",
             date: "2026-01-05",
             readTime: "6 min read",
-            image: "/images/Services/Insurance.jpg",
+            image: "/images/News/N03.jpg",
           },
         ];
   const isAr = lang === "ar";

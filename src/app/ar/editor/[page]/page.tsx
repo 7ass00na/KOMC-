@@ -1,4 +1,3 @@
-import { notFound } from "next/navigation";
 import EditorShell from "@/components/editor/EditorShell";
 import EasyblocksEditor from "@/components/editor/EasyblocksEditor";
 import Header from "@/components/Header";

@@ -151,12 +151,12 @@ export default function AboutTeamGrid({ team, isRTL = false, startIndex = 0 }: {
       if (number === 9) {
         return {
           ...p,
-          name: "Enas Ali",
+          name: "Enas Abdulrahman",
           role: "Lawyer and Legal Advisor",
           focus: "Various Legal Consultations",
-          bio: "Trusted Consultant in Commercial and Family Cases.",
+          bio: "Specialized in drafting contracts, civil and commercial lawsuits, and arbitration.",
           regions: "UAE/SUD/GCC",
-          experience: "8yrs",
+          experience: "10yrs",
           rating: 89,
         };
       }
@@ -236,9 +236,9 @@ export default function AboutTeamGrid({ team, isRTL = false, startIndex = 0 }: {
         return {
           ...p,
           name: "Ahmed Ameen",
-          role: "Legal Advisor",
-          focus: "Various Legal Consultations",
-          bio: "Trusted Consultant in rent and real estate cases.",
+          role: "IT Specialist Consuler",
+          focus: "Various IT Consultations",
+          bio: "Trusted Consultant in IT & Cyber Consultations.",
           regions: "UAE/SUD/GCC",
           experience: "10yrs",
           rating: 90,
@@ -353,12 +353,12 @@ export default function AboutTeamGrid({ team, isRTL = false, startIndex = 0 }: {
       if (number === 9) {
         return {
           ...p,
-          name: "إيناس علي",
+          name: "إيناس عبدالرحمن",
           role: "محامية ومستشارة قانونية",
           focus: "استشارات قانونية متنوعة",
-          bio: "مستشارة موثوقة في القضايا التجارية والأسرية.",
+          bio: "متخصص في صياغة العقود، والدعاوى المدنية والتجارية، والتحكيم.",
           regions: "UAE/SUD/GCC",
-          experience: "8 سنوات",
+          experience: "10 سنوات",
           rating: 89,
         };
       }
@@ -438,9 +438,9 @@ export default function AboutTeamGrid({ team, isRTL = false, startIndex = 0 }: {
         return {
           ...p,
           name: "أحمد أمين",
-          role: "مستشار قانوني",
-          focus: "استشارات قانونية متنوعة",
-          bio: "مستشار موثوق في قضايا الإيجار والعقارات.",
+          role: "متخصص في تكنولوجيا المعلومات",
+          focus: "تكنولوجيا المعلومات",
+          bio: "استشاري موثوق في تكنولوجيا المعلومات والأمن السيبراني.",
           regions: "UAE/SUD/GCC",
           experience: "10 سنوات",
           rating: 90,

@@ -1,7 +1,6 @@
 'use client';
 import { useLanguage } from "@/context/LanguageContext";
 import Link from "next/link";
-import { motion, useReducedMotion } from "framer-motion";
 
 type Props = {
   className?: string;

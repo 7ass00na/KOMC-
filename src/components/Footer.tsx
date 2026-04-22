@@ -2,7 +2,7 @@
 // EN: Footer — brand summary, quick links, services, contact, newsletter, legal
 // AR: تذييل — ملخص العلامة، روابط سريعة، خدمات، تواصل، نشرة بريدية، قانوني
 import { useLanguage } from "@/context/LanguageContext";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { useTheme } from "@/context/ThemeContext";
 import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
@@ -48,10 +48,8 @@ function SocialIcon({ kind }: { kind: "linkedin" | "twitter" | "facebook" | "ins
 export default function Footer() {
   const { t, lang } = useLanguage();
   const { mode, setMode } = useTheme();
-  const reduce = useReducedMotion();
   const base = `/${lang}`;
   const pathname = usePathname();
-  const [footerData, setFooterData] = useState<{ siteName_en: string; siteName_ar: string; logo: string; published_siteName_en?: string; published_siteName_ar?: string; published_logo?: string; links: Array<{ label_en: string; label_ar: string; href: string }> } | null>(null);
   const [showLegal, setShowLegal] = useState(false);
   const [legalType, setLegalType] = useState<"privacy" | "terms" | "disclaimer">("privacy");
   const [legalHTML, setLegalHTML] = useState<string>("");
@@ -86,19 +84,7 @@ export default function Footer() {
     load();
     async function loadFooter() {
       try {
-        const res = await fetch("/api/admin/footer", { cache: "no-store" });
-        const d = await res.json();
-        if (!cancelled) {
-          setFooterData({
-            siteName_en: d?.siteName_en ?? "",
-            siteName_ar: d?.siteName_ar ?? "",
-            logo: d?.logo ?? "",
-            published_siteName_en: d?.published_siteName_en ?? d?.siteName_en ?? "",
-            published_siteName_ar: d?.published_siteName_ar ?? d?.siteName_ar ?? "",
-            published_logo: d?.published_logo ?? d?.logo ?? "",
-            links: Array.isArray(d?.links) ? d.links : [],
-          });
-        }
+        await fetch("/api/admin/footer", { cache: "no-store" });
       } catch {}
     }
     loadFooter();
@@ -114,10 +100,6 @@ export default function Footer() {
     }
     if (typeof window !== "undefined") {
       window.addEventListener("site-settings-updated" as any, onUpdated);
-      window.addEventListener("site-footer-updated" as any, (e: any) => {
-        const d = e?.detail;
-        if (d) setFooterData((f) => ({ ...(f || {}), ...d }));
-      });
     }
     return () => {
       cancelled = true;
@@ -630,7 +612,17 @@ export default function Footer() {
                 {loadingLegal ? (
                   <div className="text-[var(--text-secondary)]">{lang === "ar" ? "جاري التحميل..." : "Loading..."}</div>
                 ) : legalHTML ? (
-                  <div dangerouslySetInnerHTML={{ __html: legalHTML }} />
+                  <div
+                    className={
+                      "space-y-4 text-white/90 " +
+                      "[&_h3]:text-2xl [&_h3]:font-bold [&_h3]:text-[var(--brand-accent)] " +
+                      "[&_h4]:mt-5 [&_h4]:text-lg [&_h4]:font-bold [&_h4]:text-[var(--brand-accent)] " +
+                      "[&_ol]:list-decimal [&_ol]:space-y-2 " +
+                      (lang === "ar" ? "[&_ol]:pr-5 [&_ul]:pr-5 " : "[&_ol]:pl-5 [&_ul]:pl-5 ") +
+                      "[&_p]:leading-7 [&_ul]:list-disc [&_ul]:space-y-2 [&_li]:leading-7"
+                    }
+                    dangerouslySetInnerHTML={{ __html: legalHTML }}
+                  />
                 ) : (
                   <div className="text-[var(--text-secondary)]">
                     {lang === "ar"

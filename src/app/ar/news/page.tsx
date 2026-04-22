@@ -38,7 +38,7 @@ export default async function Page() {
       tag: "قانون بحري",
       date: "2026-02-01",
       readTime: "8 دقائق قراءة",
-      image: "/images/Case/shiping%20cont.jpg",
+      image: "/images/News/N01.jpg",
       body: "مطالبات التأمين البحري تتطلب سرعة ودقة في جمع الأدلة وتحليل السبب المباشر. تنظيم الخطوات يحسن فرص التغطية ويختصر زمن التسوية.",
       bullets: [
         "توثيق الحادث وسجلات السفينة خلال 24 ساعة.",
@@ -53,7 +53,7 @@ export default async function Page() {
       tag: "امتثال",
       date: "2026-01-20",
       readTime: "5 دقائق قراءة",
-      image: "/images/Services/Trade1.jpg",
+      image: "/images/News/N02.jpg",
       body: "معايير الإفصاح الجديدة تفرض مسارات اعتماد أوضح ومراقبة أدق للوثائق. تحديث الحوكمة الداخلية يقلل المخاطر النظامية.",
       bullets: [
         "تحديث صلاحيات التوقيع وحدود التفويض.",
@@ -68,7 +68,7 @@ export default async function Page() {
       tag: "تحكيم",
       date: "2026-01-05",
       readTime: "6 دقائق قراءة",
-      image: "/images/Services/Insurance.jpg",
+      image: "/images/News/N03.jpg",
       body: "التقييم المبكر للنزاع يرفع فرص التسوية ويخفض التكاليف. خريطة أدلة واضحة مع تحليل الاختصاص يسرّع الحل.",
       bullets: [
         "تحديد القانون الحاكم والاختصاص وخيارات التدابير المؤقتة.",

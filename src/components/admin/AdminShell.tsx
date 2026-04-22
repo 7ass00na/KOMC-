@@ -41,7 +41,7 @@ export default function AdminShell({ lang }: Props) {
   const [popupTitle, setPopupTitle] = useState("");
   const [popupBody, setPopupBody] = useState("");
   const active = sp.get("section") || "users";
-  const { setLang, lang: activeLang } = useLanguage();
+  const { setLang } = useLanguage();
 
   useEffect(() => {
     setLang(lang);
@@ -260,112 +260,8 @@ function SectionRenderer({
   }
 }
 
-function LanguagePanel({ isAr, role }: { isAr: boolean; role: "admin" | "editor" | "viewer" }) {
-  const canEdit = role !== "viewer";
-  const [loading, setLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [theme, setTheme] = useState<{ defaultLang: "en" | "ar"; fonts: { en: string; ar: string }; sizes: { heading: string; subheading: string } } | null>(null);
-  const load = async () => {
-    setLoading(true);
-    const res = await fetch("/api/admin/theme", { cache: "no-store" });
-    const d = await res.json();
-    setTheme({ defaultLang: d?.defaultLang || "en", fonts: d?.fonts || { en: "", ar: "" }, sizes: d?.sizes || { heading: "2.25rem", subheading: "1.25rem" } });
-    setLoading(false);
-  };
-  const save = async () => {
-    if (!theme) return;
-    setSaving(true);
-    const res = await fetch("/api/admin/theme", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ defaultLang: theme.defaultLang, fonts: theme.fonts, sizes: theme.sizes }),
-    });
-    if (res.ok) load();
-    setSaving(false);
-  };
-  useEffect(() => { load(); }, []);
-  return (
-    <div className="space-y-4">
-      <h2 className="text-lg font-semibold text-white/90">{isAr ? "التحكم باللغة والخطوط" : "Language & Typography"}</h2>
-      <Card title={isAr ? "لغة الموقع الافتراضية" : "Default Website Language"}>
-        <div className="grid md:grid-cols-2 gap-3">
-          <div>
-            <label className="text-xs text-[var(--text-secondary)]">{isAr ? "اللغة" : "Language"}</label>
-            <select
-              className="input"
-              value={theme?.defaultLang || "en"}
-              onChange={(e) => setTheme((t) => t ? { ...t, defaultLang: e.target.value as any } : t)}
-              disabled={!canEdit}
-            >
-              <option value="en">{isAr ? "الإنجليزية" : "English"}</option>
-              <option value="ar">{isAr ? "العربية" : "Arabic"}</option>
-            </select>
-          </div>
-          <div className="text-xs text-[var(--text-secondary)]">
-            {isAr ? "لا يؤثر على واجهة الإدارة." : "Does not affect the admin UI."}
-          </div>
-        </div>
-      </Card>
-      <Card title={isAr ? "خطوط المحتوى" : "Content Fonts"}>
-        <div className="grid md:grid-cols-2 gap-3">
-          <div>
-            <label className="text-xs text-[var(--text-secondary)]">{isAr ? "خط الإنجليزية" : "English font-family"}</label>
-            <input
-              className="input"
-              placeholder='e.g. "Inter", system-ui, -apple-system'
-              value={theme?.fonts.en || ""}
-              onChange={(e) => setTheme((t) => t ? { ...t, fonts: { ...t.fonts, en: e.target.value } } : t)}
-              disabled={!canEdit}
-            />
-          </div>
-          <div>
-            <label className="text-xs text-[var(--text-secondary)]">{isAr ? "خط العربية" : "Arabic font-family"}</label>
-            <input
-              className="input"
-              placeholder='e.g. "Tajawal", Arial, sans-serif'
-              value={theme?.fonts.ar || ""}
-              onChange={(e) => setTheme((t) => t ? { ...t, fonts: { ...t.fonts, ar: e.target.value } } : t)}
-              disabled={!canEdit}
-            />
-          </div>
-        </div>
-      </Card>
-      <Card title={isAr ? "أحجام العناوين" : "Heading Sizes"}>
-        <div className="grid md:grid-cols-2 gap-3">
-          <div>
-            <label className="text-xs text-[var(--text-secondary)]">{isAr ? "العناوين الرئيسية" : "Main headings (h1)"}</label>
-            <input
-              className="input"
-              placeholder="e.g. 2.5rem"
-              value={theme?.sizes.heading || "2.25rem"}
-              onChange={(e) => setTheme((t) => t ? { ...t, sizes: { ...t.sizes, heading: e.target.value } } : t)}
-              disabled={!canEdit}
-            />
-          </div>
-          <div>
-            <label className="text-xs text-[var(--text-secondary)]">{isAr ? "العناوين الفرعية" : "Subheadings (h2)"}</label>
-            <input
-              className="input"
-              placeholder="e.g. 1.5rem"
-              value={theme?.sizes.subheading || "1.25rem"}
-              onChange={(e) => setTheme((t) => t ? { ...t, sizes: { ...t.sizes, subheading: e.target.value } } : t)}
-              disabled={!canEdit}
-            />
-          </div>
-        </div>
-        <div className="mt-3 text-xs text-[var(--text-secondary)]">{isAr ? "تطبق عالميًا على محتوى الموقع فقط." : "Applies globally to website content only."}</div>
-      </Card>
-      <div className="pt-2 flex items-center gap-3">
-        <button onClick={save} disabled={!canEdit || saving} className="btn-primary">{saving ? (isAr ? "جارٍ الحفظ..." : "Saving...") : (isAr ? "حفظ" : "Save")}</button>
-        <button onClick={load} disabled={loading} className="btn-secondary">{isAr ? "إعادة التحميل" : "Reload"}</button>
-      </div>
-    </div>
-  );
-}
-
 function WorkflowPanel({ isAr, role }: { isAr: boolean; role: "admin" | "editor" | "viewer" }) {
   const canEdit = role !== "viewer";
-  const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [page, setPage] = useState("home");
   const [states, setStates] = useState<any>(null);
@@ -373,12 +269,10 @@ function WorkflowPanel({ isAr, role }: { isAr: boolean; role: "admin" | "editor"
   const [approvals, setApprovals] = useState<string[]>([]);
   const [status, setStatus] = useState<"draft" | "review" | "published">("draft");
   const load = async () => {
-    setLoading(true);
     const ps = await fetch("/api/admin/page-states", { cache: "no-store" }).then((r) => r.json());
     setStates(ps);
     const wf = ps?.[page]?.workflow || { status: "draft", assignedTo: "", approvals: [] };
     setStatus(wf.status); setAssignedTo(wf.assignedTo); setApprovals(wf.approvals || []);
-    setLoading(false);
   };
   const save = async () => {
     setSaving(true);
@@ -419,20 +313,17 @@ function WorkflowPanel({ isAr, role }: { isAr: boolean; role: "admin" | "editor"
 
 function SchedulePanel({ isAr, role }: { isAr: boolean; role: "admin" | "editor" | "viewer" }) {
   const canEdit = role !== "viewer";
-  const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [page, setPage] = useState("news");
   const [states, setStates] = useState<any>(null);
   const [publishAt, setPublishAt] = useState<string>("");
   const [unpublishAt, setUnpublishAt] = useState<string>("");
   const load = async () => {
-    setLoading(true);
     const ps = await fetch("/api/admin/page-states", { cache: "no-store" }).then((r) => r.json());
     setStates(ps);
     const sch = ps?.[page]?.schedule || { publishAt: 0, unpublishAt: 0 };
     setPublishAt(sch.publishAt ? new Date(sch.publishAt).toISOString().slice(0, 16) : "");
     setUnpublishAt(sch.unpublishAt ? new Date(sch.unpublishAt).toISOString().slice(0, 16) : "");
-    setLoading(false);
   };
   const save = async () => {
     setSaving(true);
@@ -466,14 +357,11 @@ function SchedulePanel({ isAr, role }: { isAr: boolean; role: "admin" | "editor"
 
 function RevisionsPanel({ isAr, role }: { isAr: boolean; role: "admin" | "editor" | "viewer" }) {
   const canEdit = role !== "viewer";
-  const [loading, setLoading] = useState(false);
   const [states, setStates] = useState<any>(null);
   const [diffA, setDiffA] = useState(""); const [diffB, setDiffB] = useState("");
   const load = async () => {
-    setLoading(true);
     const ps = await fetch("/api/admin/page-states", { cache: "no-store" }).then((r) => r.json());
     setStates(ps);
-    setLoading(false);
   };
   const restoreHeader = async (r: any) => {
     await fetch("/api/admin/header", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ siteName_en: r.siteName_en ?? "", siteName_ar: r.siteName_ar ?? "", logo: r.logo ?? "", published_siteName_en: r.siteName_en ?? "", published_siteName_ar: r.siteName_ar ?? "", published_logo: r.logo ?? "" }) });
@@ -1048,52 +936,6 @@ function UsersPanel({ isAr, role }: { isAr: boolean; role: "admin" | "editor" | 
             ))
           )}
         </div>
-      </div>
-    </div>
-  );
-}
-
-function SiteContentsPanel({ isAr }: { isAr: boolean }) {
-  const router = useRouter();
-  const goto = (id: string) => {
-    const base = `/${isAr ? "ar" : "en"}/admin`;
-    router.push(`${base}?section=${id}`);
-  };
-  const items = [
-    { id: "header", en: "Header", ar: "الترويسة", icon: HeaderIcon },
-    { id: "footer", en: "Footer", ar: "التذييل", icon: FooterIcon },
-    { id: "homepage", en: "Home", ar: "الصفحة الرئيسية", icon: HomeIcon },
-    { id: "about", en: "About Us", ar: "من نحن", icon: InfoIcon },
-    { id: "services", en: "Services", ar: "الخدمات", icon: ServicesIcon },
-    { id: "cases", en: "Issues", ar: "القضايا", icon: CasesIcon },
-    { id: "news", en: "News", ar: "الأخبار", icon: NewsIcon },
-    { id: "contact", en: "Contact Us", ar: "تواصل معنا", icon: MailIcon },
-  ] as const;
-  return (
-    <div className="space-y-4">
-      <h2 className="text-lg font-semibold text-white/90">{isAr ? "محتوى الموقع" : "Site Contents"}</h2>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {items.map((it) => {
-          const Icon = it.icon;
-          return (
-            <div key={it.id} className="rounded-xl border border-[var(--panel-border)] bg-[var(--panel-bg)] p-4 flex items-start gap-3">
-              <div className="h-9 w-9 rounded-lg bg-white/10 flex items-center justify-center">
-                <Icon className="h-5 w-5 text-white/90" />
-              </div>
-              <div className="flex flex-col gap-1">
-                <div className="text-sm font-semibold text-white/90">{isAr ? it.ar : it.en}</div>
-                <div className="text-xs text-[var(--text-secondary)]">
-                  {isAr ? "تحرير وإدارة هذا القسم" : "Edit and manage this section"}
-                </div>
-                <div>
-                  <button className="btn-secondary mt-2" onClick={() => goto(it.id)}>
-                    {isAr ? "إدارة" : "Manage"}
-                  </button>
-                </div>
-              </div>
-            </div>
-          );
-        })}
       </div>
     </div>
   );
@@ -2533,36 +2375,6 @@ function Card({ title, children }: { title: string; children: React.ReactNode })
   );
 }
 
-function LangPill() {
-  const { lang, setLang } = useLanguage();
-  return (
-    <div className="inline-flex items-center rounded-full border border-[var(--panel-border)] dark:border-white/15 bg-[var(--panel-bg)] px-1 py-1 gap-1 ui-pill">
-      <button
-        onClick={() => setLang("en")}
-        aria-pressed={lang === "en"}
-        className={
-          "h-7 w-7 rounded-full flex items-center justify-center text-[11px] font-semibold transition " +
-          (lang === "en" ? "bg-[var(--brand-accent)] text-black shadow" : "text-[var(--text-secondary)] hover:bg-black/5 dark:hover:bg-white/10")
-        }
-        title="English"
-      >
-        EN
-      </button>
-      <button
-        onClick={() => setLang("ar")}
-        aria-pressed={lang === "ar"}
-        className={
-          "h-7 w-7 rounded-full flex items-center justify-center text-[11px] font-semibold transition " +
-          (lang === "ar" ? "bg-[var(--brand-accent)] text-black shadow" : "text-[var(--text-secondary)] hover:bg-black/5 dark:hover:bg-white/10")
-        }
-        title="العربية"
-      >
-        AR
-      </button>
-    </div>
-  );
-}
-
 function UsersIcon(props: any) { return (<svg viewBox="0 0 24 24" {...props}><path fill="currentColor" d="M16 11a4 4 0 1 0-8 0 4 4 0 0 0 8 0Zm-9 6a5 5 0 0 1 10 0v1H7v-1Z"/></svg>); }
 function ChartIcon(props: any) { return (<svg viewBox="0 0 24 24" {...props}><path fill="currentColor" d="M3 3h2v18H3V3Zm4 8h2v10H7V11Zm4-6h2v16h-2V5Zm4 10h2v6h-2v-6Zm4-12h2v18h-2V3Z"/></svg>); }
 function HeaderIcon(props: any) { return (<svg viewBox="0 0 24 24" {...props}><path fill="currentColor" d="M4 4h16v4H4V4Zm0 6h10v2H4v-2Zm0 4h8v2H4v-2Z"/></svg>); }
@@ -2587,6 +2399,4 @@ function HandshakeIcon(props: any) { return (<svg viewBox="0 0 24 24" {...props}
 function MailIcon(props: any) { return (<svg viewBox="0 0 24 24" {...props}><path fill="currentColor" d="M20 4H4v16h16V4Zm-2 4-6 4-6-4V6l6 4 6-4v2Z"/></svg>); }
 function SettingsIcon(props: any) { return (<svg viewBox="0 0 24 24" {...props}><path fill="currentColor" d="M12 8a4 4 0 1 1 0 8 4 4 0 0 1 0-8Zm9 3h-2.1a7.96 7.96 0 0 0-.6-1.45l1.5-1.5L18 5.05l-1.5 1.5c-.47-.25-.97-.46-1.5-.6V4h-4v1.95c-.53.14-1.03.35-1.5.6L8 5.05 5.2 7.05l1.5 1.5c-.25.47-.46.97-.6 1.5H4v4h2.1c.14.53.35 1.03.6 1.5l-1.5 1.5L8 18.95l1.5-1.5c.47.25.97.46 1.5.6V22h4v-1.95c.53-.14 1.03-.35 1.5-.6l1.5 1.5 2.8-2-1.5-1.5c.25-.47.46-.97.6-1.5H22v-4Z"/></svg>); }
 function LegalIcon(props: any) { return (<svg viewBox="0 0 24 24" {...props}><path fill="currentColor" d="M6 2h9l3 3v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm0 2v16h10V6h-3V4H6Zm2 4h6v2H8V8Zm0 4h8v2H8v-2Zm0 4h8v2H8v-2Z"/></svg>); }
-function ContentIcon(props: any) { return (<svg viewBox="0 0 24 24" {...props}><path fill="currentColor" d="M5 4h14a1 1 0 0 1 1 1v2H4V5a1 1 0 0 1 1-1Zm-1 6h16v2H4v-2Zm0 6h10v2H4v-2Z"/></svg>); }
-function GlobeIcon(props: any) { return (<svg viewBox="0 0 24 24" {...props}><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2Zm7.45 7h-3.19a12.7 12.7 0 0 0-2.1-5.02A8.02 8.02 0 0 1 19.45 9ZM12 4.1c1.17 1.62 2.05 3.58 2.5 5.9h-5c.45-2.32 1.33-4.28 2.5-5.9ZM4.55 9A8.02 8.02 0 0 1 9.84 4.98 12.7 12.7 0 0 0 7.74 9H4.55ZM4.55 15h3.2c.5 1.87 1.3 3.57 2.1 5.02A8.02 8.02 0 0 1 4.55 15Zm7.45 4.9c-1.17-1.62-2.05-3.58-2.5-5.9h5c-.45 2.32-1.33 4.28-2.5 5.9Zm2.61.12a12.7 12.7 0 0 0 2.1-5.02h3.19a8.02 8.02 0 0 1-5.29 5.02ZM16.27 11c.08.65.13 1.31.13 2s-.05 1.35-.13 2H7.73A12.3 12.3 0 0 1 7.6 13c0-.69.05-1.35.13-2h8.54Z"/></svg>); }
 function PaletteIcon(props: any) { return (<svg viewBox="0 0 24 24" {...props}><path fill="currentColor" d="M12 3a9 9 0 0 0-9 9c0 4.97 4.03 9 9 9h2a3 3 0 0 0 3-3c0-.83-.67-1.5-1.5-1.5H13a2 2 0 1 1 0-4h2.5A5.5 5.5 0 0 0 21 6.5C21 4.02 18.98 3 16.5 3H12Zm-5 8a1.5 1.5 0 1 1 3.001.001A1.5 1.5 0 0 1 7 11Zm5-4a1.5 1.5 0 1 1 3.001.001A1.5 1.5 0 0 1 12 7Zm5 4a1.5 1.5 0 1 1 3.001.001A1.5 1.5 0 0 1 17 11Z"/></svg>); }

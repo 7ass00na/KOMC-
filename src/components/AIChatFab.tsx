@@ -96,19 +96,6 @@ export default function AIChatFab() {
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
-  const closeAllChats = () => {
-    try {
-      if (typeof window !== "undefined") {
-        window.dispatchEvent(new Event("chat-close-all"));
-      }
-    } catch {}
-    setDimmed(false);
-    setSizeMode("default");
-    setOpen(false);
-    setDragging(false);
-    setPos(null);
-  };
-
   useEffect(() => {
     function onMove(e: PointerEvent) {
       if (!dragStart.current) return;

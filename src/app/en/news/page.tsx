@@ -38,7 +38,7 @@ export default async function Page() {
       tag: "Maritime Law",
       date: "2026-02-01",
       readTime: "8 min read",
-      image: "/images/Case/shiping%20cont.jpg",
+      image: "/images/News/N01.jpg",
       body: "Maritime claims move fast. Insurers evaluate documentation, causation, and mitigation within tight windows. A structured response plan protects coverage and accelerates recovery.",
       bullets: [
         "Document incident timelines and vessel logs within 24 hours.",
@@ -53,7 +53,7 @@ export default async function Page() {
       tag: "Compliance",
       date: "2026-01-20",
       readTime: "5 min read",
-      image: "/images/Services/Trade1.jpg",
+      image: "/images/News/N02.jpg",
       body: "New disclosure rules and board accountability standards require better audit trails. Teams need clearer approval workflows and contract playbooks to stay compliant.",
       bullets: [
         "Refresh delegation matrices and contract authority limits.",
@@ -68,7 +68,7 @@ export default async function Page() {
       tag: "Arbitration",
       date: "2026-01-05",
       readTime: "6 min read",
-      image: "/images/Services/Insurance.jpg",
+      image: "/images/News/N03.jpg",
       body: "Early dispute assessment improves leverage and reduces cost. A clear evidence map plus jurisdiction analysis streamlines settlement strategy.",
       bullets: [
         "Map governing law, forum, and interim relief options.",

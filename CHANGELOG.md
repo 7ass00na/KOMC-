@@ -1,3 +1,14 @@
+## Komc-VB0012
+- Cleanup: Removed verified dead code across admin, editor, intro, and shared UI modules without changing the current bilingual routing behavior.
+- E2E alignment: Updated Playwright coverage to match the live locale redirect flow from `/` to `/{lang}/home` and the current mobile/tablet intro overlay behavior.
+- QA: Re-ran ESLint, Vitest with coverage, Playwright, and a clean production build successfully after the cleanup pass.
+
+## Komc-VB0011
+- Cases imagery: Updated the five case study cards to use the new uploaded assets in `public/images/Cases` and kept the home case-study section in sync through the shared `CasesOverview` component.
+- News imagery: Updated the three news cards to use the new uploaded assets in `public/images/News` across both the full News pages and the home `Legal Knowledge & Updates` section.
+- Cleanup: Removed obsolete legacy image references tied to deleted `public/images/Case` and flat `public/images/Services` files, and repointed remaining fallbacks/contact visuals to the new folder-based service assets.
+- QA: Re-ran file diagnostics and prepared the project for a clean test/build validation cycle.
+
 ## TeamFN
 - Updated AboutTeamGrid to replace Card 4 with Aisaa AL‑Qaydi (EN) / عيسى القيدي (AR), including specialization, description, regions, experience, and competency.
 - Implemented indexed image mapping for 16 team cards (T01.jpeg … T016.jpeg) with safe fallback to existing `src`.

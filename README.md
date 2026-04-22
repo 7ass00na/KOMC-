@@ -21,9 +21,12 @@ Key routes:
 - start: Run the production server
 - lint: ESLint
 - test: Vitest with coverage
+- clean-build: Remove `.next` and rebuild production output
+- e2e: Run with `npx playwright test`
 
 ## Testing & Coverage
 - Unit and component tests use Vitest with jsdom.
+- End-to-end coverage uses Playwright against the locale-aware home flow and intro overlay on mobile/tablet breakpoints.
 - Coverage thresholds set to 80% (statements/branches/functions/lines) for covered modules.
 - UI-heavy routes and server-only handlers are excluded from coverage to focus on core logic.
 
@@ -35,5 +38,6 @@ Key routes:
 
 ## Notes
 - Intro video and welcome overlay are verified in both dev and prod builds.
+- Root visits to `/` redirect to `/{lang}/home` using cookie or `Accept-Language` detection.
 - RTL/LTR handled via LanguageContext with route-based detection and toggles.
 - Team grid supports 16 members with indexed image mapping (T01.jpeg … T016.jpeg).

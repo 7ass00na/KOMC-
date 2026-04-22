@@ -12,8 +12,7 @@ type Props = {
 
 export default function LoginView({ lang }: Props) {
   const isAr = lang === "ar";
-  const { lang: activeLang, setLang, t } = useLanguage();
-  const base = `/${activeLang}`;
+  const { lang: activeLang, setLang } = useLanguage();
   const router = useRouter();
   const [imgSrc, setImgSrc] = useState<string>("/Cms-low.jpg");
   const [imgStep, setImgStep] = useState<number>(0);

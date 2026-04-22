@@ -3,16 +3,14 @@ import nodemailer from "nodemailer";
 
 export async function POST(req: Request) {
   const ctype = req.headers.get("content-type") || "";
-  let fullName = "", gender = "", email = "", phone = "", address = "", inquiry = "", caseTitle = "", caseDesc = "", lang = "en", attachmentNote = "", serviceType = "", preferredDateTime = "", preferredContact = "", comments = "", honeypot = "";
+  let fullName = "", email = "", phone = "", inquiry = "", caseTitle = "", caseDesc = "", lang = "en", attachmentNote = "", serviceType = "", preferredDateTime = "", preferredContact = "", comments = "", honeypot = "";
   let file: File | null = null;
   if (ctype.includes("multipart/form-data")) {
     const fd = await req.formData();
     honeypot = String(fd.get("company") || "");
     fullName = String(fd.get("fullName") || "");
-    gender = String(fd.get("gender") || "");
     email = String(fd.get("email") || "");
     phone = String(fd.get("phone") || "");
-    address = String(fd.get("address") || "");
     inquiry = String(fd.get("inquiry") || "");
     caseTitle = String(fd.get("caseTitle") || "");
     caseDesc = String(fd.get("caseDesc") || "");
@@ -27,10 +25,8 @@ export async function POST(req: Request) {
   } else {
     const data = await req.json();
     fullName = data?.fullName || "";
-    gender = data?.gender || "";
     email = data?.email || "";
     phone = data?.phone || "";
-    address = data?.address || "";
     inquiry = data?.inquiry || "";
     caseTitle = data?.caseTitle || "";
     caseDesc = data?.caseDesc || "";

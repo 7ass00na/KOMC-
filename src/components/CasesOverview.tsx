@@ -289,21 +289,16 @@ export default function CasesOverview({ variant = "home" }: { variant?: "home" |
     return "category";
   }
   const imageFor = (id: string) => {
-    if (id === "arrest") return "/images/Services/cargoArrest.jpg";
-    if (id === "charter") return "/images/Case/shiping cont.jpg";
-    if (id === "compliance") return "/images/Case/Supply Ch.jpg";
-    if (id === "recovery") return "/images/Case/Vessel arrest.jpg";
-    if (id === "collision") return "/images/Case/shiping cont.jpg";
-    return "/images/Case/Vessel arrest.jpg";
+    if (id === "arrest") return "/images/Cases/CS01.png";
+    if (id === "charter") return "/images/Cases/CS02.jpg";
+    if (id === "compliance") return "/images/Cases/CS03.jpg";
+    if (id === "recovery") return "/images/Cases/CS04.jpg";
+    if (id === "collision") return "/images/Cases/CS05.jpg";
+    return "/images/Cases/CS01.png";
   };
   function CaseImage({ id, alt, sizes = "100vw" }: { id: string; alt: string; sizes?: string }) {
     const primary = imageFor(id);
-    const candidates = [
-      primary,
-      primary.replace(/ /g, "%20"),
-      "/images/Case/Vessel%20arrest.jpg",
-      "/images/Services/Maritime.jpg",
-    ];
+    const candidates = [primary, "/images/Services/Maritime/M01.jpg"];
     const [src, setSrc] = useState(candidates[0]);
     const [idx, setIdx] = useState(0);
     const onError = () => {
@@ -363,15 +358,6 @@ export default function CasesOverview({ variant = "home" }: { variant?: "home" |
     } else {
       setSelected(null);
     }
-  };
-  const [copied, setCopied] = useState(false);
-  const copyShare = async () => {
-    const url = typeof window !== "undefined" ? window.location.href : "";
-    try {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {}
   };
   const handleSelectWithTag = (id: string, tag?: string) => {
     setSelected(id);

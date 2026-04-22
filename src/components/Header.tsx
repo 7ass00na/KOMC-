@@ -4,7 +4,7 @@
 import { useLanguage } from "@/context/LanguageContext";
 import { useTheme } from "@/context/ThemeContext";
 import { Home as HomeIcon, Info, Scale, Gavel, Newspaper, Mail } from "lucide-react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import { useEffect, useMemo, useState, useRef } from "react";
 import { usePathname } from "next/navigation";
@@ -14,9 +14,8 @@ export default function Header() {
   // EN: Read current language and theme state
   // AR: قراءة حالة اللغة والسمة الحالية
   const { t, lang, setLang } = useLanguage();
-  const { toggleDark, dark } = useTheme();
+  const { dark } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [introPlaying, setIntroPlaying] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const langMenuRef = useRef<HTMLDivElement | null>(null);
   const pathname = usePathname();
@@ -26,8 +25,6 @@ export default function Header() {
   const [headerH, setHeaderH] = useState<number>(64);
   const [settings, setSettings] = useState<{ languageToggle: boolean; pageLoadingCursor: boolean } | null>(null);
   const [header, setHeader] = useState<{ siteName_en?: string; siteName_ar?: string; logo?: string; published_siteName_en?: string; published_siteName_ar?: string; published_logo?: string } | null>(null);
-  const reduce = useReducedMotion();
-
   useEffect(() => {
     if (typeof window === "undefined") return;
     const mq = window.matchMedia("(max-width: 1024px)");
@@ -73,23 +70,6 @@ export default function Header() {
       window.removeEventListener("resize", onResize);
       window.removeEventListener("orientationchange", onResize as any);
     };
-  }, []);
-
-  useEffect(() => {
-    function onIntroStart() {
-      setIntroPlaying(true);
-    }
-    function onIntroStop() {
-      setIntroPlaying(false);
-    }
-    if (typeof window !== "undefined") {
-      window.addEventListener("intro-video-start", onIntroStart as any);
-      window.addEventListener("intro-video-stop", onIntroStop as any);
-      return () => {
-        window.removeEventListener("intro-video-start", onIntroStart as any);
-        window.removeEventListener("intro-video-stop", onIntroStop as any);
-      };
-    }
   }, []);
 
   useEffect(() => {

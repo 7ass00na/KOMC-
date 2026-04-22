@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Reveal from "@/components/Reveal";
+import { readEntity } from "@/lib/store";
 
 export const metadata = {
   alternates: {
@@ -9,17 +10,18 @@ export const metadata = {
   },
 };
 
-export default function Page() {
+export default async function Page() {
+  const legal = await readEntity("legal", { privacy_en_html: "" });
   return (
     <div className="min-h-screen hero-bg">
       <Header />
       <main className="pt-[80px] md:pt-[96px] lg:pt-[112px]">
         <Reveal>
           <section className="section mx-auto max-w-4xl px-5 py-20">
-            <h1 className="text-4xl font-bold text-[var(--brand-accent)]">Privacy Policy</h1>
-            <div className="mt-4 text-zinc-300">
-              We collect contact details solely to respond to your inquiry. We do not sell personal data. You may request deletion at any time. Cookies may be used for analytics and performance. By submitting the contact form, you consent to processing for the purpose of handling your request.
-            </div>
+            <div
+              className="space-y-4 text-zinc-300 [&_h3]:text-4xl [&_h3]:font-bold [&_h3]:text-[var(--brand-accent)] [&_h4]:mt-6 [&_h4]:text-xl [&_h4]:font-bold [&_h4]:text-[var(--brand-accent)] [&_ol]:list-decimal [&_ol]:space-y-2 [&_ol]:pl-5 [&_p]:leading-7 [&_ul]:list-disc [&_ul]:space-y-2 [&_ul]:pl-5"
+              dangerouslySetInnerHTML={{ __html: legal.privacy_en_html || "" }}
+            />
           </section>
         </Reveal>
       </main>

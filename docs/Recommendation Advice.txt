@@ -1,0 +1,38 @@
+KOMC Project Recommendation Advice
+Date: 2026-04-21
+
+Priority 1: Security hardening
+- Replace client-side admin trust with server-side authenticated sessions.
+- Protect all admin, editor, and upload routes with middleware and route-level authorization.
+- Remove hardcoded admin credentials from source code.
+- Store passwords with bcrypt or argon2 and support secure credential rotation.
+- Sanitize any HTML content rendered into the site and avoid raw script injection where possible.
+
+Priority 2: Data safety and backend reliability
+- Replace JSON file persistence with a transactional datastore, or add locking and optimistic concurrency controls as an interim safeguard.
+- Add durable rate limiting for login, contact, subscribe, and legal chat endpoints.
+- Validate uploads by file type, extension, size, and destination before saving.
+
+Priority 3: Architecture and performance
+- Reduce client-side fetches for public page configuration and move stable content reads to server rendering where practical.
+- Decouple public rendering from admin transport payloads.
+- Improve observability by replacing silent catch blocks with actionable logging and typed error handling.
+
+Priority 4: Quality and maintainability
+- Expand test coverage to include auth, admin write paths, uploads, and public rendering.
+- Update lint and coverage configuration so generated files do not affect source quality gates.
+- Remove placeholders, normalize bilingual naming, and document architecture, deployment, and content governance.
+
+Recommended amendment order
+1. Lock down auth and admin APIs.
+2. Remove hardcoded credentials and patch XSS/upload risks.
+3. Stabilize persistence and rate limiting.
+4. Improve rendering/data-flow architecture.
+5. Expand tests and clean technical debt.
+
+Success criteria
+- Unauthorized users cannot access admin or mutate protected resources.
+- No credentials remain hardcoded in the repository.
+- Unsafe uploads and malicious HTML payloads are rejected or sanitized.
+- Concurrent content updates do not overwrite each other silently.
+- Build, lint, and tests pass from a clean environment.
