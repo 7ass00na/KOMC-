@@ -26,9 +26,11 @@ Key routes:
 
 ## Testing & Coverage
 - Unit and component tests use Vitest with jsdom.
+- Integration-style component and route behavior checks run inside the Vitest suite alongside unit coverage.
 - End-to-end coverage uses Playwright against the locale-aware home flow and intro overlay on mobile/tablet breakpoints.
 - Coverage thresholds set to 80% (statements/branches/functions/lines) for covered modules.
 - UI-heavy routes and server-only handlers are excluded from coverage to focus on core logic.
+- Latest cleanup and validation details are recorded in `docs/KOMC-VB00011_TEST_REPORT.md`.
 
 ## SMTP Setup (Vercel)
 - Set the following Env Vars in Vercel Project Settings:
@@ -41,3 +43,4 @@ Key routes:
 - Root visits to `/` redirect to `/{lang}/home` using cookie or `Accept-Language` detection.
 - RTL/LTR handled via LanguageContext with route-based detection and toggles.
 - Team grid supports 16 members with indexed image mapping (T01.jpeg … T016.jpeg).
+- About page Photo Library is driven by `src/data/photo-library.json` and serves assets from `public/images/Library`.

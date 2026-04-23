@@ -152,12 +152,13 @@ export default function AboutTeamGrid({ team, isRTL = false, startIndex = 0 }: {
         return {
           ...p,
           name: "Enas Abdulrahman",
-          role: "Lawyer and Legal Advisor",
-          focus: "Various Legal Consultations",
-          bio: "Specialized in drafting contracts, civil and commercial lawsuits, and arbitration.",
+          role: "Lawyer and Legal Consultant",
+          tags: ["Commercial", "Contracts"],
+          focus: "Contracts, drafting, commercial and arbitration cases",
+          bio: "Trusted consultant in contracts, drafting, and commercial cases.",
           regions: "UAE/SUD/GCC",
           experience: "10yrs",
-          rating: 89,
+          rating: 88,
         };
       }
       if (number === 10) {
@@ -175,70 +176,76 @@ export default function AboutTeamGrid({ team, isRTL = false, startIndex = 0 }: {
       if (number === 11) {
         return {
           ...p,
-          name: "Gehad Abd Elgwad",
-          role: "Lawyer and Legal Advisor",
-          focus: "Various Legal Consultations",
-          bio: "Trusted Consultant in media and rent cases.",
-          regions: "UAE/EGP/GCC",
-          experience: "8yrs",
-          rating: 84,
+          name: "Gehad Atiaa",
+          role: "Lawyer and Legal Consultant",
+          tags: ["Civil", "Contract"],
+          focus: "Various Legal assistance",
+          bio: "Trusted consultant in Contract, drafting, and civil cases.",
+          regions: "UAE/EGP",
+          experience: "12yrs",
+          rating: 85,
         };
       }
       if (number === 12) {
         return {
           ...p,
           name: "Haya Khaled",
-          role: "Lawyer and Legal Advisor",
-          focus: "Various Legal Consultations",
-          bio: "Trusted Consultant in media and real estate cases.",
-          regions: "UAE/EGP/GCC",
-          experience: "4yrs",
-          rating: 86,
+          role: "Legal Assistant",
+          tags: ["Legal Assistant"],
+          focus: "Various Legal assistance",
+          bio: "Trusted legal assistance in media & family Cases.",
+          regions: "UAE/EGP",
+          experience: "1yr",
+          rating: 55,
         };
       }
       if (number === 13) {
         return {
           ...p,
           name: "Ahmed Ali",
-          role: "Lawyer and Legal Advisor",
+          role: "Lawyer and Legal Consultant",
+          tags: ["Criminal", "Civil"],
           focus: "Various Legal Consultations",
-          bio: "Trusted Consultant in crime and media cases.",
-          regions: "UAE/EGP/GCC",
-          experience: "8yrs",
-          rating: 84,
+          bio: "Trusted consultant in criminal & civil cases.",
+          regions: "UAE/EGP",
+          experience: "9yrs",
+          rating: 83,
         };
       }
       if (number === 14) {
         return {
           ...p,
           name: "Essam Hamza",
-          role: "Lawyer and Legal Advisor",
+          role: "Lawyer and Legal Consultant",
+          tags: ["Commercial", "Labor"],
           focus: "Various Legal Consultations",
-          bio: "Trusted Consultant in rent and real estate cases.",
-          regions: "UAE/EGP/GCC",
-          experience: "8yrs",
-          rating: 86,
+          bio: "Trusted Consultant in Labor and Commercial Cases.",
+          regions: "UAE/EGP",
+          experience: "10yrs",
+          rating: 88,
         };
       }
       if (number === 15) {
         return {
           ...p,
-          name: "Ibrahim Abu Roais",
-          role: "Operation Manager",
-          focus: "Various business and corporate consultations",
-          bio: "Trusted Consultant in business and corporate cases.",
-          regions: "UAE/EGP/GCC",
-          experience: "8yrs",
-          rating: 86,
+          name: "Ibrahim Abu Rouis",
+          role: "Operations Manager",
+          tags: ["Business", "Management"],
+          focus: "Various Diverse Business Consultations",
+          bio: "Trusted Consultant in Business and Management Consulting.",
+          regions: "UAE/EGP/SUD",
+          experience: "15yrs",
+          rating: 89,
         };
       }
       if (number === 16) {
         return {
           ...p,
           name: "Ahmed Ameen",
-          role: "IT Specialist Consuler",
-          focus: "Various IT Consultations",
-          bio: "Trusted Consultant in IT & Cyber Consultations.",
+          role: "IT Consultant",
+          tags: ["Software Developer", "Cybersecurity"],
+          focus: "Various Technical Consultations",
+          bio: "Trusted Consultant in IT, Software Development & Cybersecurity Consulting.",
           regions: "UAE/SUD/GCC",
           experience: "10yrs",
           rating: 90,
@@ -355,11 +362,12 @@ export default function AboutTeamGrid({ team, isRTL = false, startIndex = 0 }: {
           ...p,
           name: "إيناس عبدالرحمن",
           role: "محامية ومستشارة قانونية",
-          focus: "استشارات قانونية متنوعة",
-          bio: "متخصص في صياغة العقود، والدعاوى المدنية والتجارية، والتحكيم.",
+          tags: ["تجاري", "عقود"],
+          focus: "العقود والصياغة والقضايا التجارية والتحكيم",
+          bio: "مستشارة موثوقة في العقود والصياغة والقضايا التجارية.",
           regions: "UAE/SUD/GCC",
           experience: "10 سنوات",
-          rating: 89,
+          rating: 88,
         };
       }
       if (number === 10) {
@@ -377,25 +385,27 @@ export default function AboutTeamGrid({ team, isRTL = false, startIndex = 0 }: {
       if (number === 11) {
         return {
           ...p,
-          name: "جهاد عبد الجواد",
+          name: "جهاد عطية",
           role: "محامٍ ومستشار قانوني",
-          focus: "استشارات قانونية متنوعة",
-          bio: "مستشار موثوق في قضايا الإعلام والإيجارات.",
-          regions: "UAE/EGP/GCC",
-          experience: "8 سنوات",
-          rating: 84,
+          tags: ["مدني", "عقود"],
+          focus: "مساعدات قانونية متنوعة",
+          bio: "مستشار موثوق في العقود والصياغة والقضايا المدنية.",
+          regions: "UAE/EGP",
+          experience: "12 سنة",
+          rating: 85,
         };
       }
       if (number === 12) {
         return {
           ...p,
           name: "هيا خالد",
-          role: "محامية ومستشارة قانونية",
-          focus: "استشارات قانونية متنوعة",
-          bio: "مستشارة موثوقة في قضايا الإعلام والعقارات.",
-          regions: "UAE/EGP/GCC",
-          experience: "4 سنوات",
-          rating: 86,
+          role: "مساعدة قانونية",
+          tags: ["مساعدة قانونية"],
+          focus: "مساعدات قانونية متنوعة",
+          bio: "مساعدة قانونية موثوقة في قضايا الإعلام والأسرة.",
+          regions: "UAE/EGP",
+          experience: "سنة واحدة",
+          rating: 55,
         };
       }
       if (number === 13) {
@@ -403,11 +413,12 @@ export default function AboutTeamGrid({ team, isRTL = false, startIndex = 0 }: {
           ...p,
           name: "أحمد علي",
           role: "محامٍ ومستشار قانوني",
+          tags: ["جنائي", "مدني"],
           focus: "استشارات قانونية متنوعة",
-          bio: "مستشار موثوق في قضايا الجرائم والإعلام.",
-          regions: "UAE/EGP/GCC",
-          experience: "8 سنوات",
-          rating: 84,
+          bio: "مستشار موثوق في القضايا الجنائية والمدنية.",
+          regions: "UAE/EGP",
+          experience: "9 سنوات",
+          rating: 83,
         };
       }
       if (number === 14) {
@@ -415,32 +426,35 @@ export default function AboutTeamGrid({ team, isRTL = false, startIndex = 0 }: {
           ...p,
           name: "عصام حمزة",
           role: "محامٍ ومستشار قانوني",
+          tags: ["تجاري", "عمال"],
           focus: "استشارات قانونية متنوعة",
-          bio: "مستشار موثوق في قضايا الإيجار والعقارات.",
-          regions: "UAE/EGP/GCC",
-          experience: "8 سنوات",
-          rating: 86,
+          bio: "مستشار موثوق في قضايا العمل والقضايا التجارية.",
+          regions: "UAE/EGP",
+          experience: "10 سنوات",
+          rating: 88,
         };
       }
       if (number === 15) {
         return {
           ...p,
           name: "إبراهيم أبو رويص",
-          role: "مدير التسغيل",
-          focus: "استشارات أعمال وشركات",
-          bio: "مستشار موثوق في قضايا الأعمال والشركات.",
-          regions: "UAE/EGP/GCC",
-          experience: "8 سنوات",
-          rating: 86,
+          role: "مدير العمليات",
+          tags: ["أعمال", "إدارة"],
+          focus: "استشارات متنوعة في الأعمال والإدارة",
+          bio: "مستشار موثوق في استشارات الأعمال والإدارة.",
+          regions: "UAE/EGP/SUD",
+          experience: "15 سنة",
+          rating: 89,
         };
       }
       if (number === 16) {
         return {
           ...p,
           name: "أحمد أمين",
-          role: "متخصص في تكنولوجيا المعلومات",
-          focus: "تكنولوجيا المعلومات",
-          bio: "استشاري موثوق في تكنولوجيا المعلومات والأمن السيبراني.",
+          role: "إستشاري تكنلوجيا المعلومات",
+          tags: ["البرمجيات", "الأمن السيبراني"],
+          focus: "إستشارات تكنولوجية متنوعة",
+          bio: "إستشاري موثوق في تكنلوجيا المعلومات, تطوير البرمجيات والأمن السيبراني.",
           regions: "UAE/SUD/GCC",
           experience: "10 سنوات",
           rating: 90,
