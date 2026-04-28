@@ -32,7 +32,14 @@ export default function Page() {
                 </p>
                 <div className="mt-6 rounded-2xl surface p-6 md:p-8">
                   <div className="relative h-80 md:h-96 overflow-hidden rounded-xl border border-[var(--panel-border)] bg-black/20">
-                    <Image src="/images/Services/Insurance/1.jpg" alt="Lawyer consultation" fill sizes="100vw" className="object-cover" priority />
+                    <Image
+                      src="/images/contact/consultation-hero.jpg"
+                      alt="Professional legal consultation meeting at KOMC"
+                      fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      className="object-cover"
+                      priority
+                    />
                     <div className="absolute inset-x-4 bottom-4 rounded-xl bg-white/10 dark:bg-[var(--brand-accent)]/10 backdrop-blur-lg px-4 py-3 text-white dark:text-[var(--brand-accent)] border border-white/20">
                       <span className="insight-badge inline-flex items-center rounded-full bg-black/35 px-3 py-1 text-xs text-white dark:bg-[var(--brand-accent)] dark:text-black">
                         Confidential legal support you can trust

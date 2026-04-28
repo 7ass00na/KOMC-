@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import WelcomingMessage from "./WelcomingMessage";
 import styles from "./welcome-card.module.css";
 import { deriveLabels, track, type WelcomeLabels } from "@/lib/welcomeLabels";
+import { lockBodyScroll, unlockBodyScroll } from "@/lib/bodyScrollLock";
 
 export default function IntroOverlay() {
   const { lang } = useLanguage();
@@ -128,14 +129,14 @@ export default function IntroOverlay() {
   useEffect(() => {
     try {
       if (mode !== "hidden") {
-        document.body.style.overflow = "hidden";
+        lockBodyScroll();
       } else {
-        document.body.style.overflow = "";
+        unlockBodyScroll();
       }
     } catch {}
     return () => {
       try {
-        document.body.style.overflow = "";
+        unlockBodyScroll();
       } catch {}
     };
   }, [mode]);

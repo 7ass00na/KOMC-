@@ -103,7 +103,7 @@ const translations: Record<Lang, Record<string, string>> = {
     footerDisclaimer: "Legal Disclaimer",
     footerAddress:
       "3rd Floor, AL Nokhtha Blds, Hamriya Port, Dubai, UAE.",
-    footerPhone: "+971 55 194 9881",
+    footerPhone: "+971 54 345 6591",
     footerEmail: "info@khaledomer.ae",
     footerHours: "Monday to Friday: 9:00 AM - 6:00 PM",
     newsletterTitle: "Subscribe to our newsletter",
@@ -112,7 +112,7 @@ const translations: Record<Lang, Record<string, string>> = {
     newsletterInvalidEmail: "Invalid email address",
     newsletterSubmitError: "Subscription failed, please try again.",
     newsletterSuccessTitle: "Subscription Confirmed",
-    newsletterSuccessBody: "Thank you for subscribing. We will keep you updated on the latest legal news.",
+    newsletterSuccessBody: "Thank you for subscribing. Your request has been received and our team will share important updates with you soon.",
     footerCopyright:
       "$ Khaled Omer Maritime Consultancy - All rights reserved @ 2026 - Create & Dev by 7assona",
     footerTheme: "Theme",
@@ -209,7 +209,7 @@ const translations: Record<Lang, Record<string, string>> = {
     footerDisclaimer: "إخلاء المسؤولية القانونية",
     footerAddress:
       "الطابق الثالث، مبنى النوخذة، ميناء الحمرية، دبي، الإمارات العربية المتحدة.",
-    footerPhone: "+971 55 194 9881",
+    footerPhone: "+971 54 345 6591",
     footerEmail: "info@khaledomer.ae",
     footerHours: "الاثنين إلى الجمعة: 9:00 ص - 6:00 م",
     newsletterTitle: "اشترك في النشرة البريدية",
@@ -218,7 +218,7 @@ const translations: Record<Lang, Record<string, string>> = {
     newsletterInvalidEmail: "البريد الإلكتروني غير صالح",
     newsletterSubmitError: "تعذر إتمام الاشتراك، حاول مرة أخرى.",
     newsletterSuccessTitle: "تم الاشتراك بنجاح",
-    newsletterSuccessBody: "شكرًا لك على الاشتراك. سنبقيك مطلعًا على أحدث الأخبار القانونية.",
+    newsletterSuccessBody: "شكرًا لك على الاشتراك. تم استلام طلبك وسيتواصل فريقنا معك بأهم التحديثات قريبًا.",
     footerCopyright:
       "خالد عمر للاستشارات البحرية. جميع الحقوق محفوظة @ 2026 - تصميم وتطوير بواسطة 7assona",
     footerTheme: "السمة",

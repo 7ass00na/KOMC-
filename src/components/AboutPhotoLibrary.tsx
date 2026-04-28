@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { lockBodyScroll, unlockBodyScroll } from "@/lib/bodyScrollLock";
 
 type MediaType = "photo" | "video";
 
@@ -358,9 +359,9 @@ function MediaModal({
   }, [item.id]);
 
   useEffect(() => {
-    document.documentElement.style.overflow = "hidden";
+    lockBodyScroll();
     return () => {
-      document.documentElement.style.overflow = "";
+      unlockBodyScroll();
     };
   }, []);
 

@@ -9,6 +9,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState, useRef } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
+import { lockBodyScroll, unlockBodyScroll } from "@/lib/bodyScrollLock";
 
 export default function Header() {
   // EN: Read current language and theme state
@@ -114,11 +115,13 @@ export default function Header() {
   };
 
   useEffect(() => {
-    const prev = document.body.style.overflow;
-    if (mobileOpen) document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prev || "";
-    };
+    if (!mobileOpen) {
+      unlockBodyScroll();
+      return;
+    }
+
+    lockBodyScroll();
+    return () => unlockBodyScroll();
   }, [mobileOpen]);
 
   function Icon({ id }: { id: string }) {
@@ -199,15 +202,15 @@ export default function Header() {
                   ? "text-transparent bg-clip-text bg-gradient-to-r from-white/60 via-white to-white/60 bg-center"
                   : "text-transparent bg-clip-text bg-gradient-to-r from-[#132437] via-[color-mix(in_oklab,#132437,white_18%)] to-[#132437] bg-center"))
           }>
-            <span className="md:hidden" data-edit-key="brand-name-mobile">
+            <span className="lg:hidden" data-edit-key="brand-name-mobile">
               {lang === "ar" ? "خـالـد عـمـر" : "Khaled Omer"}
             </span>
-            <span className="hidden md:inline" data-edit-key="brand-name-desktop">
+            <span className="hidden lg:inline" data-edit-key="brand-name-desktop">
               {lang === "ar" ? "خالد عمر للإستشارات البحرية" : "Khaled Omer Maritime Consultancy"}
             </span>
           </div>
         </motion.div>
-        <nav className="hidden md:flex items-center gap-1 text-sm">
+        <nav className="hidden lg:flex items-center gap-1 text-sm">
           {/* EN: Primary navigation links with active indicator */}
           {/* AR: روابط الملاحة الأساسية مع مؤشر التفعيل */}
           {navItems.map((item) => {
@@ -366,7 +369,7 @@ export default function Header() {
             onClick={() => setMobileOpen((v) => !v)}
             aria-expanded={mobileOpen}
             className={
-               "md:hidden ml-2 h-11 w-11 rounded-lg border flex items-center justify-center " +
+               "lg:hidden ml-2 h-11 w-11 rounded-lg border flex items-center justify-center " +
                (dark ? "border-white/10 bg-white/10" : (scrolledVisual ? "border-transparent bg-[var(--brand-accent)]" : "border-black/10 bg-black/5 hover:bg-black/10"))
             }
           >
@@ -399,7 +402,7 @@ export default function Header() {
           role="dialog"
           aria-modal="true"
           aria-label={lang === "ar" ? "قائمة الجوال" : "Mobile menu"}
-          className="md:hidden fixed left-0 right-0 z-[60] text-[var(--ink-primary)]"
+          className="lg:hidden fixed left-0 right-0 z-[60] text-[var(--ink-primary)]"
           style={{ top: headerH, bottom: 0 }}
         >
           <div

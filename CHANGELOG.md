@@ -1,9 +1,21 @@
+## Komc-VB0013
+- Footer contact updates: Replaced the footer phone number with `+971 54 345 6591`, kept it mobile-clickable via `tel:` formatting, and refreshed the supporting helper copy for bilingual contact clarity.
+- Newsletter workflow: Updated the newsletter endpoint to route subscription emails to `info.khaledomer.adv2@khaledomer.ae`, kept client/server email validation aligned, and refreshed success messaging in both locales.
+- Copyright and DevOps CTA: Removed the footer link from `KOMC` while preserving styling, replaced the direct `DevOps` mail link with a themed modal, and added analytics tracking for modal opens plus WhatsApp/email contact actions.
+- Developer contact modal: Added responsive WhatsApp and email actions with the requested prefilled content targeting `+971509559088` and `ahmedhussan068@gmail.com`.
+- Consultation form delivery: Updated the contact email route to send to `info.khaledomer.adv2@khaledomer.ae` with BCC to `ahmedhussan068@gmail.com`, expanded the email template to include all captured fields, and added stricter phone validation on client and server.
+- Tests and maintenance: Added focused route tests for contact and newsletter delivery behavior, updated subject-line coverage, and recorded the new email-routing assumptions for future maintenance.
+
 ## KOMC-VB00011
 - Cleanup audit: Re-ran repository diagnostics, ESLint, and TypeScript-backed editor diagnostics across frontend and backend code; no remaining unused imports or variables were reported after the latest cleanup pass.
+- Header scroll recovery: Replaced direct header/body overflow mutations with shared scroll-lock bookkeeping, aligned tablet hamburger breakpoints, and confirmed touch scrolling resumes immediately after the menu closes.
+- Overlay interaction stability: Updated the intro/photo overlays to share the same scroll-lock helper and made the global loading overlay non-interactive so it no longer blocks visible controls during transition states.
+- Lint hygiene: Updated ESLint ignores for generated `coverage/` and `test-results/` artifacts so repository linting now reflects source files only.
+- Regression coverage: Added dedicated unit/component/E2E coverage for shared body scroll locking, mobile-menu scroll recovery, and the phone/tablet hamburger close flow.
 - About page team updates: Refined About team cards 09, 11, 12, 13, 14, 15, and 16 in `src/components/AboutTeamGrid.tsx`, including updated badge labels, biographies, focus text, regions, experience, and professionalism values.
 - Home team overview: Kept the homepage team overview in sync through `src/components/TeamOverview.tsx` for the Ibrahim Abu Rouis card update.
 - Photo Library refresh: Updated `src/data/photo-library.json` to include the newly added media assets from `public/images/Library` for the About page gallery.
-- QA: Executed lint, Vitest coverage, Playwright end-to-end tests, and a clean production rebuild successfully before repository sync.
+- QA: Executed lint, Vitest coverage, Playwright end-to-end tests, and a production rebuild successfully before repository sync.
 
 ## Komc-VB0012
 - Cleanup: Removed verified dead code across admin, editor, intro, and shared UI modules without changing the current bilingual routing behavior.

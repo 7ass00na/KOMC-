@@ -1,16 +1,21 @@
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 
+const PRIMARY_CONTACT_RECIPIENT = "info.khaledomer.adv2@khaledomer.ae";
+const CONTACT_BCC_RECIPIENT = "ahmedhussan068@gmail.com";
+
 export async function POST(req: Request) {
   const ctype = req.headers.get("content-type") || "";
-  let fullName = "", email = "", phone = "", inquiry = "", caseTitle = "", caseDesc = "", lang = "en", attachmentNote = "", serviceType = "", preferredDateTime = "", preferredContact = "", comments = "", honeypot = "";
+  let fullName = "", gender = "", email = "", phone = "", address = "", inquiry = "", caseTitle = "", caseDesc = "", lang = "en", attachmentNote = "", serviceType = "", preferredDateTime = "", preferredContact = "", comments = "", honeypot = "";
   let file: File | null = null;
   if (ctype.includes("multipart/form-data")) {
     const fd = await req.formData();
     honeypot = String(fd.get("company") || "");
     fullName = String(fd.get("fullName") || "");
+    gender = String(fd.get("gender") || "");
     email = String(fd.get("email") || "");
     phone = String(fd.get("phone") || "");
+    address = String(fd.get("address") || "");
     inquiry = String(fd.get("inquiry") || "");
     caseTitle = String(fd.get("caseTitle") || "");
     caseDesc = String(fd.get("caseDesc") || "");
@@ -25,8 +30,10 @@ export async function POST(req: Request) {
   } else {
     const data = await req.json();
     fullName = data?.fullName || "";
+    gender = data?.gender || "";
     email = data?.email || "";
     phone = data?.phone || "";
+    address = data?.address || "";
     inquiry = data?.inquiry || "";
     caseTitle = data?.caseTitle || "";
     caseDesc = data?.caseDesc || "";
@@ -47,30 +54,37 @@ export async function POST(req: Request) {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return NextResponse.json({ ok: false, error: "INVALID_EMAIL" }, { status: 400 });
   }
+  if (!/^[+()\-\s\d]{8,20}$/.test(phone)) {
+    return NextResponse.json({ ok: false, error: "INVALID_PHONE" }, { status: 400 });
+  }
   if (file && file.size > 25 * 1024 * 1024) {
     return NextResponse.json({ ok: false, error: "ATTACHMENT_TOO_LARGE" }, { status: 413 });
   }
 
-  const to = "ahmedhussan068@gmail.com";
+  const to = process.env.CONTACT_TO_EMAIL || PRIMARY_CONTACT_RECIPIENT;
+  const bcc = process.env.CONTACT_BCC_EMAIL || CONTACT_BCC_RECIPIENT;
   const ts = new Date().toISOString();
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || req.headers.get("cf-connecting-ip") || req.headers.get("x-real-ip") || "unknown";
   const subject =
     lang === "ar"
-      ? `عميل من موقع خالد عمر (KOMC) يطلب استشارة وتمثيل قانوني - ${ts}`
-      : `Customer from Khaled Omar (KOMC) website seeking Consultation & Legal Representation - ${ts}`;
+      ? `طلب استشارة جديد من موقع KOMC - ${ts}`
+      : `New consultation request from the KOMC website - ${ts}`;
 
   const salutation =
     lang === "ar"
-      ? "مرحبًا، شركة خالد عمر للاستشارات القانونية والبحرية،"
-      : "Hello, Khaled Omar Maritime & Legal Consulting Law Firm,";
+      ? "مرحبًا فريق شركة خالد عمر للاستشارات البحرية،"
+      : "Hello Khaled Omar Marine Consulting team,";
   const introLine =
     lang === "ar"
-      ? `أنا ${escapeHtml(fullName)} أطلب استشارة وتمثيلًا قانونيًا للتفاصيل أدناه.`
-      : `I am ${escapeHtml(fullName)} seeking legal consultation and representation for the details below.`;
+      ? `تم استلام طلب استشارة جديد من ${escapeHtml(fullName)} عبر موقع KOMC. تفاصيل العميل موضحة أدناه للمتابعة.`
+      : `A new consultation request was submitted on the KOMC website by ${escapeHtml(fullName)}. The client details are listed below for follow-up.`;
   const headers = {
     section: lang === "ar" ? "بيانات النموذج" : "Form Data",
     fullName: lang === "ar" ? "الاسم الكامل" : "Full Name",
+    gender: lang === "ar" ? "النوع" : "Gender",
     contact: lang === "ar" ? "معلومات التواصل" : "Contact Information",
+    address: lang === "ar" ? "العنوان" : "Address",
+    inquiry: lang === "ar" ? "نوع الاستفسار" : "Type of Inquiry",
     preferredContact: lang === "ar" ? "طريقة التواصل المفضلة" : "Preferred Contact Method",
     serviceType: lang === "ar" ? "نوع الخدمة" : "Service Type",
     preferredDT: lang === "ar" ? "الوقت المفضل" : "Preferred Date/Time",
@@ -93,7 +107,10 @@ export async function POST(req: Request) {
         </thead>
         <tbody>
           <tr><td style="padding:10px; border-bottom:1px solid #e5e7eb;">${headers.fullName}</td><td style="padding:10px; border-bottom:1px solid #e5e7eb;">${escapeHtml(fullName)}</td></tr>
+          <tr><td style="padding:10px; border-bottom:1px solid #e5e7eb;">${headers.gender}</td><td style="padding:10px; border-bottom:1px solid #e5e7eb;">${escapeHtml(gender || "-")}</td></tr>
           <tr><td style="padding:10px; border-bottom:1px solid #e5e7eb;">${headers.contact}</td><td style="padding:10px; border-bottom:1px solid #e5e7eb;">Email: ${escapeHtml(email)} | ${lang === "ar" ? "هاتف" : "Phone"}: ${escapeHtml(phone)}</td></tr>
+          <tr><td style="padding:10px; border-bottom:1px solid #e5e7eb;">${headers.address}</td><td style="padding:10px; border-bottom:1px solid #e5e7eb;">${escapeHtml(address || "-")}</td></tr>
+          <tr><td style="padding:10px; border-bottom:1px solid #e5e7eb;">${headers.inquiry}</td><td style="padding:10px; border-bottom:1px solid #e5e7eb;">${escapeHtml(inquiry || "-")}</td></tr>
           <tr><td style="padding:10px; border-bottom:1px solid #e5e7eb;">${headers.preferredContact}</td><td style="padding:10px; border-bottom:1px solid #e5e7eb;">${escapeHtml(preferredContact || "-")}</td></tr>
           <tr><td style="padding:10px; border-bottom:1px solid #e5e7eb;">${headers.serviceType}</td><td style="padding:10px; border-bottom:1px solid #e5e7eb;">${escapeHtml(serviceType || "-")}</td></tr>
           <tr><td style="padding:10px; border-bottom:1px solid #e5e7eb;">${headers.preferredDT}</td><td style="padding:10px; border-bottom:1px solid #e5e7eb;">${escapeHtml(preferredDateTime || "-")}</td></tr>
@@ -114,7 +131,10 @@ ${salutation}
 ${introLine}
 
 ${headers.fullName}: ${fullName}
+${headers.gender}: ${gender || "-"}
 ${headers.contact}: Email ${email} | ${lang === "ar" ? "هاتف" : "Phone"} ${phone}
+${headers.address}: ${address || "-"}
+${headers.inquiry}: ${inquiry || "-"}
 ${headers.preferredContact}: ${preferredContact || "-"}
 ${headers.serviceType}: ${serviceType || "-"}
 ${headers.preferredDT}: ${preferredDateTime || "-"}
@@ -160,6 +180,7 @@ IP ${ip} · ${ts}
     const mail: any = {
       from,
       to,
+      bcc: bcc && bcc !== to ? bcc : undefined,
       replyTo: email,
       subject,
       text,
@@ -202,7 +223,7 @@ IP ${ip} · ${ts}
         throw e;
       }
     }
-    console.info("[contact] email delivered", { to, subject, ts, ip });
+    console.info("[contact] email delivered", { to, bcc: bcc && bcc !== to ? bcc : undefined, subject, ts, ip });
     return NextResponse.json({ ok: true, queued: true });
   } catch (err) {
     console.error("[contact] Failed to send email", err);

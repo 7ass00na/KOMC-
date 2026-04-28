@@ -141,7 +141,7 @@ export default function GlobalLoadingOverlay() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: reduce ? 0 : 0.5 }}
-          className="fixed inset-0 z-[9999] flex items-center justify-center bg-[rgba(4,10,20,0.9)] backdrop-blur-sm"
+          className="pointer-events-none fixed inset-0 z-[9999] flex items-center justify-center bg-[rgba(4,10,20,0.9)] backdrop-blur-sm"
           aria-live="polite"
           aria-busy="true"
         >

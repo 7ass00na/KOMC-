@@ -40,11 +40,12 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
     attachHelp: rtl ? "الحد الأقصى 10 ميجابايت" : "Max 10 MB",
     requiredMsg: rtl ? "يرجى ملء هذا الحقل" : "Please fill out this field.",
     emailMsg: rtl ? "يرجى إدخال بريد إلكتروني صالح" : "Please enter a valid email address.",
+    phoneMsg: rtl ? "يرجى إدخال رقم هاتف صالح" : "Please enter a valid phone number.",
     submit: rtl ? "إرسال الطلب" : "Submit Request",
     thanksTitle: rtl ? "تم إرسال الطلب بنجاح" : "Request submitted successfully",
-    thanksBody: rtl ? "سيتواصل معك أحد خبرائنا قريبًا." : "One of our experts will contact you soon.",
+    thanksBody: rtl ? "تم استلام طلبك بنجاح وسيتواصل معك فريق KOMC قريبًا عبر وسيلة التواصل المناسبة." : "Your request has been received and the KOMC team will contact you soon using your preferred contact method.",
     errorTitle: rtl ? "تعذر إرسال الطلب" : "Submission failed",
-    errorBody: rtl ? "حدث خطأ أثناء الإرسال. حاول مرة أخرى لاحقًا." : "An error occurred during submission. Please try again later.",
+    errorBody: rtl ? "تعذر إرسال طلبك وفق معايير التواصل الحالية. يرجى التحقق من البيانات والمحاولة مرة أخرى." : "We could not send your request using the current communication workflow. Please review your details and try again.",
     processingTitle: rtl ? "جاري إرسال الطلب" : "Submitting request",
     processingBody: rtl ? "يرجى الانتظار لحظات قليلة..." : "Please wait a moment...",
     preferredContact: rtl ? "طريقة التواصل المفضلة" : "Preferred Contact Method",
@@ -61,12 +62,16 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
     return `${(bytes / Math.pow(k, i)).toFixed(2)} ${sizes[i]}`;
   };
 
+  const isValidPhone = (value: string) => /^[+()\-\s\d]{8,20}$/.test(value.trim());
+
   const handleInvalid = (e: React.FormEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const el = e.currentTarget as HTMLInputElement & HTMLSelectElement & HTMLTextAreaElement;
     if (el.validity.valueMissing) {
       el.setCustomValidity(t.requiredMsg);
     } else if (el.getAttribute("type") === "email" && (el as HTMLInputElement).validity.typeMismatch) {
       el.setCustomValidity(t.emailMsg);
+    } else if (el.getAttribute("type") === "tel" && (el as HTMLInputElement).validity.patternMismatch) {
+      el.setCustomValidity(t.phoneMsg);
     } else {
       el.setCustomValidity("");
     }
@@ -89,6 +94,17 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setShowThanks(false);
+    setShowError(false);
+    setErrorDetail("");
+    const trimmedEmail = email.trim();
+    const trimmedPhone = phone.trim();
+    if (!isValidPhone(trimmedPhone)) {
+      setStatus("idle");
+      setErrorDetail(t.phoneMsg);
+      setShowError(true);
+      return;
+    }
     setStatus("loading");
     setLoadingShownAt(Date.now());
     setAttachmentError(null);
@@ -104,19 +120,19 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
       const fd = new FormData();
       // honeypot
       fd.append("company", "");
-      fd.append("fullName", fullName);
+      fd.append("fullName", fullName.trim());
       fd.append("gender", gender);
-      fd.append("email", email);
-      fd.append("phone", phone);
-      fd.append("address", address);
+      fd.append("email", trimmedEmail);
+      fd.append("phone", trimmedPhone);
+      fd.append("address", address.trim());
       fd.append("inquiry", inquiry);
-      fd.append("caseTitle", caseTitle);
-      fd.append("caseDesc", caseDesc);
+      fd.append("caseTitle", caseTitle.trim());
+      fd.append("caseDesc", caseDesc.trim());
       fd.append("lang", lang);
       fd.append("preferredDateTime", preferredDateTime);
       fd.append("preferredContact", preferredContact);
       if (attachment) fd.append("attachment", attachment);
-      if (attachmentNote) fd.append("attachmentNote", attachmentNote);
+      if (attachmentNote) fd.append("attachmentNote", attachmentNote.trim());
       const res = await fetch("/api/contact", { method: "POST", body: fd });
       let next: "success" | "error" = res.ok ? "success" : "error";
       if (!res.ok) {
@@ -167,6 +183,12 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
     setInquiry("");
     setCaseTitle("");
     setCaseDesc("");
+    setAttachment(null);
+    setAttachmentNote("");
+    setAttachmentError(null);
+    setErrorDetail("");
+    setPreferredDateTime("");
+    setPreferredContact("");
     setStatus("idle");
   };
 
@@ -214,13 +236,13 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
             <label className="block text-xs font-semibold text-[var(--brand-accent)] mb-1">
               {labelWrap(<Mail className="h-3.5 w-3.5" />, t.email, true)}
             </label>
-            <input value={email} onChange={(e) => setEmail(e.target.value)} onInvalid={handleInvalid} onInput={clearValidity} placeholder="you@example.com" type="email" required className="w-full rounded-lg bg-black/30 border border-[var(--panel-border)] px-3 py-2 text-white placeholder:text-zinc-500" />
+            <input value={email} onChange={(e) => setEmail(e.target.value)} onInvalid={handleInvalid} onInput={clearValidity} placeholder="you@example.com" type="email" inputMode="email" autoComplete="email" required className="w-full rounded-lg bg-black/30 border border-[var(--panel-border)] px-3 py-2 text-white placeholder:text-zinc-500" />
           </div>
           <div>
             <label className="block text-xs font-semibold text-[var(--brand-accent)] mb-1">
               {labelWrap(<PhoneIcon className="h-3.5 w-3.5" />, t.phone, true)}
             </label>
-            <input value={phone} onChange={(e) => setPhone(e.target.value)} onInvalid={handleInvalid} onInput={clearValidity} placeholder={rtl ? "+971 5x xxx xxxx" : "+971 5x xxx xxxx"} required className="w-full rounded-lg bg-black/30 border border-[var(--panel-border)] px-3 py-2 text-white placeholder:text-zinc-500" />
+            <input value={phone} onChange={(e) => setPhone(e.target.value)} onInvalid={handleInvalid} onInput={clearValidity} placeholder={rtl ? "+971 5x xxx xxxx" : "+971 5x xxx xxxx"} type="tel" inputMode="tel" autoComplete="tel" pattern="^[+()\\-\\s\\d]{8,20}$" required className="w-full rounded-lg bg-black/30 border border-[var(--panel-border)] px-3 py-2 text-white placeholder:text-zinc-500" />
           </div>
           <div className="md:col-span-2">
             <label className="block text-xs font-semibold text-[var(--brand-accent)] mb-1">{labelWrap(<MapPin className="h-3.5 w-3.5" />, t.address)}</label>
@@ -275,6 +297,8 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
                 required
                 value={preferredContact}
                 onChange={(e) => setPreferredContact(e.target.value as any)}
+                onInvalid={handleInvalid}
+                onInput={clearValidity}
                 className="themed-select w-full rounded-lg border border-[var(--panel-border)] px-3 py-2 pr-10 text-white"
               >
                 <option value="">{rtl ? "اختر طريقة التواصل" : "Select a method"}</option>

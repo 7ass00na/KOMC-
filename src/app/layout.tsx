@@ -24,10 +24,13 @@ const tajawal = Tajawal({
   display: "swap",
 });
 
+const SITE_TITLE = "KOMC || Legal & Maritime Consultancy || Across the UAE";
+const SITE_DESCRIPTION =
+  "Trusted maritime law and legal consulting in the UAE. Admiralty, shipping, contracts, disputes, compliance. Bilingual Arabic & English.";
+
 export const metadata: Metadata = {
-  title: "KOMC || Legal & Maitime Consultation a cross the UAE",
-  description:
-    "Trusted maritime law and legal consulting in the UAE. Admiralty, shipping, contracts, disputes, compliance. Bilingual Arabic & English.",
+  title: SITE_TITLE,
+  description: SITE_DESCRIPTION,
   keywords: [
     "Maritime Law UAE",
     "Legal Consulting",
@@ -53,10 +56,9 @@ export const metadata: Metadata = {
     apple: "/main_logo.svg",
   },
   openGraph: {
-    title:
-      "KOMC | Legal & Maitime Consultation UAE",
+    title: SITE_TITLE,
     description:
-      "Specialized in Admiralty, Commercial Shipping, Contracts, Disputes, and Compliance across the UAE & GCC.",
+      "Specialized in Admiralty, Commercial Shipping, Contracts, Disputes, and Compliance across the UAE and GCC.",
     url: "https://DN.com",
     siteName: "KOMC",
     locale: "en_US",
@@ -64,10 +66,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title:
-      "KOMC || Legal & Maitime Consultation UAE",
+    title: SITE_TITLE,
     description:
-      "Trusted maritime & legal expertise a cross the UAE.",
+      "Trusted maritime and legal expertise across the UAE.",
   },
 };
 
