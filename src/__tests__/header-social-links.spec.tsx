@@ -124,7 +124,7 @@ describe("Header social links", () => {
       "https://www.instagram.com/komc.23?igsh=MTNtZDF3NXdtdWdoMA=="
     );
     expect(links[2].getAttribute("href")).toBe("https://tiktok.com/@komc.23");
-    expect(links[3].getAttribute("href")).toBe("mailto:info.kom23@gmail.com");
+    expect(links[3].getAttribute("href")).toBe("mailto:info.komc23@gmail.com");
 
     for (const link of links) {
       expect(link.getAttribute("target")).toBe("_blank");

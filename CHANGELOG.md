@@ -1,3 +1,14 @@
+## Komc Version 15
+- Email routing: Updated the default newsletter and contact recipients to `info.komc23@gmail.com` while preserving contact-form BCC delivery to `ahmedhussan068@gmail.com`.
+- Social links: Standardized shared header/footer social links to Facebook, Instagram, TikTok, and Email using secure `_blank` + `noopener noreferrer` external-link attributes.
+- Regression coverage: Added and aligned Vitest and Playwright coverage for email routing, contact BCC behavior, and responsive social-link rendering/targets.
+
+## Komc-VB0014
+- Bilingual notifications: Added `src/lib/notificationTemplates.ts` to detect the active Arabic/English UI language and generate localized WhatsApp and email copy with encoded `wa.me` and `mailto:` links.
+- Global WhatsApp CTA: Updated the floating WhatsApp button to use `+971543456591` while preserving the existing bilingual consultation message template across all pages.
+- DevOps contact localization: Reworked the footer DevOps WhatsApp/email actions to use professional Arabic and English message templates from the shared notification helper.
+- QA: Added focused Vitest coverage for localized notification templates and the floating WhatsApp button, plus Playwright coverage for responsive and desktop WhatsApp CTA rendering.
+
 ## Komc-VB0013
 - Footer contact updates: Replaced the footer phone number with `+971 54 345 6591`, kept it mobile-clickable via `tel:` formatting, and refreshed the supporting helper copy for bilingual contact clarity.
 - Newsletter workflow: Updated the newsletter endpoint to route subscription emails to `info.khaledomer.adv2@khaledomer.ae`, kept client/server email validation aligned, and refreshed success messaging in both locales.

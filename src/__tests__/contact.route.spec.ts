@@ -64,13 +64,14 @@ describe("contact route", () => {
     expect(sendMailMock).toHaveBeenCalled();
 
     const mail = sendMailMock.mock.calls[0][0];
-    expect(mail.to).toBe("info.khaledomer.adv2@khaledomer.ae");
+    expect(mail.to).toBe("info.komc23@gmail.com");
     expect(mail.bcc).toBe("ahmedhussan068@gmail.com");
     expect(mail.replyTo).toBe("client@example.com");
     expect(mail.subject).toMatch(/^New consultation request from the KOMC website - /);
     expect(mail.text).toContain("Gender: male");
     expect(mail.text).toContain("Address: Dubai, UAE");
     expect(mail.text).toContain("Type of Inquiry: Maritime Law");
+    expect(mail.to).not.toContain("ahmedhussan068@gmail.com");
   });
 
   it("rejects invalid phone numbers", async () => {

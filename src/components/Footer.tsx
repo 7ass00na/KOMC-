@@ -4,17 +4,25 @@
 import { useLanguage } from "@/context/LanguageContext";
 import { motion } from "framer-motion";
 import { useTheme } from "@/context/ThemeContext";
+import {
+  buildMailtoUrl,
+  buildWhatsAppUrl,
+  DEVOPS_EMAIL,
+  DEVOPS_WHATSAPP_NUMBER,
+  getDevOpsNotificationCopy,
+} from "@/lib/notificationTemplates";
+import { SOCIAL_LINKS, type SocialLinkKind } from "@/lib/socialLinks";
 import { track } from "@/lib/welcomeLabels";
 import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 
-function SocialIcon({ kind }: { kind: "linkedin" | "twitter" | "facebook" | "instagram" | "tiktok" }) {
-  if (kind === "linkedin") {
+function SocialIcon({ kind }: { kind: SocialLinkKind }) {
+  if (kind === "email") {
     return (
       <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">
-        <path fill="currentColor" d="M4.98 3.5C4.98 4.88 3.86 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM0 8.98h5V24H0zM8.5 8.98H13v2.05h.06c.63-1.2 2.17-2.47 4.47-2.47C22.4 8.56 24 11 24 15.02V24h-5v-7.47c0-1.78-.03-4.06-2.48-4.06-2.48 0-2.86 1.94-2.86 3.94V24H8.5z"/>
+        <path fill="currentColor" d="M3 6.75A1.75 1.75 0 0 1 4.75 5h14.5A1.75 1.75 0 0 1 21 6.75v10.5A1.75 1.75 0 0 1 19.25 19H4.75A1.75 1.75 0 0 1 3 17.25V6.75Zm1.94-.25L12 11.44l7.06-4.94H4.94ZM19.5 8.06l-7 4.9a.9.9 0 0 1-1 0l-7-4.9v9.19c0 .14.11.25.25.25h14.5a.25.25 0 0 0 .25-.25V8.06Z"/>
       </svg>
     );
   }
@@ -22,13 +30,6 @@ function SocialIcon({ kind }: { kind: "linkedin" | "twitter" | "facebook" | "ins
     return (
       <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">
         <path fill="currentColor" d="M20 8.5c-2 0-3.8-1-4.8-2.6v9.3a5.2 5.2 0 11-5.2-5.2c.3 0 .7 0 1 .1v2.7a2.5 2.5 0 10.9 4.8 2.5 2.5 0 001.6-2.3V2h2.7c.2.8.7 1.6 1.3 2.2A5.5 5.5 0 0020 5.5v3z"/>
-      </svg>
-    );
-  }
-  if (kind === "twitter") {
-    return (
-      <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">
-        <path fill="currentColor" d="M13.7 10.3 21.9 2h-1.9l-6.8 7.2L9 2H2l8 12.3L2 22h1.9l7.4-7.8L15 22h7l-8.3-11.7Zm-2.6 2.7-.9-1.3L4.3 3.3h3.1l4.1 6 1 1.4 4.9 7h-3.1l-3.2-4.7Z"/>
       </svg>
     );
   }
@@ -239,11 +240,13 @@ export default function Footer() {
     return v.replace(/[^\d+]/g, "");
   }
   const footerPhoneHref = `tel:${sanitizePhoneNumber(t("footerPhone"))}`;
-  const devOpsWhatsappMessage = "Hello - I've seen your website and would like to create a website for myself/my company, so please contact me about this...";
-  const devOpsEmailSubject = "A client from website is looking to create a website";
-  const devOpsEmailBody = "Hello - I've seen your website and would like to create a website for myself/my company, so please contact me about this...";
-  const devOpsWhatsappHref = `https://wa.me/971509559088?text=${encodeURIComponent(devOpsWhatsappMessage)}`;
-  const devOpsEmailHref = `mailto:ahmedhussan068@gmail.com?subject=${encodeURIComponent(devOpsEmailSubject)}&body=${encodeURIComponent(devOpsEmailBody)}`;
+  const devOpsNotificationCopy = getDevOpsNotificationCopy(lang);
+  const devOpsWhatsappHref = buildWhatsAppUrl(DEVOPS_WHATSAPP_NUMBER, devOpsNotificationCopy.whatsappMessage);
+  const devOpsEmailHref = buildMailtoUrl(
+    DEVOPS_EMAIL,
+    devOpsNotificationCopy.emailSubject,
+    devOpsNotificationCopy.emailBody
+  );
   function trackFooterEvent(event: string, payload: Record<string, unknown>) {
     try {
       track(event, { lang, location: "footer", ...payload });
@@ -361,58 +364,22 @@ export default function Footer() {
             </div>
             <p className="text-sm text-[var(--text-secondary)] dark:text-[color-mix(in_oklab,var(--text-on-dark),transparent_20%)] footer-copy">{t("footerIntro")}</p>
             <div className="flex items-center gap-3">
-              <motion.a
-                href="https://twitter.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Twitter / X"
-                data-social="twitter"
-                whileHover={{ y: -1.5, scale: 1.08, rotate: 0.4 }}
-                whileTap={{ scale: 0.94, rotate: 0 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                className="h-9 w-9 rounded-lg ring-1 ring-[var(--panel-border)] dark:ring-white/15 bg-[var(--panel-bg)] light:bg-[color-mix(in_oklab,var(--brand-primary),black_90%)] flex items-center justify-center text-[var(--ink-primary)] light:text-zinc-300 dark:text-zinc-300 hover:bg-[#1DA1F2]/90 hover:text-white"
-              >
-                <SocialIcon kind="twitter" />
-              </motion.a>
-              <motion.a
-                href="https://facebook.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Facebook"
-                data-social="facebook"
-                whileHover={{ y: -1.5, scale: 1.08, rotate: 0.4 }}
-                whileTap={{ scale: 0.94, rotate: 0 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                className="h-9 w-9 rounded-lg ring-1 ring-[var(--panel-border)] dark:ring-white/15 bg-[var(--panel-bg)] light:bg-[color-mix(in_oklab,var(--brand-primary),black_90%)] flex items-center justify-center text-[var(--ink-primary)] light:text-zinc-300 dark:text-zinc-300 hover:bg-[#1877F2]/90 hover:text-white"
-              >
-                <SocialIcon kind="facebook" />
-              </motion.a>
-              <motion.a
-                href="https://instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram"
-                data-social="instagram"
-                whileHover={{ y: -1.5, scale: 1.08, rotate: 0.4 }}
-                whileTap={{ scale: 0.94, rotate: 0 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                className="h-9 w-9 rounded-lg ring-1 ring-[var(--panel-border)] dark:ring-white/15 bg-[var(--panel-bg)] light:bg-[color-mix(in_oklab,var(--brand-primary),black_90%)] flex items-center justify-center text-[var(--ink-primary)] light:text-zinc-300 dark:text-zinc-300 hover:bg-[#E1306C]/90 hover:text-white"
-              >
-                <SocialIcon kind="instagram" />
-              </motion.a>
-              <motion.a
-                href="https://www.tiktok.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="TikTok"
-                data-social="tiktok"
-                whileHover={{ y: -1.5, scale: 1.08, rotate: 0.4 }}
-                whileTap={{ scale: 0.94, rotate: 0 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                className="h-9 w-9 rounded-lg ring-1 ring-[var(--panel-border)] dark:ring-white/15 bg-[var(--panel-bg)] light:bg-[color-mix(in_oklab,var(--brand-primary),black_90%)] flex items-center justify-center text-[var(--ink-primary)] light:text-zinc-300 dark:text-zinc-300 hover:bg-[#000000]/90 hover:text-white"
-              >
-                <SocialIcon kind="tiktok" />
-              </motion.a>
+              {SOCIAL_LINKS.map((social) => (
+                <motion.a
+                  key={social.kind}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={social.label}
+                  data-social={social.kind}
+                  whileHover={{ y: -1.5, scale: 1.08, rotate: 0.4 }}
+                  whileTap={{ scale: 0.94, rotate: 0 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                  className={`h-9 w-9 rounded-lg ring-1 ring-[var(--panel-border)] dark:ring-white/15 bg-[var(--panel-bg)] light:bg-[color-mix(in_oklab,var(--brand-primary),black_90%)] flex items-center justify-center text-[var(--ink-primary)] light:text-zinc-300 dark:text-zinc-300 ${social.hoverClassName}`}
+                >
+                  <SocialIcon kind={social.kind} />
+                </motion.a>
+              ))}
             </div>
           </motion.div>
           {/* EN: Quick links column — site navigation shortcuts */}
@@ -665,7 +632,7 @@ export default function Footer() {
           </div>
         {settings?.whatsapp?.enabled && settings.whatsapp.number ? (
           <a
-            href={`https://wa.me/${encodeURIComponent(settings.whatsapp.number)}${settings.whatsapp.message ? `?text=${encodeURIComponent(settings.whatsapp.message)}` : ""}`}
+            href={buildWhatsAppUrl(settings.whatsapp.number, settings.whatsapp.message)}
             target="_blank"
             rel="noopener noreferrer"
             className="fixed bottom-6 right-6 z-40 h-12 w-12 rounded-full bg-[#25D366] text-white shadow-lg flex items-center justify-center hover:opacity-90"

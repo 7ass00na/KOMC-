@@ -28,6 +28,7 @@ Key routes:
 - Unit and component tests use Vitest with jsdom.
 - Integration-style component and route behavior checks run inside the Vitest suite alongside unit coverage.
 - End-to-end coverage uses Playwright against the locale-aware home flow, intro overlay, and header scroll recovery on mobile/tablet breakpoints.
+- WhatsApp QA includes localized floating-button link validation on Arabic/English routes and verification of the updated global `wa.me/971543456591` destination.
 - Coverage thresholds set to 80% (statements/branches/functions/lines) for covered modules.
 - UI-heavy routes and server-only handlers are excluded from coverage to focus on core logic.
 - ESLint ignores generated `coverage/` and `test-results/` artifacts so lint only evaluates source files.
@@ -41,13 +42,15 @@ Key routes:
   - Optional: SMTP_SECURE, SMTP_MAX_CONNECTIONS, SMTP_MAX_MESSAGES, SMTP_TLS_REJECT_UNAUTH, SMTP_CONN_TIMEOUT, SMTP_GREET_TIMEOUT, SMTP_SOCKET_TIMEOUT
 - The contact endpoint verifies connection before sending and logs delivery status without exposing secrets.
 - Default routing for the current maintenance baseline:
-  - Newsletter submissions send to `info.khaledomer.adv2@khaledomer.ae`
-  - Contact/consultation submissions send to `info.khaledomer.adv2@khaledomer.ae` with BCC to `ahmedhussan068@gmail.com`
+  - Newsletter submissions send to `info.komc23@gmail.com`
+  - Contact/consultation submissions send to `info.komc23@gmail.com` with BCC to `ahmedhussan068@gmail.com`
+- Shared header and footer social links now render in this order: Facebook, Instagram, TikTok, Email, with secure external-link attributes.
 
 ## Notes
 - Intro video and welcome overlay are verified in both dev and prod builds.
 - Header mobile/tablet navigation is validated against touch-scroll recovery after opening and closing the hamburger menu.
 - Root visits to `/` redirect to `/{lang}/home` using cookie or `Accept-Language` detection.
 - RTL/LTR handled via LanguageContext with route-based detection and toggles.
+- Shared notification templates in `src/lib/notificationTemplates.ts` centralize Arabic/English WhatsApp and email copy, preserving proper URL encoding for Arabic text and official `wa.me` formatting.
 - Team grid supports 16 members with indexed image mapping (T01.jpeg … T016.jpeg).
 - About page Photo Library is driven by `src/data/photo-library.json` and serves assets from `public/images/Library`.

@@ -10,6 +10,7 @@ import { useEffect, useMemo, useState, useRef } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { lockBodyScroll, unlockBodyScroll } from "@/lib/bodyScrollLock";
+import { SOCIAL_LINKS } from "@/lib/socialLinks";
 
 export default function Header() {
   // EN: Read current language and theme state
@@ -471,18 +472,27 @@ export default function Header() {
               <span>{lang === "ar" ? "تابعنا" : "Follow us"}</span>
             </div>
             <div className="flex items-center justify-center gap-3">
-              <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook" data-social="facebook" className="p-2 rounded-lg ring-1 ring-black/10 dark:ring-white/10 hover:bg-[#1877F2]/90 hover:text-white">
-                <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M13.5 9H15V6h-1.5C11.6 6 11 7.4 11 9v1.5H9V14h2v6h3v-6h2l.5-3.5h-2.5V9c0-.4.1-1 .5-1h1V6h-1c-2 0-2.5 1.6-2.5 3v1.5z"/></svg>
-              </a>
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="Twitter" data-social="twitter" className="p-2 rounded-lg ring-1 ring-black/10 dark:ring-white/10 hover:bg-[#1DA1F2]/90 hover:text-white">
-                <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M22 5.8c-.7.3-1.5.6-2.3.7.8-.5 1.4-1.3 1.7-2.2-.8.5-1.7.9-2.6 1.1A3.9 3.9 0 0012 8.5c0 .3 0 .6.1.8-3.2-.2-6-1.7-7.9-4.1-.4.6-.6 1.3-.6 2.1 0 1.4.7 2.6 1.8 3.3-.6 0-1.2-.2-1.7-.5v.1c0 2 1.4 3.7 3.3 4.1-.3.1-.7.1-1 .1-.2 0-.5 0-.7-.1.5 1.7 2.1 3 4 3A7.9 7.9 0 014 19.6a11 11 0 006 1.8c7.2 0 11.2-6 11.2-11.2v-.5c.8-.5 1.4-1.2 1.9-1.9-.7.3-1.4.5-2.1.6z"/></svg>
-              </a>
-              <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram" data-social="instagram" className="p-2 rounded-lg ring-1 ring-black/10 dark:ring-white/10 hover:bg-[#E1306C]/90 hover:text-white">
-                <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M7 2h10a5 5 0 015 5v10a5 5 0 01-5 5H7a5 5 0 01-5-5V7a5 5 0 015-5zm0 2a3 3 0 00-3 3v10a3 3 0 003 3h10a3 3 0 003-3V7a3 3 0 00-3-3H7zm5 3.5a5.5 5.5 0 110 11 5.5 5.5 0 010-11zm0 2a3.5 3.5 0 100 7 3.5 3.5 0 000-7zm5-2.3a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z"/></svg>
-              </a>
-              <a href="https://www.tiktok.com" target="_blank" rel="noopener noreferrer" aria-label="TikTok" data-social="tiktok" className="p-2 rounded-lg ring-1 ring-black/10 dark:ring-white/10 hover:bg-[#000000]/90 hover:text-white">
-                <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M20 8.5c-2 0-3.8-1-4.8-2.6v9.3a5.2 5.2 0 11-5.2-5.2c.3 0 .7 0 1 .1v2.7a2.5 2.5 0 10.9 4.8 2.5 2.5 0 001.6-2.3V2h2.7c.2.8.7 1.6 1.3 2.2A5.5 5.5 0 0020 5.5v3z"/></svg>
-              </a>
+              {SOCIAL_LINKS.map((social) => (
+                <a
+                  key={social.kind}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={social.label}
+                  data-social={social.kind}
+                  className={`p-2 rounded-lg ring-1 ring-black/10 dark:ring-white/10 ${social.hoverClassName}`}
+                >
+                  {social.kind === "facebook" ? (
+                    <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M13.5 9H15V6h-1.5C11.6 6 11 7.4 11 9v1.5H9V14h2v6h3v-6h2l.5-3.5h-2.5V9c0-.4.1-1 .5-1h1V6h-1c-2 0-2.5 1.6-2.5 3v1.5z"/></svg>
+                  ) : social.kind === "instagram" ? (
+                    <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M7 2h10a5 5 0 015 5v10a5 5 0 01-5 5H7a5 5 0 01-5-5V7a5 5 0 015-5zm0 2a3 3 0 00-3 3v10a3 3 0 003 3h10a3 3 0 003-3V7a3 3 0 00-3-3H7zm5 3.5a5.5 5.5 0 110 11 5.5 5.5 0 010-11zm0 2a3.5 3.5 0 100 7 3.5 3.5 0 000-7zm5-2.3a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z"/></svg>
+                  ) : social.kind === "tiktok" ? (
+                    <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M20 8.5c-2 0-3.8-1-4.8-2.6v9.3a5.2 5.2 0 11-5.2-5.2c.3 0 .7 0 1 .1v2.7a2.5 2.5 0 10.9 4.8 2.5 2.5 0 001.6-2.3V2h2.7c.2.8.7 1.6 1.3 2.2A5.5 5.5 0 0020 5.5v3z"/></svg>
+                  ) : (
+                    <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M3 6.75A1.75 1.75 0 0 1 4.75 5h14.5A1.75 1.75 0 0 1 21 6.75v10.5A1.75 1.75 0 0 1 19.25 19H4.75A1.75 1.75 0 0 1 3 17.25V6.75Zm1.94-.25L12 11.44l7.06-4.94H4.94ZM19.5 8.06l-7 4.9a.9.9 0 0 1-1 0l-7-4.9v9.19c0 .14.11.25.25.25h14.5a.25.25 0 0 0 .25-.25V8.06Z"/></svg>
+                  )}
+                </a>
+              ))}
             </div>
             {/* EN: Mobile contact CTA */}
             {/* AR: زر تواصل للجوال */}

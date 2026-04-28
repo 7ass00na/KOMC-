@@ -4,6 +4,7 @@
 
 - Fixed the strict-TypeScript issue in `src/__tests__/header-social-links.spec.tsx` and hardened the test harness for mocked browser APIs.
 - Added regression coverage for the header social links when header bootstrap fetches fail.
+- Corrected the shared social email link to `mailto:info.komc23@gmail.com` so header/footer UI matches the updated contact and newsletter routing.
 - Replaced the consultation image on both localized contact pages with an optimized responsive asset.
 - Corrected the global browser title/meta title string to `KOMC || Legal & Maritime Consultancy || Across the UAE`.
 - Re-ran cleanup detection with strict TypeScript unused-code checks and verified the build/test pipeline.

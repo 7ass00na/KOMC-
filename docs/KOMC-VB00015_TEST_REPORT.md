@@ -3,6 +3,7 @@
 ## Scope
 
 - Analyze and fix the issues surfaced in `src/__tests__/header-social-links.spec.tsx`.
+- Align shared social-link email targets with the updated `info.komc23@gmail.com` routing.
 - Replace the consultation image on the English and Arabic contact pages.
 - Correct the global browser title and metadata title formatting.
 - Run cleanup detection for unused imports and variables.
