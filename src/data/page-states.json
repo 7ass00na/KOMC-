@@ -1,0 +1,69 @@
+{
+  "id": "page-states",
+  "home": {
+    "active": false,
+    "draft": true,
+    "maintenanceMessage": "Maintenance is underway and may take up to 30 minutes. Thank you for your patience."
+  },
+  "about": {
+    "active": false,
+    "maintenanceMessage": ""
+  },
+  "services": {
+    "active": false,
+    "maintenanceMessage": ""
+  },
+  "cases": {
+    "active": false,
+    "maintenanceMessage": ""
+  },
+  "news": {
+    "active": false,
+    "maintenanceMessage": ""
+  },
+  "header": {
+    "active": false,
+    "draft": true,
+    "maintenanceMessage": "",
+    "revisions": [
+      {
+        "at": 1772224964883,
+        "siteName_en": "KOMC",
+        "siteName_ar": "خالد عمر ",
+        "logo": "",
+        "published": true
+      }
+    ]
+  },
+  "footer": {
+    "active": false,
+    "draft": true,
+    "maintenanceMessage": "",
+    "revisions": [
+      {
+        "at": 1772567346305,
+        "siteName_en": "KOMC",
+        "siteName_ar": "كومك",
+        "logo": "",
+        "links": [],
+        "published": true
+      },
+      {
+        "at": 1772567584258,
+        "siteName_en": "KOMC",
+        "siteName_ar": "خالد عمر ",
+        "logo": "",
+        "links": [],
+        "published": true
+      },
+      {
+        "at": 1773694887773,
+        "siteName_en": "KOMC",
+        "siteName_ar": "خالد عمر ",
+        "logo": "",
+        "links": [],
+        "published": true
+      }
+    ]
+  }
+}

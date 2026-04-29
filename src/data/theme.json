@@ -1,0 +1,16 @@
+{
+  "id": "theme",
+  "defaultLang": "en",
+  "fonts": {
+    "en": "",
+    "ar": ""
+  },
+  "sizes": {
+    "heading": "2.25rem",
+    "subheading": "1.25rem"
+  },
+  "colors": {
+    "primary": "#afb7c0",
+    "secondary": "#E1BC89"
+  }
+}

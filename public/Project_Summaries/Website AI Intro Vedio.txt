@@ -1,0 +1,92 @@
+prompt.txt
+Ultra‑realistic 4K cinematic legal thriller for “Khaled Omer Maritime Consultancy (KOMC)”.
+Tone: suspenseful, authoritative, professional. Style: cinematic realism, dramatic lighting, shallow depth of field (35mm f/1.4), smooth slow‑motion camera, precise focus transitions, natural reflections (water, glass, metal), light fog/sea mist, subtle particles, cinematic motion blur. Color: deep navy shadows, cool blue‑grey midtones, crisp white and warm amber highlights. Editing: trailer‑style with quick flash cuts, 2–4‑frame black frames, sound‑driven transitions. Creative intent: communicate dominance, precision, and control in high‑stakes maritime law.
+
+Scene structure (5 shots, 3s each, total 15s):
+Shot 1 — Hook & Arrival
+• Black screen, metallic impact. Flash: “COURT ORDER – MARITIME SEIZURE.”
+• Cut: Massive container ship approaches port through dense dawn fog; navigation lights blinking; cold blue reflections on water.
+• Brief HUD: Vessel name • Coordinates • Status: UNDER LEGAL REVIEW.
+• Camera: slow aerial drift, cinematic.
+
+Shot 2 — Legal Intelligence (Office)
+• Flash cut.
+• Interior: luxury corporate legal office overlooking port.
+• Micro‑shots: cufflinks adjustment; pen signing a legal document; team reviewing case files; tense client → lawyer’s calm, confident nod.
+• Warm, controlled lighting; glass reflections; shallow DOF.
+
+Shot 3 — Seizure Operation (Hero Beat)
+• Impact cut with deep hit.
+• Dockside: coast guard vehicles flashing; light wind.
+• Slow‑motion: footsteps on metal dock; lawyer advances confidently with documents; officers follow.
+• Beat: lawyer raises document → close‑up: “SEIZURE ORDER.” Officers move toward ship.
+• Brief floating maritime law clauses appear and dissolve.
+
+Shot 4 — Resolution & Control
+• Soft flash transition.
+• Glass office overlooking port; seized ship visible in background.
+• Minimal handshake; client shifts from tension to satisfaction.
+• Mood: calm power, control, success.
+
+Shot 5 — Brand Reveal
+• Deep navy background with subtle particles and very soft ocean texture.
+• Metallic gold logo appears with a smooth light reflection sweep.
+• Logo: Khaled Omer Maritime Consultancy (KOMC).
+• Taglines (bilingual): English: “Precision in Maritime Law.” Arabic: “دقة في القانون البحري”.
+• Soft cinematic boom and shimmer; elegant fade out.
+
+Keywords for AI engines: cinematic legal thriller, maritime law, ship seizure, container ship port, coast guard boarding, lawyer authority, luxury corporate office, ultra realistic 4k, dramatic lighting, shallow depth of field, suspense atmosphere, premium branding, film trailer transitions.
+
+timing.txt
+Duration: 15.0s at 24 fps (360 frames)
+• Shot 1: 0.0–3.0s (0–72f) – Court Order flash, ship arrival, brief HUD
+• Shot 2: 3.0–6.0s (72–144f) – Office micro‑shots, warm lighting, reflections
+• Shot 3: 6.0–9.0s (144–216f) – Dockside slow‑mo, SEIZURE ORDER beat, movement
+• Shot 4: 9.0–12.0s (216–288f) – Resolution in office, handshake, control
+• Shot 5: 12.0–15.0s (288–360f) – Brand reveal, bilingual taglines, fade
+
+Logo sweep pacing in Shot 5:
+• Start: ~12.4s
+• Reflection sweep: 1.2s
+• Shimmer tail: 0.3s (total ≈1.5s)
+• Taglines fade in: 13.6–14.6s
+• Final fade: 14.6–15.0s
+
+sound.txt
+Sound design and mix guidance:
+• Ambience: deep ambient bass (heartbeat‑style tension), ocean/port atmospheres
+• Impacts: metallic hits synchronized to trailer flash cuts
+• Foley: footsteps on dock, paper/document handling, subtle wind, cloth movement
+• Texture: minimal coast guard radio chatter as background texture in Shot 3
+• Logo reveal: soft cinematic boom at sweep start + shimmering tail
+Mix targets:
+• Sample rate: 48 kHz
+• Integrated loudness: ≈ −14 LUFS
+• Preserve dynamic range around the logo beat; avoid hard limiting; gentle bus compression for cohesion
+
+overlays.txt
+On‑screen text overlays:
+• Shot 1 HUD (2–3s, tasteful): Vessel KOMC‑A12 • 25.2953°N, 55.3283°E • Status: UNDER LEGAL REVIEW
+• Shot 3 legal stamp close‑up: SEIZURE ORDER
+• Shot 5 brand + taglines:
+  • Logo: Khaled Omer Maritime Consultancy (KOMC) in metallic gold with reflection sweep
+  • English tagline: Precision in Maritime Law.
+  • Arabic tagline: دقة في القانون البحري
+Typography and placement:
+• Keep overlays minimal, high contrast, unobtrusive; avoid lower‑third clutter
+• Respect safe areas for TV margins; no edge clipping
+
+integration.txt
+Export specs:
+• Video: 4K 3840×2160, 24 fps
+• Codec: H.264 High Profile, 100–150 Mbps CBR (or Apple ProRes 422 HQ)
+• Audio: 48 kHz; final loudness ≈ −14 LUFS
+• Filename: komc‑intro.mp4
+
+Site wiring steps:
+• Place the final file at public/videos/komc‑intro.mp4
+• Homepage plays once per visitor via IntroOverlay (Skip + Mute/Unmute supported)
+• Demo page player loads /videos/komc‑intro.mp4 and provides an upload fallback for local preview
+Validation:
+• Hard refresh after copying (Ctrl+F5)
+• Verify the player on the demo page and one‑time overlay playback on the homepage

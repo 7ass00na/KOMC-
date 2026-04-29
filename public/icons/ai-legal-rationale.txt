@@ -1,0 +1,25 @@
+AI Legal Assistant Icon — Design Rationale
+
+Concept:
+- The icon merges AI and legal symbolism to communicate an AI-powered legal advisory experience at a glance.
+
+Elements:
+- Neural/Circuit Motifs (top row nodes and links; soft parabolic arcs): represent artificial intelligence, reasoning, and data flow.
+- Scales of Justice (center): represent legal balance, due process, and counsel impartiality.
+
+Color & Contrast:
+- Foreground uses refined sand gold (#E1BC89) for premium, legal-tech credibility over deep navy gradients aligned with brand.
+- Gold on deep navy passes WCAG contrast in the glyph areas. The in-app FAB shows the icon on a gold disk with black foreground for AA+ legibility.
+
+Grid & Safe Zone:
+- 48×48 vector grid with rounded container ensures visual balance and consistent rendering down to small sizes with adequate safe zones.
+
+Scalability:
+- Clean paths and limited detail maintain clarity at 16×16. The scales remain legible; the neural arcs gracefully simplify at small sizes.
+
+Usage:
+- In-app floating chat button, menus, and any AI assistant entry points. The SVG can be exported to PNG at 16, 32, 48, and 256 px, and to ICO for platform needs.
+
+Compliance:
+- The symbol is generic and non-jurisdictional; no government emblems used. It reflects advisory assistance, not enforcement.
+

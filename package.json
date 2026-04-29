@@ -1,0 +1,53 @@
+{
+  "name": "komc-site",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "tsc --noEmit",
+    "clean": "node -e \"require('fs').rmSync('.next',{recursive:true,force:true})\"",
+    "clean-build": "node -e \"require('fs').rmSync('.next',{recursive:true,force:true})\" && next build",
+    "rebuild": "npm run clean-build",
+    "test": "vitest run --coverage",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:e2e": "playwright test",
+    "audit:prod": "npm audit --omit=dev",
+    "generate:logo": "node scripts/generate-logo-assets.mjs",
+    "verify": "npm run lint && npm run typecheck && npm test"
+  },
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1",
+    "ai": "^6.0.146",
+    "framer-motion": "^12.34.0",
+    "lucide-react": "^0.577.0",
+    "next": "^16.2.0",
+    "nodemailer": "^8.0.1",
+    "ollama-ai-provider-v2": "^3.5.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.55.0",
+    "@tailwindcss/postcss": "^4",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^20",
+    "@types/nodemailer": "^7.0.11",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@vitest/coverage-v8": "^4.1.2",
+    "eslint": "^10.0.3",
+    "jsdom": "^29.0.1",
+    "png-to-ico": "^3.0.1",
+    "sharp": "^0.34.5",
+    "tailwindcss": "^4",
+    "typescript": "^5",
+    "vitest": "^4.1.2"
+  }
+}
