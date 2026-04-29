@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { User, Mail, Phone as PhoneIcon, MapPin, HelpCircle, FileText, AlignLeft, CalendarClock } from "lucide-react";
 
 export function ContactForm({ lang }: { lang: "en" | "ar" }) {
@@ -18,10 +18,11 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [showThanks, setShowThanks] = useState(false);
   const [showError, setShowError] = useState(false);
-  const [loadingShownAt, setLoadingShownAt] = useState<number | null>(null);
   const [errorDetail, setErrorDetail] = useState<string>("");
+  const [successDetail, setSuccessDetail] = useState<string>("");
   const [preferredDateTime, setPreferredDateTime] = useState("");
   const [preferredContact, setPreferredContact] = useState<"phone" | "email" | "either" | "">("");
+  const submitLockRef = useRef(false);
 
   const t = {
     title: rtl ? "نموذج الاستشارة" : "Consultation Form",
@@ -44,6 +45,7 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
     submit: rtl ? "إرسال الطلب" : "Submit Request",
     thanksTitle: rtl ? "تم إرسال الطلب بنجاح" : "Request submitted successfully",
     thanksBody: rtl ? "تم استلام طلبك بنجاح وسيتواصل معك فريق KOMC قريبًا عبر وسيلة التواصل المناسبة." : "Your request has been received and the KOMC team will contact you soon using your preferred contact method.",
+    duplicateBody: rtl ? "تم استلام بياناتك بالفعل. لا حاجة إلى إعادة إرسال الطلب، وسيتواصل معك فريق KOMC قريبًا." : "We already received your information. There is no need to submit the form again, and the KOMC team will contact you soon.",
     errorTitle: rtl ? "تعذر إرسال الطلب" : "Submission failed",
     errorBody: rtl ? "تعذر إرسال طلبك وفق معايير التواصل الحالية. يرجى التحقق من البيانات والمحاولة مرة أخرى." : "We could not send your request using the current communication workflow. Please review your details and try again.",
     processingTitle: rtl ? "جاري إرسال الطلب" : "Submitting request",
@@ -92,23 +94,68 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
     </span>
   );
 
+  const isValidEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+
+  const formatErrorMessage = (code: string) => {
+    if (rtl) {
+      switch (code) {
+        case "INVALID_EMAIL":
+          return "يرجى إدخال بريد إلكتروني صالح.";
+        case "INVALID_PHONE":
+          return "يرجى إدخال رقم هاتف صالح.";
+        case "RATE_LIMITED":
+          return "تم تلقي عدة محاولات متتالية. يرجى الانتظار قليلًا ثم المحاولة مجددًا.";
+        case "SMTP_NOT_CONFIGURED":
+        case "SMTP_VERIFY_FAILED":
+        case "EMAIL_SEND_FAILED":
+          return "تعذر تسليم الطلب عبر البريد الإلكتروني حاليًا. يرجى المحاولة مرة أخرى لاحقًا.";
+        default:
+          return code;
+      }
+    }
+    switch (code) {
+      case "INVALID_EMAIL":
+        return "Please enter a valid email address.";
+      case "INVALID_PHONE":
+        return "Please enter a valid phone number.";
+      case "RATE_LIMITED":
+        return "Too many submission attempts were received. Please wait a moment and try again.";
+      case "SMTP_NOT_CONFIGURED":
+      case "SMTP_VERIFY_FAILED":
+      case "EMAIL_SEND_FAILED":
+        return "We could not deliver your request by email right now. Please try again shortly.";
+      default:
+        return code;
+    }
+  };
+
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (submitLockRef.current || status === "loading") return;
     setShowThanks(false);
     setShowError(false);
     setErrorDetail("");
+    setSuccessDetail("");
     const trimmedEmail = email.trim();
     const trimmedPhone = phone.trim();
+    if (!isValidEmail(trimmedEmail)) {
+      setStatus("idle");
+      setErrorDetail(t.emailMsg);
+      setShowError(true);
+      return;
+    }
     if (!isValidPhone(trimmedPhone)) {
       setStatus("idle");
       setErrorDetail(t.phoneMsg);
       setShowError(true);
       return;
     }
+    submitLockRef.current = true;
+    const requestStartedAt = Date.now();
     setStatus("loading");
-    setLoadingShownAt(Date.now());
     setAttachmentError(null);
     if (attachment && attachment.size > 25 * 1024 * 1024) {
+      submitLockRef.current = false;
       setStatus("idle");
       setAttachmentError(rtl ? "حجم الملف يتجاوز 25 ميجابايت" : "File exceeds 25 MB limit");
       if (typeof window !== "undefined") {
@@ -134,16 +181,19 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
       if (attachment) fd.append("attachment", attachment);
       if (attachmentNote) fd.append("attachmentNote", attachmentNote.trim());
       const res = await fetch("/api/contact", { method: "POST", body: fd });
+      const ct = res.headers.get("content-type") || "";
+      const payload =
+        ct.includes("application/json")
+          ? await res.json().catch(() => null)
+          : null;
       let next: "success" | "error" = res.ok ? "success" : "error";
       if (!res.ok) {
         try {
-          const ct = res.headers.get("content-type") || "";
           let detail = `HTTP ${res.status} ${res.statusText}`;
-          if (ct.includes("application/json")) {
-            const j = await res.json();
-            if (j?.error) detail += ` – ${j.error}`;
+          if (payload?.error) {
+            detail += ` – ${formatErrorMessage(String(payload.error))}`;
           } else {
-            const txt = await res.text();
+            const txt = await res.text().catch(() => "");
             if (txt) detail += ` – ${txt.substring(0, 240)}`;
           }
           setErrorDetail(detail);
@@ -152,8 +202,9 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
         }
       } else {
         setErrorDetail("");
+        setSuccessDetail(payload?.duplicate ? t.duplicateBody : t.thanksBody);
       }
-      const elapsed = loadingShownAt ? Date.now() - loadingShownAt : 0;
+      const elapsed = Date.now() - requestStartedAt;
       const delay = Math.max(0, 1000 - elapsed);
       setTimeout(() => {
         setStatus(next);
@@ -162,14 +213,16 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
         } else {
           setShowError(true);
         }
+        submitLockRef.current = false;
       }, delay);
     } catch (e: any) {
       setErrorDetail(e?.message ? String(e.message) : "Network error");
-      const elapsed = loadingShownAt ? Date.now() - loadingShownAt : 0;
+      const elapsed = Date.now() - requestStartedAt;
       const delay = Math.max(0, 1000 - elapsed);
       setTimeout(() => {
         setStatus("error");
         setShowError(true);
+        submitLockRef.current = false;
       }, delay);
     }
   };
@@ -187,9 +240,11 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
     setAttachmentNote("");
     setAttachmentError(null);
     setErrorDetail("");
+    setSuccessDetail("");
     setPreferredDateTime("");
     setPreferredContact("");
     setStatus("idle");
+    submitLockRef.current = false;
   };
 
   return (
@@ -361,6 +416,8 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
             </div>
             <button
               type="submit"
+              disabled={status === "loading"}
+              aria-busy={status === "loading"}
               className={`inline-flex items-center gap-2 ${rtl ? "flex-row-reverse" : "flex-row"} rounded-lg bg-[var(--brand-accent)] text-white dark:text-black px-5 py-2.5 font-semibold transition-transform duration-200 will-change-transform hover:-translate-y-0.5 active:scale-95 hover:opacity-90`}
             >
               <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4">
@@ -397,7 +454,7 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
             </div>
             <div className="mt-3 text-2xl font-extrabold text-[var(--brand-accent)]">{t.thanksTitle}</div>
             <div className="mx-auto mt-2 h-px w-24 bg-gradient-to-r from-transparent via-[var(--brand-accent)]/70 to-transparent" />
-            <div className="mt-2 text-sm text-[var(--text-secondary)]">{t.thanksBody}</div>
+            <div className="mt-2 text-sm text-[var(--text-secondary)]">{successDetail || t.thanksBody}</div>
             <button
               onClick={() => {
                 setShowThanks(false);

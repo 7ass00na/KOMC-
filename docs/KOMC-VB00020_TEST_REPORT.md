@@ -6,6 +6,7 @@
 - Hide both floating actions on first paint, reveal them after the scroll threshold, hide them when the footer enters the viewport, and show them again when the page scrolls back above the footer boundary.
 - Validate the behavior across iPhone WebKit, Android Chrome emulation, and tablet layouts.
 - Rebuild the site and confirm the cleaned codebase still passes lint, strict TypeScript unused-code checks, automated tests, and production build generation.
+- Harden the consultation form submission flow so it delivers to `info@khaledomer.com` with a mirrored blind copy to `ahmedhussano68@gmail.com`, applies duplicate-submission protection, and surfaces clearer client/server delivery states.
 
 ## Cleanup And Static Validation
 
@@ -39,7 +40,7 @@ npm test
 
 - Result: passed
 - Test files: `19`
-- Tests passed: `45`
+- Tests passed: `46`
 - Tests failed: `0`
 - Coverage summary:
   - Statements: `94.51%`
@@ -48,9 +49,26 @@ npm test
   - Lines: `99.32%`
 
 - Relevant new regression coverage:
+  - `src/__tests__/contact.route.spec.ts`
   - `src/__tests__/whatsapp-floating-button.spec.tsx`
   - `src/__tests__/aiChatFab.modal.spec.tsx`
   - `src/hooks/useResponsiveFloatingVisibility.ts` is now covered through the CTA regressions.
+
+## Contact Email Delivery Validation
+
+- Updated default consultation recipients:
+  - Primary TO: `info@khaledomer.com`
+  - Mirrored blind copy: `ahmedhussano68@gmail.com`
+- Transport verification covered in code:
+  - Primary transport defaults to `smtp.hostinger.com:465` with `secure: true`
+  - Blind-copy transport defaults to `smtp.gmail.com:465` with `secure: true`
+- Validation performed:
+  - Verified the API route creates both transports with TLS-enabled settings through automated route tests.
+  - Verified duplicate submissions return a success confirmation without re-sending mail during the suppression window.
+  - Verified the client CTA locks while the request is in flight and shows a confirmation message after successful submission.
+- Live mailbox verification:
+  - Not executed in this environment because no real SMTP credentials or mailbox app passwords were provided during the session.
+  - The implementation is ready for live verification once the production environment variables are populated.
 
 ## End-To-End Validation
 
@@ -132,4 +150,4 @@ npm run rebuild
 ## Release Status
 
 - Functional status: ready from a code and validation perspective.
-- Remaining operational blocker: Git metadata is missing from the current workspace, so commit and push actions cannot be completed until the repository is restored.
+- Remaining operational blocker: live mailbox delivery could not be verified from this session because SMTP credentials were not provided; automated code-level validation and production rebuild passed.

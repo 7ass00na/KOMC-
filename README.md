@@ -40,13 +40,31 @@ Key routes:
 
 ## SMTP Setup (Vercel)
 - Set the following Env Vars in Vercel Project Settings:
-  - SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM
-  - Optional routing overrides: CONTACT_TO_EMAIL, CONTACT_BCC_EMAIL
-  - Optional: SMTP_SECURE, SMTP_MAX_CONNECTIONS, SMTP_MAX_MESSAGES, SMTP_TLS_REJECT_UNAUTH, SMTP_CONN_TIMEOUT, SMTP_GREET_TIMEOUT, SMTP_SOCKET_TIMEOUT
-- The contact endpoint verifies connection before sending and logs delivery status without exposing secrets.
+  - Primary consultation mailbox:
+    - `CONTACT_PRIMARY_SMTP_HOST=smtp.hostinger.com`
+    - `CONTACT_PRIMARY_SMTP_PORT=465`
+    - `CONTACT_PRIMARY_SMTP_SECURE=true`
+    - `CONTACT_PRIMARY_SMTP_USER=info@khaledomer.com`
+    - `CONTACT_PRIMARY_SMTP_PASS=<hostinger-mailbox-password>`
+    - `CONTACT_PRIMARY_SMTP_FROM=info@khaledomer.com`
+  - BCC consultation mailbox:
+    - `CONTACT_BCC_SMTP_HOST=smtp.gmail.com`
+    - `CONTACT_BCC_SMTP_PORT=465`
+    - `CONTACT_BCC_SMTP_SECURE=true`
+    - `CONTACT_BCC_SMTP_USER=ahmedhussano68@gmail.com`
+    - `CONTACT_BCC_SMTP_PASS=<gmail-app-password>`
+    - `CONTACT_BCC_SMTP_FROM=ahmedhussano68@gmail.com`
+  - Routing overrides:
+    - `CONTACT_TO_EMAIL=info@khaledomer.com`
+    - `CONTACT_BCC_EMAIL=ahmedhussano68@gmail.com`
+  - Newsletter mailbox:
+    - `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`
+  - Optional tuning:
+    - `SMTP_SECURE`, `SMTP_MAX_CONNECTIONS`, `SMTP_MAX_MESSAGES`, `SMTP_TLS_REJECT_UNAUTH`, `SMTP_CONN_TIMEOUT`, `SMTP_GREET_TIMEOUT`, `SMTP_SOCKET_TIMEOUT`
+- The contact endpoint verifies both SMTP connections before sending, logs delivery attempts without exposing secrets, and suppresses duplicate submissions for a short in-memory window.
 - Default routing for the current maintenance baseline:
   - Newsletter submissions send to `info@khaledomer.ae`
-  - Contact/consultation submissions send to `info@khaledomer.ae` with BCC to `ahmedhussan068@gmail.com`
+  - Contact/consultation submissions send to `info@khaledomer.com` and mirror a secure blind copy to `ahmedhussano68@gmail.com`
 - Shared header and footer social links now render in this order: Facebook, Instagram, TikTok, Email, with secure external-link attributes.
 
 ## Notes

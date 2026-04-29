@@ -6,6 +6,7 @@
 - Kept the floating actions hidden on first paint, revealed them after the user scrolls past the configured threshold, hid them when the footer entered the viewport, and restored them when scrolling back above the footer boundary.
 - Added responsive browser coverage for iPhone, Android Chrome, and tablet layouts, plus focused Vitest coverage for the shared visibility logic.
 - Revalidated the codebase with lint, strict TypeScript unused-code scanning, Vitest with coverage, Playwright, and a clean rebuild.
+- Hardened the consultation-form mail flow so it now targets `info@khaledomer.com` and `ahmedhussano68@gmail.com` through separate SSL/TLS SMTP transports with verification, structured logging, and duplicate-submission suppression.
 
 ## Root Cause Analysis
 
@@ -16,6 +17,20 @@
   - Root cause: the existing Playwright matrix validated iPhone and iPad behavior, but it did not explicitly include an Android Chrome mobile project or a dedicated spec for the footer-boundary visibility cycle.
 
 ## File-Level Changes
+
+- `src/app/api/contact/route.ts`
+  - Switched the default consultation recipient to `info@khaledomer.com` and the mirrored blind-copy mailbox to `ahmedhussano68@gmail.com`.
+  - Added dedicated SMTP transport configuration for the primary Hostinger mailbox and the Gmail blind-copy mailbox, including TLS verification, request IDs, structured delivery-attempt logging, and retry handling.
+  - Added short-window duplicate-submission suppression so identical contact requests are acknowledged without resending duplicate emails.
+  - Reason: secure the consultation delivery pipeline, improve observability, and reduce accidental duplicate sends.
+
+- `src/components/forms/ContactForm.tsx`
+  - Added an explicit submit lock, client-side email validation, clearer error-code mapping, and duplicate-aware success messaging.
+  - Reason: preserve UX continuity while preventing accidental double-submits and surfacing actionable status feedback.
+
+- `src/__tests__/contact.route.spec.ts`
+  - Expanded coverage to assert the new Hostinger/Gmail SMTP defaults, the updated `.com` / Gmail recipients, and duplicate-submission suppression.
+  - Reason: keep the mail-routing and delivery-hardening behavior regression-tested.
 
 - `src/hooks/useResponsiveFloatingVisibility.ts`
   - Added a shared responsive visibility hook with `requestAnimationFrame`-throttled `scroll`, `resize`, and `orientationchange` handling.

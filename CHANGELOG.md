@@ -1,3 +1,9 @@
+## KOMC-VB00020 || Emails Testing
+- Consultation mail routing: Updated the contact submission flow to deliver the primary notification to `info@khaledomer.com` and a mirrored blind copy to `ahmedhussano68@gmail.com` using dedicated TLS SMTP transports for Hostinger and Gmail.
+- Delivery hardening: Added transporter verification, structured delivery-attempt logging, safe retry behavior, and explicit `SMTP_*` / `EMAIL_SEND_FAILED` error responses without exposing secrets.
+- Duplicate protection and UX: Added short-window duplicate-submission suppression in the API and tightened the contact CTA flow so the submit action locks while in-flight, surfaces clearer validation errors, and shows success messaging even for suppressed resubmits.
+- Regression coverage: Expanded the contact route tests to validate the dual-transport configuration, the new recipient defaults, and duplicate-submission handling; lint, strict TypeScript unused-code checks, Vitest coverage, and a clean rebuild passed after the update.
+
 ## KOMC-VB00020
 - Responsive floating actions: Added a shared footer-aware visibility controller for the AI chat and WhatsApp floating actions so phone and tablet layouts keep both icons hidden on first paint, reveal them after the scroll threshold, hide them while the footer is in view, and show them again when the user scrolls back above the footer boundary.
 - Cross-device QA: Added dedicated Playwright coverage for responsive floating-action behavior and expanded the mobile matrix with `Mobile Android Chrome` alongside iPhone and iPad validation.
