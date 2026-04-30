@@ -1,3 +1,11 @@
+## KOMC-VB00020 || Email Testing
+- Issue reference: no external issue ID was provided in this workspace, so this release note records the request directly in-repo.
+- Modified `src/app/api/contact/route.ts`: reverted consultation delivery to `info@khaledomer.ae` with BCC to `ahmedhussan068@gmail.com`, fixed the subject/body copy to the requested legal-representation template, added field-specific server validation responses, and kept logging, spam protection, and duplicate-submission suppression.
+- Modified `src/components/forms/ContactForm.tsx`: added sequential client validation, field-only clearing on invalid input, inline highlight states, modal-based success/failure messaging, real-time Arabic/English-friendly validation, submit locking, and accessible dialog semantics.
+- Modified `src/__tests__/contact.route.spec.ts`: aligned route coverage with the `.ae`/BCC mail flow, fixed subject/body assertions, and added field-specific validation checks.
+- Modified `README.md`: added an `Email Testing` section documenting required env vars, local verification steps, and the current consultation-email contract.
+- Impact: the Contact Us consultation workflow now matches the requested delivery targets and UX, while the broader release validation baseline remains above 90% line/statement coverage.
+
 ## KOMC-VB00020 || Emails Testing
 - Consultation mail routing: Updated the contact submission flow to deliver the primary notification to `info@khaledomer.com` and a mirrored blind copy to `ahmedhussano68@gmail.com` using dedicated TLS SMTP transports for Hostinger and Gmail.
 - Delivery hardening: Added transporter verification, structured delivery-attempt logging, safe retry behavior, and explicit `SMTP_*` / `EMAIL_SEND_FAILED` error responses without exposing secrets.

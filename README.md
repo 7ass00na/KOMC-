@@ -40,32 +40,39 @@ Key routes:
 
 ## SMTP Setup (Vercel)
 - Set the following Env Vars in Vercel Project Settings:
-  - Primary consultation mailbox:
-    - `CONTACT_PRIMARY_SMTP_HOST=smtp.hostinger.com`
-    - `CONTACT_PRIMARY_SMTP_PORT=465`
-    - `CONTACT_PRIMARY_SMTP_SECURE=true`
-    - `CONTACT_PRIMARY_SMTP_USER=info@khaledomer.com`
-    - `CONTACT_PRIMARY_SMTP_PASS=<hostinger-mailbox-password>`
-    - `CONTACT_PRIMARY_SMTP_FROM=info@khaledomer.com`
-  - BCC consultation mailbox:
-    - `CONTACT_BCC_SMTP_HOST=smtp.gmail.com`
-    - `CONTACT_BCC_SMTP_PORT=465`
-    - `CONTACT_BCC_SMTP_SECURE=true`
-    - `CONTACT_BCC_SMTP_USER=ahmedhussano68@gmail.com`
-    - `CONTACT_BCC_SMTP_PASS=<gmail-app-password>`
-    - `CONTACT_BCC_SMTP_FROM=ahmedhussano68@gmail.com`
+  - Consultation mailbox:
+    - `CONTACT_SMTP_HOST=smtp.hostinger.com`
+    - `CONTACT_SMTP_PORT=465`
+    - `CONTACT_SMTP_SECURE=true`
+    - `CONTACT_SMTP_USER=info@khaledomer.ae`
+    - `CONTACT_SMTP_PASS=<hostinger-mailbox-password>`
+    - `CONTACT_SMTP_FROM=info@khaledomer.ae`
   - Routing overrides:
-    - `CONTACT_TO_EMAIL=info@khaledomer.com`
-    - `CONTACT_BCC_EMAIL=ahmedhussano68@gmail.com`
+    - `CONTACT_TO_EMAIL=info@khaledomer.ae`
+    - `CONTACT_BCC_EMAIL=ahmedhussan068@gmail.com`
   - Newsletter mailbox:
     - `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`
   - Optional tuning:
     - `SMTP_SECURE`, `SMTP_MAX_CONNECTIONS`, `SMTP_MAX_MESSAGES`, `SMTP_TLS_REJECT_UNAUTH`, `SMTP_CONN_TIMEOUT`, `SMTP_GREET_TIMEOUT`, `SMTP_SOCKET_TIMEOUT`
-- The contact endpoint verifies both SMTP connections before sending, logs delivery attempts without exposing secrets, and suppresses duplicate submissions for a short in-memory window.
+- The contact endpoint verifies the SMTP connection before sending, logs delivery attempts without exposing secrets, and suppresses duplicate submissions for a short in-memory window.
 - Default routing for the current maintenance baseline:
   - Newsletter submissions send to `info@khaledomer.ae`
-  - Contact/consultation submissions send to `info@khaledomer.com` and mirror a secure blind copy to `ahmedhussano68@gmail.com`
+  - Contact/consultation submissions send to `info@khaledomer.ae` with BCC to `ahmedhussan068@gmail.com`
 - Shared header and footer social links now render in this order: Facebook, Instagram, TikTok, Email, with secure external-link attributes.
+
+## Email Testing
+- Development verification uses the contact route tests in `src/__tests__/contact.route.spec.ts` plus the full `npm test` suite; these cover validation failures, duplicate-submission suppression, subject/body composition, and TO/BCC routing.
+- Required env vars for local delivery testing:
+  - `CONTACT_SMTP_HOST`, `CONTACT_SMTP_PORT`, `CONTACT_SMTP_SECURE`
+  - `CONTACT_SMTP_USER`, `CONTACT_SMTP_PASS`, `CONTACT_SMTP_FROM`
+  - `CONTACT_TO_EMAIL`, `CONTACT_BCC_EMAIL`
+- Local verification flow:
+  - Start the app with `npm run dev`
+  - Submit the Contact Us consultation form with valid data
+  - Confirm the modal success message appears and the server logs a verified SMTP send attempt
+  - For invalid input, confirm only the bad field clears, the field is highlighted, and the modal shows the field-specific correction message
+- The current consultation email subject is `Customer seeking legal representation from the KOMC - website`.
+- Live mailbox delivery could not be verified in this session because production SMTP credentials were not available.
 
 ## Notes
 - Intro video and welcome overlay are verified in both dev and prod builds.

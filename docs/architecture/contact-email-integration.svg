@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="860" viewBox="0 0 1400 860" role="img" aria-labelledby="title desc">
+  <title id="title">KOMC Contact Email Integration</title>
+  <desc id="desc">Architecture diagram showing how the Contact Us consultation form flows through client validation, the API route, spam protection, SMTP delivery, and recipient mailboxes.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#111827"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#132437"/>
+      <stop offset="100%" stop-color="#1f2937"/>
+    </linearGradient>
+    <style>
+      .title { font: 700 34px Arial, sans-serif; fill: #f8fafc; }
+      .subtitle { font: 400 18px Arial, sans-serif; fill: #cbd5e1; }
+      .card-title { font: 700 22px Arial, sans-serif; fill: #f8fafc; }
+      .card-text { font: 400 16px Arial, sans-serif; fill: #e2e8f0; }
+      .muted { font: 400 14px Arial, sans-serif; fill: #94a3b8; }
+      .label { font: 700 16px Arial, sans-serif; fill: #0f172a; }
+      .badge { font: 700 14px Arial, sans-serif; fill: #132437; }
+      .line { stroke: #e1bc89; stroke-width: 4; fill: none; marker-end: url(#arrow); }
+      .dash { stroke: #94a3b8; stroke-width: 3; stroke-dasharray: 10 10; fill: none; marker-end: url(#arrow); }
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#e1bc89"/>
+    </marker>
+  </defs>
+
+  <rect width="1400" height="860" fill="url(#bg)"/>
+  <text x="70" y="80" class="title">KOMC Consultation Email Service Integration</text>
+  <text x="70" y="115" class="subtitle">Contact Us form validation, spam protection, SMTP verification, delivery logging, and recipient routing</text>
+
+  <rect x="70" y="180" rx="26" ry="26" width="290" height="220" fill="url(#card)" stroke="#e1bc89" stroke-width="2"/>
+  <text x="105" y="230" class="card-title">Visitor Browser</text>
+  <text x="105" y="270" class="card-text">`ContactForm.tsx`</text>
+  <text x="105" y="305" class="card-text">- Real-time field validation</text>
+  <text x="105" y="333" class="card-text">- Sequential submit validation</text>
+  <text x="105" y="361" class="card-text">- Modal success / error states</text>
+  <text x="105" y="389" class="card-text">- Preserve valid data, clear bad field</text>
+
+  <rect x="70" y="470" rx="26" ry="26" width="290" height="200" fill="url(#card)" stroke="#e1bc89" stroke-width="2"/>
+  <text x="105" y="520" class="card-title">Spam / UX Guardrails</text>
+  <text x="105" y="560" class="card-text">- Hidden honeypot field</text>
+  <text x="105" y="588" class="card-text">- Submit locking</text>
+  <text x="105" y="616" class="card-text">- Duplicate-submission suppression</text>
+  <text x="105" y="644" class="card-text">- Localized field highlighting</text>
+
+  <rect x="470" y="180" rx="26" ry="26" width="360" height="240" fill="url(#card)" stroke="#e1bc89" stroke-width="2"/>
+  <text x="505" y="230" class="card-title">Next.js API Route</text>
+  <text x="505" y="270" class="card-text">`src/app/api/contact/route.ts`</text>
+  <text x="505" y="305" class="card-text">- Server-side Arabic / English validation</text>
+  <text x="505" y="333" class="card-text">- Field-specific error responses</text>
+  <text x="505" y="361" class="card-text">- Request IDs and delivery logging</text>
+  <text x="505" y="389" class="card-text">- Builds the consultation email payload</text>
+
+  <rect x="470" y="500" rx="26" ry="26" width="360" height="170" fill="url(#card)" stroke="#e1bc89" stroke-width="2"/>
+  <text x="505" y="550" class="card-title">SMTP Delivery Layer</text>
+  <text x="505" y="590" class="card-text">- `transporter.verify()`</text>
+  <text x="505" y="618" class="card-text">- TLS / SSL transport</text>
+  <text x="505" y="646" class="card-text">- Retry on transient failures</text>
+
+  <rect x="960" y="180" rx="26" ry="26" width="320" height="200" fill="url(#card)" stroke="#e1bc89" stroke-width="2"/>
+  <text x="995" y="230" class="card-title">Primary Recipient</text>
+  <text x="995" y="270" class="card-text">TO: `info@khaledomer.ae`</text>
+  <text x="995" y="305" class="card-text">- Subject: legal representation request</text>
+  <text x="995" y="333" class="card-text">- Reply-To: client email</text>
+
+  <rect x="960" y="460" rx="26" ry="26" width="320" height="200" fill="url(#card)" stroke="#e1bc89" stroke-width="2"/>
+  <text x="995" y="510" class="card-title">Secondary Recipient</text>
+  <text x="995" y="550" class="card-text">BCC: `ahmedhussan068@gmail.com`</text>
+  <text x="995" y="585" class="card-text">- Same consultation payload</text>
+  <text x="995" y="613" class="card-text">- Hidden from the primary mailbox</text>
+
+  <path class="line" d="M360 290 C410 290, 425 300, 470 300"/>
+  <path class="line" d="M360 560 C420 560, 430 560, 470 560"/>
+  <path class="line" d="M830 300 C885 300, 900 280, 960 280"/>
+  <path class="line" d="M830 585 C885 585, 900 560, 960 560"/>
+  <path class="dash" d="M650 420 C650 455, 650 470, 650 500"/>
+
+  <rect x="535" y="725" rx="18" ry="18" width="220" height="58" fill="#e1bc89"/>
+  <text x="563" y="761" class="label">Logs + Test Reports + Docs</text>
+
+  <text x="70" y="800" class="muted">Generated for KOMC-VB00020 validation and release packaging on 2026-04-29.</text>
+</svg>

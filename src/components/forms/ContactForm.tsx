@@ -2,6 +2,19 @@
 import { useRef, useState } from "react";
 import { User, Mail, Phone as PhoneIcon, MapPin, HelpCircle, FileText, AlignLeft, CalendarClock } from "lucide-react";
 
+type FieldKey =
+  | "fullName"
+  | "email"
+  | "phone"
+  | "address"
+  | "inquiry"
+  | "preferredDateTime"
+  | "preferredContact"
+  | "caseTitle"
+  | "caseDesc"
+  | "attachment"
+  | "attachmentNote";
+
 export function ContactForm({ lang }: { lang: "en" | "ar" }) {
   const rtl = lang === "ar";
   const [fullName, setFullName] = useState("");
@@ -20,9 +33,12 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
   const [showError, setShowError] = useState(false);
   const [errorDetail, setErrorDetail] = useState<string>("");
   const [successDetail, setSuccessDetail] = useState<string>("");
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<FieldKey, string>>>({});
   const [preferredDateTime, setPreferredDateTime] = useState("");
   const [preferredContact, setPreferredContact] = useState<"phone" | "email" | "either" | "">("");
+  const [companyTrap, setCompanyTrap] = useState("");
   const submitLockRef = useRef(false);
+  const fieldRefs = useRef<Partial<Record<FieldKey, HTMLElement | null>>>({});
 
   const t = {
     title: rtl ? "نموذج الاستشارة" : "Consultation Form",
@@ -41,21 +57,25 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
     attachHelp: rtl ? "الحد الأقصى 10 ميجابايت" : "Max 10 MB",
     requiredMsg: rtl ? "يرجى ملء هذا الحقل" : "Please fill out this field.",
     emailMsg: rtl ? "يرجى إدخال بريد إلكتروني صالح" : "Please enter a valid email address.",
-    phoneMsg: rtl ? "يرجى إدخال رقم هاتف صالح" : "Please enter a valid phone number.",
+    phoneMsg: rtl ? "رقم الهاتف غير صحيح، يرجى التحقق." : "Incorrect phone number, please verify",
     submit: rtl ? "إرسال الطلب" : "Submit Request",
-    thanksTitle: rtl ? "تم إرسال الطلب بنجاح" : "Request submitted successfully",
-    thanksBody: rtl ? "تم استلام طلبك بنجاح وسيتواصل معك فريق KOMC قريبًا عبر وسيلة التواصل المناسبة." : "Your request has been received and the KOMC team will contact you soon using your preferred contact method.",
+    thanksTitle: rtl ? "حالة إرسال الرسالة" : "Message Status",
+    thanksBody: rtl ? "تم الإرسال بنجاح. سيتواصل معك أحد محامينا قريبًا بخصوص قضيتك. شكرًا لك." : "Submitted successfully. One of our lawyers will contact you soon regarding your case. Thank you.",
     duplicateBody: rtl ? "تم استلام بياناتك بالفعل. لا حاجة إلى إعادة إرسال الطلب، وسيتواصل معك فريق KOMC قريبًا." : "We already received your information. There is no need to submit the form again, and the KOMC team will contact you soon.",
-    errorTitle: rtl ? "تعذر إرسال الطلب" : "Submission failed",
-    errorBody: rtl ? "تعذر إرسال طلبك وفق معايير التواصل الحالية. يرجى التحقق من البيانات والمحاولة مرة أخرى." : "We could not send your request using the current communication workflow. Please review your details and try again.",
+    errorTitle: rtl ? "حالة إرسال الرسالة" : "Message Status",
+    errorBody: rtl ? "عذرًا، تعذر إرسال الرسالة" : "Sorry, the message could not be sent",
     processingTitle: rtl ? "جاري إرسال الطلب" : "Submitting request",
     processingBody: rtl ? "يرجى الانتظار لحظات قليلة..." : "Please wait a moment...",
     preferredContact: rtl ? "طريقة التواصل المفضلة" : "Preferred Contact Method",
     contactPhone: rtl ? "الهاتف" : "Phone",
     contactEmail: rtl ? "البريد الإلكتروني" : "Email",
     contactEither: rtl ? "أي منهما" : "Either",
+    verifyFieldPrefix: rtl ? "يوجد خطأ في الحقل" : "There is an error in field",
+    verifyFieldSuffix: rtl ? "، يرجى التحقق" : ", please verify",
+    ok: rtl ? "حسنًا" : "OK",
   };
 
+  /** Formats attachment sizes for the upload helper text. */
   const formatBytes = (bytes: number) => {
     if (bytes === 0) return "0 B";
     const k = 1024;
@@ -64,8 +84,41 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
     return `${(bytes / Math.pow(k, i)).toFixed(2)} ${sizes[i]}`;
   };
 
+  /** Validates international-style phone numbers accepted by the consultation form. */
   const isValidPhone = (value: string) => /^[+()\-\s\d]{8,20}$/.test(value.trim());
+  /** Validates email addresses before the form hits the server. */
+  const isValidEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+  /** Validates personal-name fields while supporting Arabic and English letters. */
+  const isValidHumanText = (value: string, min: number, max: number) => {
+    const trimmed = value.trim();
+    return trimmed.length >= min && trimmed.length <= max && /^[\p{L}\p{M}\s'.-]+$/u.test(trimmed);
+  };
+  /** Validates general-purpose Arabic/English text fields and optional multiline content. */
+  const isValidFlexibleText = (value: string, min: number, max: number, multiline = false) => {
+    const trimmed = value.trim();
+    if (!trimmed) return true;
+    if (trimmed.length < min || trimmed.length > max) return false;
+    const pattern = multiline
+      ? /^[\p{L}\p{M}\p{N}\s'".,;:!?()\-\/&@#+\n\r]+$/u
+      : /^[\p{L}\p{M}\p{N}\s'".,;:!?()\-\/&@#+]+$/u;
+    return pattern.test(trimmed);
+  };
 
+  const fieldLabels: Record<FieldKey, string> = {
+    fullName: t.fullName,
+    email: t.email,
+    phone: t.phone,
+    address: t.address,
+    inquiry: t.inquiry,
+    preferredDateTime: rtl ? "التاريخ والوقت المفضل" : "Preferred Date/Time",
+    preferredContact: t.preferredContact,
+    caseTitle: t.caseTitle,
+    caseDesc: t.caseDesc,
+    attachment: t.attachLabel,
+    attachmentNote: t.attachNote,
+  };
+
+  /** Maps native invalid events to localized field messages. */
   const handleInvalid = (e: React.FormEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const el = e.currentTarget as HTMLInputElement & HTMLSelectElement & HTMLTextAreaElement;
     if (el.validity.valueMissing) {
@@ -78,6 +131,7 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
       el.setCustomValidity("");
     }
   };
+  /** Clears any custom validity text once the user edits a field again. */
   const clearValidity = (e: React.FormEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     (e.currentTarget as any).setCustomValidity("");
   };
@@ -85,6 +139,7 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
   const inquiries = rtl
     ? ["القانون بحري", "القانون المدني", "القانون الجنائي", "القانون التجاري", "قانون العمل", "القانون العقاري", "قانون الأسرة", "أخرى"]
     : ["Maritime Law", "Civil law", "Criminal law", "Commercial law", "Labor law", "Real estate law", "Family law", "Other"];
+  /** Renders a consistent icon + label pattern for field captions. */
   const labelWrap = (icon: React.ReactNode, text: string, required?: boolean) => (
     <span className={`inline-flex items-center gap-1.5 ${rtl ? "flex-row-reverse" : "flex-row"}`}>
       <span className="inline-flex items-center justify-center h-4 w-4 text-[var(--brand-accent)]" aria-hidden="true">
@@ -94,15 +149,28 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
     </span>
   );
 
-  const isValidEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
-
+  /** Translates server-side error codes into localized user-facing copy. */
   const formatErrorMessage = (code: string) => {
     if (rtl) {
       switch (code) {
+        case "FIELD_REQUIRED":
+          return "يرجى التحقق من الحقل المطلوب.";
         case "INVALID_EMAIL":
           return "يرجى إدخال بريد إلكتروني صالح.";
         case "INVALID_PHONE":
-          return "يرجى إدخال رقم هاتف صالح.";
+          return t.phoneMsg;
+        case "INVALID_FULL_NAME":
+          return "يرجى إدخال اسم صحيح بالأحرف العربية أو الإنجليزية.";
+        case "INVALID_ADDRESS":
+        case "INVALID_INQUIRY":
+        case "INVALID_CASE_TITLE":
+        case "INVALID_CASE_DESCRIPTION":
+        case "INVALID_ATTACHMENT_NOTE":
+        case "INVALID_PREFERRED_DATETIME":
+        case "INVALID_PREFERRED_CONTACT":
+          return "يرجى التحقق من تنسيق البيانات المدخلة.";
+        case "ATTACHMENT_TOO_LARGE":
+          return rtl ? "حجم الملف يتجاوز 25 ميجابايت." : "File exceeds the 25 MB limit.";
         case "RATE_LIMITED":
           return "تم تلقي عدة محاولات متتالية. يرجى الانتظار قليلًا ثم المحاولة مجددًا.";
         case "SMTP_NOT_CONFIGURED":
@@ -114,10 +182,24 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
       }
     }
     switch (code) {
+      case "FIELD_REQUIRED":
+        return "Please verify the required field.";
       case "INVALID_EMAIL":
         return "Please enter a valid email address.";
       case "INVALID_PHONE":
-        return "Please enter a valid phone number.";
+        return t.phoneMsg;
+      case "INVALID_FULL_NAME":
+        return "Please enter a valid name using Arabic or English letters.";
+      case "INVALID_ADDRESS":
+      case "INVALID_INQUIRY":
+      case "INVALID_CASE_TITLE":
+      case "INVALID_CASE_DESCRIPTION":
+      case "INVALID_ATTACHMENT_NOTE":
+      case "INVALID_PREFERRED_DATETIME":
+      case "INVALID_PREFERRED_CONTACT":
+        return "Please verify the field format.";
+      case "ATTACHMENT_TOO_LARGE":
+        return "File exceeds the 25 MB limit.";
       case "RATE_LIMITED":
         return "Too many submission attempts were received. Please wait a moment and try again.";
       case "SMTP_NOT_CONFIGURED":
@@ -129,6 +211,138 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
     }
   };
 
+  /** Stores DOM references so invalid fields can be focused from modal feedback. */
+  const setFieldRef = (field: FieldKey, element: HTMLElement | null) => {
+    fieldRefs.current[field] = element;
+  };
+
+  /** Scrolls and focuses the target field after a validation failure. */
+  const focusField = (field: FieldKey) => {
+    const target = fieldRefs.current[field];
+    if (target && "focus" in target) {
+      (target as HTMLElement).focus();
+      target.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  };
+
+  /** Clears only the invalid field while preserving the rest of the form state. */
+  const clearFieldValue = (field: FieldKey) => {
+    switch (field) {
+      case "fullName":
+        setFullName("");
+        break;
+      case "email":
+        setEmail("");
+        break;
+      case "phone":
+        setPhone("");
+        break;
+      case "address":
+        setAddress("");
+        break;
+      case "inquiry":
+        setInquiry("");
+        break;
+      case "preferredDateTime":
+        setPreferredDateTime("");
+        break;
+      case "preferredContact":
+        setPreferredContact("");
+        break;
+      case "caseTitle":
+        setCaseTitle("");
+        break;
+      case "caseDesc":
+        setCaseDesc("");
+        break;
+      case "attachment":
+        setAttachment(null);
+        break;
+      case "attachmentNote":
+        setAttachmentNote("");
+        break;
+    }
+  };
+
+  /** Writes or removes the inline error for a single field. */
+  const updateFieldError = (field: FieldKey, message: string | null) => {
+    setFieldErrors((current) => {
+      const next = { ...current };
+      if (message) next[field] = message;
+      else delete next[field];
+      return next;
+    });
+  };
+
+  /** Validates one field at a time and returns the localized error, if any. */
+  const validateField = (field: FieldKey, value?: string) => {
+    switch (field) {
+      case "fullName":
+        if (!fullName.trim()) return t.requiredMsg;
+        return isValidHumanText(fullName, 2, 120) ? null : formatErrorMessage("INVALID_FULL_NAME");
+      case "email":
+        if (!email.trim()) return t.requiredMsg;
+        return isValidEmail(email) ? null : formatErrorMessage("INVALID_EMAIL");
+      case "phone":
+        if (!phone.trim()) return t.requiredMsg;
+        return isValidPhone(phone) ? null : t.phoneMsg;
+      case "address":
+        return address.trim() && !isValidFlexibleText(address, 3, 200) ? formatErrorMessage("INVALID_ADDRESS") : null;
+      case "inquiry":
+        if (!inquiry.trim()) return t.requiredMsg;
+        return isValidFlexibleText(inquiry, 2, 80) ? null : formatErrorMessage("INVALID_INQUIRY");
+      case "preferredDateTime":
+        return preferredDateTime && Number.isNaN(Date.parse(preferredDateTime)) ? formatErrorMessage("INVALID_PREFERRED_DATETIME") : null;
+      case "preferredContact":
+        if (!preferredContact.trim()) return t.requiredMsg;
+        return ["phone", "email", "either"].includes(preferredContact) ? null : formatErrorMessage("INVALID_PREFERRED_CONTACT");
+      case "caseTitle":
+        return caseTitle.trim() && !isValidFlexibleText(caseTitle, 2, 150) ? formatErrorMessage("INVALID_CASE_TITLE") : null;
+      case "caseDesc":
+        return caseDesc.trim() && !isValidFlexibleText(caseDesc, 5, 3000, true) ? formatErrorMessage("INVALID_CASE_DESCRIPTION") : null;
+      case "attachment":
+        return attachment && attachment.size > 25 * 1024 * 1024 ? formatErrorMessage("ATTACHMENT_TOO_LARGE") : null;
+      case "attachmentNote":
+        return attachmentNote.trim() && !isValidFlexibleText(attachmentNote, 2, 250, true) ? formatErrorMessage("INVALID_ATTACHMENT_NOTE") : null;
+      default:
+        return value ? null : null;
+    }
+  };
+
+  /** Opens the modal error state with a field-specific correction message. */
+  const showFieldErrorModal = (field: FieldKey, customMessage?: string) => {
+    const baseMessage =
+      field === "phone"
+        ? t.phoneMsg
+        : `${t.verifyFieldPrefix} ${fieldLabels[field]}${t.verifyFieldSuffix}`;
+    setErrorDetail(customMessage || baseMessage);
+    setShowError(true);
+    focusField(field);
+  };
+
+  /** Revalidates a field on change/blur without disturbing other inputs. */
+  const handleRealtimeValidation = (field: FieldKey) => {
+    const message = validateField(field);
+    updateFieldError(field, message);
+  };
+
+  /** Builds the shared input class string including invalid-state styling. */
+  const inputClassName = (field: FieldKey) =>
+    `w-full rounded-lg bg-black/30 border px-3 py-2 text-white placeholder:text-zinc-500 ${
+      fieldErrors[field]
+        ? "border-red-400 ring-1 ring-red-400/70"
+        : "border-[var(--panel-border)]"
+    }`;
+
+  /** Builds the shared select class string including invalid-state styling. */
+  const selectClassName = (field: FieldKey) =>
+    `themed-select w-full rounded-lg border px-3 py-2 pr-10 text-white ${
+      fieldErrors[field]
+        ? "border-red-400 ring-1 ring-red-400/70"
+        : "border-[var(--panel-border)]"
+    }`;
+
+  /** Runs sequential client validation, posts the form, and coordinates modal feedback. */
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (submitLockRef.current || status === "loading") return;
@@ -136,37 +350,38 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
     setShowError(false);
     setErrorDetail("");
     setSuccessDetail("");
+    const validationOrder: FieldKey[] = [
+      "fullName",
+      "email",
+      "phone",
+      "address",
+      "inquiry",
+      "preferredDateTime",
+      "preferredContact",
+      "caseTitle",
+      "caseDesc",
+      "attachment",
+      "attachmentNote",
+    ];
+    for (const field of validationOrder) {
+      const message = validateField(field);
+      updateFieldError(field, message);
+      if (message) {
+        clearFieldValue(field);
+        setStatus("idle");
+        showFieldErrorModal(field, field === "phone" ? t.phoneMsg : undefined);
+        return;
+      }
+    }
     const trimmedEmail = email.trim();
     const trimmedPhone = phone.trim();
-    if (!isValidEmail(trimmedEmail)) {
-      setStatus("idle");
-      setErrorDetail(t.emailMsg);
-      setShowError(true);
-      return;
-    }
-    if (!isValidPhone(trimmedPhone)) {
-      setStatus("idle");
-      setErrorDetail(t.phoneMsg);
-      setShowError(true);
-      return;
-    }
     submitLockRef.current = true;
     const requestStartedAt = Date.now();
     setStatus("loading");
     setAttachmentError(null);
-    if (attachment && attachment.size > 25 * 1024 * 1024) {
-      submitLockRef.current = false;
-      setStatus("idle");
-      setAttachmentError(rtl ? "حجم الملف يتجاوز 25 ميجابايت" : "File exceeds 25 MB limit");
-      if (typeof window !== "undefined") {
-        alert(rtl ? "المرفق أكبر من 25 ميجابايت. يرجى رفع ملف أصغر لإرسال الطلب." : "The attached file exceeds 25 MB. Please upload a smaller file to send your request.");
-      }
-      return;
-    }
     try {
       const fd = new FormData();
-      // honeypot
-      fd.append("company", "");
+      fd.append("company", companyTrap);
       fd.append("fullName", fullName.trim());
       fd.append("gender", gender);
       fd.append("email", trimmedEmail);
@@ -189,20 +404,30 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
       let next: "success" | "error" = res.ok ? "success" : "error";
       if (!res.ok) {
         try {
-          let detail = `HTTP ${res.status} ${res.statusText}`;
+          let detail = `${t.errorBody}.`;
           if (payload?.error) {
-            detail += ` – ${formatErrorMessage(String(payload.error))}`;
+            const field = payload?.field as FieldKey | undefined;
+            if (field) {
+              clearFieldValue(field);
+              updateFieldError(field, formatErrorMessage(String(payload.error)));
+              focusField(field);
+              detail += ` ${field === "phone" ? t.phoneMsg : `${t.verifyFieldPrefix} ${fieldLabels[field]}${t.verifyFieldSuffix}`}`;
+            } else {
+              detail += ` ${formatErrorMessage(String(payload.error))}`;
+            }
+            detail += ` ${formatErrorMessage(String(payload.error))}`;
           } else {
             const txt = await res.text().catch(() => "");
-            if (txt) detail += ` – ${txt.substring(0, 240)}`;
+            if (txt) detail += ` ${txt.substring(0, 240)}`;
           }
           setErrorDetail(detail);
         } catch {
-          setErrorDetail(`HTTP ${res.status} ${res.statusText}`);
+          setErrorDetail(`${t.errorBody}. HTTP ${res.status} ${res.statusText}`);
         }
       } else {
         setErrorDetail("");
         setSuccessDetail(payload?.duplicate ? t.duplicateBody : t.thanksBody);
+        setFieldErrors({});
       }
       const elapsed = Date.now() - requestStartedAt;
       const delay = Math.max(0, 1000 - elapsed);
@@ -216,7 +441,7 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
         submitLockRef.current = false;
       }, delay);
     } catch (e: any) {
-      setErrorDetail(e?.message ? String(e.message) : "Network error");
+      setErrorDetail(`${t.errorBody}. ${e?.message ? String(e.message) : "Network error"}`);
       const elapsed = Date.now() - requestStartedAt;
       const delay = Math.max(0, 1000 - elapsed);
       setTimeout(() => {
@@ -227,6 +452,7 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
     }
   };
 
+  /** Restores the consultation form to its pristine post-success state. */
   const resetForm = () => {
     setFullName("");
     setGender("unspecified");
@@ -243,13 +469,26 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
     setSuccessDetail("");
     setPreferredDateTime("");
     setPreferredContact("");
+    setCompanyTrap("");
     setStatus("idle");
+    setFieldErrors({});
     submitLockRef.current = false;
   };
 
   return (
     <div dir={rtl ? "rtl" : "ltr"}>
-      <form onSubmit={onSubmit} className="rounded-2xl surface p-6 md:p-8 h-full min-h-[420px] flex flex-col">
+      <form onSubmit={onSubmit} noValidate className="rounded-2xl surface p-6 md:p-8 h-full min-h-[420px] flex flex-col">
+        <div className="sr-only" aria-hidden="true">
+          <label htmlFor="company-field">Company</label>
+          <input
+            id="company-field"
+            name="company"
+            tabIndex={-1}
+            autoComplete="off"
+            value={companyTrap}
+            onChange={(e) => setCompanyTrap(e.target.value)}
+          />
+        </div>
         <div className="flex items-center justify-center gap-2 text-[var(--brand-accent)] font-extrabold text-lg uppercase">
           <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5">
             <path d="M4 4h12l4 4v12H4z" fill="none" stroke="currentColor" strokeWidth="1.6" />
@@ -265,14 +504,22 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
               {labelWrap(<User className="h-3.5 w-3.5" />, t.fullName, true)}
             </label>
             <input
+              ref={(node) => setFieldRef("fullName", node)}
+              id="contact-full-name"
               value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
+              onChange={(e) => {
+                setFullName(e.target.value);
+                handleRealtimeValidation("fullName");
+              }}
+              onBlur={() => handleRealtimeValidation("fullName")}
               onInvalid={handleInvalid}
               onInput={clearValidity}
               placeholder={rtl ? "أدخل الاسم الكامل" : "Enter full name"}
-              className="w-full rounded-lg bg-black/30 border border-[var(--panel-border)] px-3 py-2 text-white placeholder:text-zinc-500"
+              aria-invalid={Boolean(fieldErrors.fullName)}
+              className={inputClassName("fullName")}
               required
             />
+            {fieldErrors.fullName ? <p className="mt-1 text-xs text-red-300">{fieldErrors.fullName}</p> : null}
           </div>
           <div className="md:col-span-1">
             <label className="block text-xs font-semibold text-[var(--brand-accent)] mb-1">{labelWrap(<HelpCircle className="h-3.5 w-3.5" />, t.gender)}</label>
@@ -291,17 +538,74 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
             <label className="block text-xs font-semibold text-[var(--brand-accent)] mb-1">
               {labelWrap(<Mail className="h-3.5 w-3.5" />, t.email, true)}
             </label>
-            <input value={email} onChange={(e) => setEmail(e.target.value)} onInvalid={handleInvalid} onInput={clearValidity} placeholder="you@example.com" type="email" inputMode="email" autoComplete="email" required className="w-full rounded-lg bg-black/30 border border-[var(--panel-border)] px-3 py-2 text-white placeholder:text-zinc-500" />
+            <input
+              ref={(node) => setFieldRef("email", node)}
+              id="contact-email"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                handleRealtimeValidation("email");
+              }}
+              onBlur={() => handleRealtimeValidation("email")}
+              onInvalid={handleInvalid}
+              onInput={clearValidity}
+              placeholder="you@example.com"
+              type="email"
+              inputMode="email"
+              autoComplete="email"
+              required
+              aria-invalid={Boolean(fieldErrors.email)}
+              className={inputClassName("email")}
+            />
+            {fieldErrors.email ? <p className="mt-1 text-xs text-red-300">{fieldErrors.email}</p> : null}
           </div>
           <div>
             <label className="block text-xs font-semibold text-[var(--brand-accent)] mb-1">
               {labelWrap(<PhoneIcon className="h-3.5 w-3.5" />, t.phone, true)}
             </label>
-            <input value={phone} onChange={(e) => setPhone(e.target.value)} onInvalid={handleInvalid} onInput={clearValidity} placeholder={rtl ? "+971 5x xxx xxxx" : "+971 5x xxx xxxx"} type="tel" inputMode="tel" autoComplete="tel" pattern="^[+()\\-\\s\\d]{8,20}$" required className="w-full rounded-lg bg-black/30 border border-[var(--panel-border)] px-3 py-2 text-white placeholder:text-zinc-500" />
+            <input
+              ref={(node) => setFieldRef("phone", node)}
+              id="contact-phone"
+              value={phone}
+              onChange={(e) => {
+                setPhone(e.target.value);
+                handleRealtimeValidation("phone");
+              }}
+              onBlur={() => {
+                handleRealtimeValidation("phone");
+                if (phone.trim() && !isValidPhone(phone)) {
+                  setErrorDetail(t.phoneMsg);
+                  setShowError(true);
+                }
+              }}
+              onInvalid={handleInvalid}
+              onInput={clearValidity}
+              placeholder={rtl ? "+971 5x xxx xxxx" : "+971 5x xxx xxxx"}
+              type="tel"
+              inputMode="tel"
+              autoComplete="tel"
+              pattern="^[+()\\-\\s\\d]{8,20}$"
+              required
+              aria-invalid={Boolean(fieldErrors.phone)}
+              className={inputClassName("phone")}
+            />
+            {fieldErrors.phone ? <p className="mt-1 text-xs text-red-300">{fieldErrors.phone}</p> : null}
           </div>
           <div className="md:col-span-2">
             <label className="block text-xs font-semibold text-[var(--brand-accent)] mb-1">{labelWrap(<MapPin className="h-3.5 w-3.5" />, t.address)}</label>
-            <input value={address} onChange={(e) => setAddress(e.target.value)} placeholder={rtl ? "العنوان الكامل" : "Full address"} className="w-full rounded-lg bg-black/30 border border-[var(--panel-border)] px-3 py-2 text-white placeholder:text-zinc-500" />
+            <input
+              ref={(node) => setFieldRef("address", node)}
+              value={address}
+              onChange={(e) => {
+                setAddress(e.target.value);
+                handleRealtimeValidation("address");
+              }}
+              onBlur={() => handleRealtimeValidation("address")}
+              placeholder={rtl ? "العنوان الكامل" : "Full address"}
+              aria-invalid={Boolean(fieldErrors.address)}
+              className={inputClassName("address")}
+            />
+            {fieldErrors.address ? <p className="mt-1 text-xs text-red-300">{fieldErrors.address}</p> : null}
           </div>
           <div>
             <label className="block text-xs font-semibold text-[var(--brand-accent)] mb-1">
@@ -309,13 +613,19 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
             </label>
             <div className="relative">
               <select
+                ref={(node) => setFieldRef("inquiry", node)}
                 value={inquiry}
-                onChange={(e) => setInquiry(e.target.value)}
+                onChange={(e) => {
+                  setInquiry(e.target.value);
+                  handleRealtimeValidation("inquiry");
+                }}
+                onBlur={() => handleRealtimeValidation("inquiry")}
                 onInvalid={handleInvalid}
                 onInput={clearValidity}
                 required
                 data-select="inquiry"
-                className="themed-select w-full rounded-lg border border-[var(--panel-border)] px-3 py-2 pr-10 text-white"
+                aria-invalid={Boolean(fieldErrors.inquiry)}
+                className={selectClassName("inquiry")}
               >
                 <option value="" disabled>{rtl ? "اختر نوع الاستفسار" : "Select inquiry type"}</option>
                 {inquiries.map((opt) => (
@@ -328,6 +638,7 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
                 </svg>
               </span>
             </div>
+            {fieldErrors.inquiry ? <p className="mt-1 text-xs text-red-300">{fieldErrors.inquiry}</p> : null}
           </div>
           <div>
             <label className="block text-xs font-semibold text-[var(--brand-accent)] mb-1">
@@ -335,13 +646,20 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
             </label>
             <div className="relative">
               <input
+                ref={(node) => setFieldRef("preferredDateTime", node)}
                 type="datetime-local"
                 value={preferredDateTime}
-                onChange={(e) => setPreferredDateTime(e.target.value)}
-                className="w-full rounded-lg bg-black/30 border border-[var(--panel-border)] px-3 py-2 text-white placeholder:text-zinc-500"
+                onChange={(e) => {
+                  setPreferredDateTime(e.target.value);
+                  handleRealtimeValidation("preferredDateTime");
+                }}
+                onBlur={() => handleRealtimeValidation("preferredDateTime")}
+                aria-invalid={Boolean(fieldErrors.preferredDateTime)}
+                className={inputClassName("preferredDateTime")}
               />
               <CalendarClock aria-hidden="true" className={`pointer-events-none absolute top-1/2 -translate-y-1/2 ${rtl ? "left-3" : "right-3"} h-4 w-4 text-[var(--brand-accent)]`} />
             </div>
+            {fieldErrors.preferredDateTime ? <p className="mt-1 text-xs text-red-300">{fieldErrors.preferredDateTime}</p> : null}
           </div>
           <div>
             <label className="block text-xs font-semibold text-[var(--brand-accent)] mb-1">
@@ -349,12 +667,18 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
             </label>
             <div className="relative">
               <select
+                ref={(node) => setFieldRef("preferredContact", node)}
                 required
                 value={preferredContact}
-                onChange={(e) => setPreferredContact(e.target.value as any)}
+                onChange={(e) => {
+                  setPreferredContact(e.target.value as any);
+                  handleRealtimeValidation("preferredContact");
+                }}
+                onBlur={() => handleRealtimeValidation("preferredContact")}
                 onInvalid={handleInvalid}
                 onInput={clearValidity}
-                className="themed-select w-full rounded-lg border border-[var(--panel-border)] px-3 py-2 pr-10 text-white"
+                aria-invalid={Boolean(fieldErrors.preferredContact)}
+                className={selectClassName("preferredContact")}
               >
                 <option value="">{rtl ? "اختر طريقة التواصل" : "Select a method"}</option>
                 <option value="phone">{t.contactPhone}</option>
@@ -367,30 +691,71 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
                 </svg>
               </span>
             </div>
+            {fieldErrors.preferredContact ? <p className="mt-1 text-xs text-red-300">{fieldErrors.preferredContact}</p> : null}
           </div>
           <div>
             <label className="block text-xs font-semibold text-[var(--brand-accent)] mb-1">{labelWrap(<FileText className="h-3.5 w-3.5" />, t.caseTitle)}</label>
-            <input value={caseTitle} onChange={(e) => setCaseTitle(e.target.value)} placeholder={rtl ? "عنوان موجز للقضية" : "Brief case title"} className="w-full rounded-lg bg-black/30 border border-[var(--panel-border)] px-3 py-2 text-white placeholder:text-zinc-500" />
+            <input
+              ref={(node) => setFieldRef("caseTitle", node)}
+              value={caseTitle}
+              onChange={(e) => {
+                setCaseTitle(e.target.value);
+                handleRealtimeValidation("caseTitle");
+              }}
+              onBlur={() => handleRealtimeValidation("caseTitle")}
+              placeholder={rtl ? "عنوان موجز للقضية" : "Brief case title"}
+              aria-invalid={Boolean(fieldErrors.caseTitle)}
+              className={inputClassName("caseTitle")}
+            />
+            {fieldErrors.caseTitle ? <p className="mt-1 text-xs text-red-300">{fieldErrors.caseTitle}</p> : null}
           </div>
           <div className="md:col-span-2 mt-6">
             <label className="block text-xs font-semibold text-[var(--brand-accent)] mb-1">{labelWrap(<AlignLeft className="h-3.5 w-3.5" />, t.caseDesc)}</label>
-            <textarea value={caseDesc} onChange={(e) => setCaseDesc(e.target.value)} rows={6} placeholder={rtl ? "صف بإيجاز الوقائع والوثائق المتاحة ونطاق المطلوب." : "Briefly describe facts, available documents, and the scope sought."} className="w-full rounded-lg bg-black/30 border border-[var(--panel-border)] px-3 py-2 text-white placeholder:text-zinc-500" />
+            <textarea
+              ref={(node) => setFieldRef("caseDesc", node)}
+              value={caseDesc}
+              onChange={(e) => {
+                setCaseDesc(e.target.value);
+                handleRealtimeValidation("caseDesc");
+              }}
+              onBlur={() => handleRealtimeValidation("caseDesc")}
+              rows={6}
+              placeholder={rtl ? "صف بإيجاز الوقائع والوثائق المتاحة ونطاق المطلوب." : "Briefly describe facts, available documents, and the scope sought."}
+              aria-invalid={Boolean(fieldErrors.caseDesc)}
+              className={inputClassName("caseDesc")}
+            />
+            {fieldErrors.caseDesc ? <p className="mt-1 text-xs text-red-300">{fieldErrors.caseDesc}</p> : null}
           </div>
           <div className="md:col-span-2 mt-4 mb-6 md:mb-8">
             <label className="block text-xs font-semibold text-[var(--brand-accent)] mb-1">{t.attachLabel} <span className="text-[var(--text-secondary)]">(Max 25 MB)</span></label>
             <div className="grid gap-3 md:grid-cols-3">
               <input
+                ref={(node) => setFieldRef("attachment", node)}
                 type="file"
                 accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.heic,.zip,.rar,.7z"
-                onChange={(e) => setAttachment(e.target.files?.[0] || null)}
-                className="md:col-span-2 rounded-lg bg-black/30 border border-[var(--panel-border)] px-3 py-2 text-white text-xs md:text-[12px] file:mr-3 file:rounded-md file:border file:border-[var(--panel-border)] file:bg-white/10 file:px-3 file:py-1 file:text-white file:text-xs"
+                onChange={(e) => {
+                  setAttachment(e.target.files?.[0] || null);
+                  handleRealtimeValidation("attachment");
+                }}
+                aria-invalid={Boolean(fieldErrors.attachment)}
+                className={`md:col-span-2 rounded-lg bg-black/30 border px-3 py-2 text-white text-xs md:text-[12px] file:mr-3 file:rounded-md file:border file:px-3 file:py-1 file:text-white file:text-xs ${
+                  fieldErrors.attachment
+                    ? "border-red-400 file:border-red-400"
+                    : "border-[var(--panel-border)] file:border-[var(--panel-border)]"
+                } file:bg-white/10`}
               />
               <input
+                ref={(node) => setFieldRef("attachmentNote", node)}
                 type="text"
                 value={attachmentNote}
-                onChange={(e) => setAttachmentNote(e.target.value)}
+                onChange={(e) => {
+                  setAttachmentNote(e.target.value);
+                  handleRealtimeValidation("attachmentNote");
+                }}
+                onBlur={() => handleRealtimeValidation("attachmentNote")}
                 placeholder={rtl ? "أدخل ملاحظة موجزة للمرفق" : "Add a brief note for the attachment"}
-                className="md:col-span-1 rounded-lg bg-black/30 border border-[var(--panel-border)] px-3 py-2 text-white placeholder:text-zinc-500"
+                aria-invalid={Boolean(fieldErrors.attachmentNote)}
+                className={`md:col-span-1 ${inputClassName("attachmentNote")}`}
               />
             </div>
             {attachment ? (
@@ -406,7 +771,8 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
                 {rtl ? "الملفات المسموح بها: PDF, DOC(X), صور، ZIP (حتى 25 ميجابايت)" : "Allowed: PDF, DOC(X), images, ZIP (up to 25 MB)"}
               </div>
             )}
-            {attachmentError ? null : null}
+            {fieldErrors.attachment ? <div className="mt-1 text-xs text-red-300">{fieldErrors.attachment}</div> : null}
+            {fieldErrors.attachmentNote ? <div className="mt-1 text-xs text-red-300">{fieldErrors.attachmentNote}</div> : null}
           </div>
         </div>
         <div className="mt-auto -mx-6 -mb-6 md:-mx-8 md:-mb-8">
@@ -443,7 +809,7 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
         </div>
       )}
       {showThanks && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
+        <div className="fixed inset-0 z-50 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="contact-success-title">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowThanks(false)} />
           <div className="relative z-10 w-[92%] max-w-md rounded-2xl surface p-6 md:p-8 text-center overflow-hidden">
             <div className="pointer-events-none absolute -top-16 left-1/2 h-32 w-72 -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(225,188,137,0.25),transparent_60%)] blur-2xl" />
@@ -452,7 +818,7 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
                 <path fill="currentColor" d="M12 2c-1.1 0-2 .9-2 2v.18C7.16 4.61 5 7.06 5 10v3.5L3.29 15.8c-.19.19-.29.44-.29.71V18h18v-1.49c0-.27-.11-.52-.29-.71L19 13.5V10c0-2.94-2.16-5.39-5-5.82V4c0-1.1-.9-2-2-2zm-1.41 12.59l-2.12-2.12-1.41 1.41 3.53 3.53 6.59-6.59-1.41-1.41-5.77 5.77z"/>
               </svg>
             </div>
-            <div className="mt-3 text-2xl font-extrabold text-[var(--brand-accent)]">{t.thanksTitle}</div>
+            <div id="contact-success-title" className="mt-3 text-2xl font-extrabold text-[var(--brand-accent)]">{t.thanksTitle}</div>
             <div className="mx-auto mt-2 h-px w-24 bg-gradient-to-r from-transparent via-[var(--brand-accent)]/70 to-transparent" />
             <div className="mt-2 text-sm text-[var(--text-secondary)]">{successDetail || t.thanksBody}</div>
             <button
@@ -462,13 +828,13 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
               }}
               className="mt-5 inline-flex items-center rounded-lg bg-[var(--brand-accent)] text-black px-5 py-2.5 font-semibold"
             >
-              {rtl ? "حسنًا" : "Okay"}
+              {t.ok}
             </button>
           </div>
         </div>
       )}
       {showError && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
+        <div className="fixed inset-0 z-50 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="contact-error-title">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowError(false)} />
           <div className="relative z-10 w-[92%] max-w-md rounded-2xl surface p-6 md:p-8 text-center overflow-hidden">
             <div className="pointer-events-none absolute -top-16 left-1/2 h-32 w-72 -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(225,188,137,0.22),transparent_60%)] blur-2xl" />
@@ -477,7 +843,7 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
                 <path fill="currentColor" d="M12 2 1 21h22L12 2zm1 15h-2v2h2v-2zm0-8h-2v6h2V9z"/>
               </svg>
             </div>
-            <div className="mt-3 text-2xl font-extrabold text-[var(--brand-accent)]">{t.errorTitle}</div>
+            <div id="contact-error-title" className="mt-3 text-2xl font-extrabold text-[var(--brand-accent)]">{t.errorTitle}</div>
             <div className="mx-auto mt-2 h-px w-24 bg-gradient-to-r from-transparent via-[var(--brand-accent)]/70 to-transparent" />
             <div className="mt-2 text-sm text-[var(--text-secondary)]">
               {t.errorBody}
@@ -486,11 +852,10 @@ export function ContactForm({ lang }: { lang: "en" | "ar" }) {
             <button
               onClick={() => {
                 setShowError(false);
-                resetForm();
               }}
               className="mt-5 inline-flex items-center rounded-lg bg-[var(--brand-accent)] text-black px-5 py-2.5 font-semibold"
             >
-              {rtl ? "حسنًا" : "OK"}
+              {t.ok}
             </button>
           </div>
         </div>

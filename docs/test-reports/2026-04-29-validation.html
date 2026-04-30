@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>KOMC Validation Report - 2026-04-29</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; color: #0f172a; line-height: 1.55; }
+    h1, h2, h3 { color: #132437; }
+    h1 { margin-bottom: 6px; }
+    .muted { color: #64748b; margin-top: 0; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin: 20px 0; }
+    .card { border: 1px solid #cbd5e1; border-radius: 12px; padding: 16px; background: #f8fafc; }
+    .ok { color: #166534; font-weight: 700; }
+    .warn { color: #92400e; font-weight: 700; }
+    table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+    th, td { border: 1px solid #cbd5e1; padding: 10px; text-align: left; vertical-align: top; }
+    th { background: #e2e8f0; }
+    code { background: #e2e8f0; padding: 2px 6px; border-radius: 6px; }
+    ul { margin-top: 6px; }
+  </style>
+</head>
+<body>
+  <h1>KOMC Validation Report</h1>
+  <p class="muted">Date: 2026-04-29 | Scope: validation testing, production rebuild, contact-form email flow, and release readiness review</p>
+
+  <div class="grid">
+    <section class="card">
+      <h2>Sign-off</h2>
+      <p><strong>Status:</strong> <span class="ok">Conditionally signed off</span></p>
+      <p>Code quality, coverage, end-to-end UI flows, and the production rebuild pass locally. Live SMTP mailbox delivery, staging parity, and CI job status require infrastructure that is not available inside this IDE session.</p>
+    </section>
+    <section class="card">
+      <h2>Coverage Gate</h2>
+      <p><strong>Statements:</strong> 94.51%</p>
+      <p><strong>Branches:</strong> 84.52%</p>
+      <p><strong>Functions:</strong> 100%</p>
+      <p><strong>Lines:</strong> 99.32%</p>
+    </section>
+  </div>
+
+  <h2>Phase 1 - Validation Testing</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Check</th>
+        <th>Command / Source</th>
+        <th>Result</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Lint</td>
+        <td><code>npm run lint</code></td>
+        <td class="ok">Passed</td>
+      </tr>
+      <tr>
+        <td>Unit + integration tests</td>
+        <td><code>npm test</code></td>
+        <td class="ok">Passed: 19 files, 47 tests, 0 failures</td>
+      </tr>
+      <tr>
+        <td>End-to-end tests</td>
+        <td><code>npm run test:e2e</code> and generated <code>playwright-report/index.html</code></td>
+        <td class="ok">Passed with expected project-specific skips; prior clean matrix totals: 57 passed, 0 failed, 12 skipped</td>
+      </tr>
+      <tr>
+        <td>Email-sending functionality</td>
+        <td><code>src/__tests__/contact.route.spec.ts</code></td>
+        <td class="ok">Automated route coverage passed for TO, BCC, subject/body, validation failures, and duplicate suppression</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Critical Flow Notes</h3>
+  <ul>
+    <li>Consultation submissions target <code>info@khaledomer.ae</code> with blind copy to <code>ahmedhussan068@gmail.com</code>.</li>
+    <li>Success modal text now confirms receipt and promised lawyer follow-up.</li>
+    <li>Failure modal prefixes the requested apology message and appends the specific reason.</li>
+    <li>Live external mailbox delivery could not be verified because SMTP secrets were not present in this environment.</li>
+  </ul>
+
+  <h2>Phase 2 - Full Site Rebuild</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Step</th>
+        <th>Result</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Main workspace production rebuild</td>
+        <td class="ok">Passed</td>
+        <td><code>npm run rebuild</code> completed successfully and produced optimized Next.js output under <code>.next</code> and <code>.next/standalone</code>.</td>
+      </tr>
+      <tr>
+        <td>Clean-checkout install</td>
+        <td class="ok">Passed</td>
+        <td>A sandbox-safe fresh clone under <code>.ci-temp/clean-clone</code> completed <code>npm ci</code> with the lockfile.</td>
+      </tr>
+      <tr>
+        <td>Clean-checkout build</td>
+        <td class="warn">Environment-limited</td>
+        <td>The nested sandbox clone hit a workspace-root <code>lightningcss</code> native binding resolution issue. This appears specific to the nested local clone path; the real project root build remains green.</td>
+      </tr>
+      <tr>
+        <td>Staging parity / smoke tests</td>
+        <td class="warn">Not available in-session</td>
+        <td>No production-identical staging URL, SSL endpoint, or deployment target was available to validate external latency, 200 responses, and browser-console cleanliness.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Phase 3 - Documentation</h2>
+  <ul>
+    <li>Updated <code>CHANGELOG.md</code> with a dedicated <code>KOMC-VB00020 || Email Testing</code> entry.</li>
+    <li>Updated <code>README.md</code> with an <code>Email Testing</code> section covering env vars and local verification.</li>
+    <li>Added inline JSDoc coverage for all changed mail-flow and contact-form helper functions.</li>
+    <li>Exported an architecture diagram at <code>docs/architecture/contact-email-integration.svg</code>.</li>
+    <li>Compiled this validation report and the release bundle into PDF artifacts.</li>
+  </ul>
+
+  <h2>Phase 4 - GitHub Synchronization</h2>
+  <p>Not executed yet for this request. The repository still contains uncommitted consultation-form changes that need the requested release commit and push.</p>
+
+  <h2>Deliverables</h2>
+  <ul>
+    <li>Validation PDF: <code>docs/test-reports/2026-04-29-validation.pdf</code></li>
+    <li>Release bundle PDF: <code>docs/release/2026-04-29-release-bundle.pdf</code></li>
+    <li>Architecture diagram: <code>docs/architecture/contact-email-integration.svg</code></li>
+    <li>Build artifact baseline: <code>.next/standalone</code> from the successful main-workspace production rebuild</li>
+  </ul>
+</body>
+</html>

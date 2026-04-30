@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>KOMC Release Bundle - 2026-04-29</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; color: #0f172a; line-height: 1.55; }
+    h1, h2, h3 { color: #132437; }
+    .muted { color: #64748b; }
+    .section { margin-top: 28px; }
+    .card { border: 1px solid #cbd5e1; border-radius: 12px; padding: 16px; background: #f8fafc; margin: 14px 0; }
+    table { width: 100%; border-collapse: collapse; margin: 14px 0; }
+    th, td { border: 1px solid #cbd5e1; padding: 10px; text-align: left; vertical-align: top; }
+    th { background: #e2e8f0; }
+    code { background: #e2e8f0; padding: 2px 6px; border-radius: 6px; }
+    .ok { color: #166534; font-weight: 700; }
+    .warn { color: #92400e; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <h1>KOMC Release Documentation Bundle</h1>
+  <p class="muted">Date: 2026-04-29 | Bundle scope: validation, rebuild, email-flow architecture, and release-readiness notes</p>
+
+  <section class="section">
+    <h2>Release Summary</h2>
+    <div class="card">
+      <p>The current release package focuses on the Contact Us consultation form. The form now validates fields sequentially, preserves valid user input, clears only the invalid field, highlights that field, and uses modal messaging for both success and failure flows. The API route sends the consultation payload to <code>info@khaledomer.ae</code> with BCC to <code>ahmedhussan068@gmail.com</code>, using the requested fixed subject line and legal-representation email intro.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Files Changed</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>File</th>
+          <th>Change</th>
+          <th>Reason</th>
+          <th>Issue ID</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>src/app/api/contact/route.ts</code></td>
+          <td>Updated recipient routing, subject/body copy, field-level validation, duplicate suppression, SMTP verification, and logging.</td>
+          <td>Match the requested consultation-delivery contract and server-side validation behavior.</td>
+          <td>No external issue ID provided</td>
+        </tr>
+        <tr>
+          <td><code>src/components/forms/ContactForm.tsx</code></td>
+          <td>Added real-time validation, sequential submit validation, invalid-field clearing/highlighting, and modal feedback improvements.</td>
+          <td>Deliver the requested user experience and preserve valid form data.</td>
+          <td>No external issue ID provided</td>
+        </tr>
+        <tr>
+          <td><code>src/__tests__/contact.route.spec.ts</code></td>
+          <td>Aligned automated coverage with the updated `.ae` + BCC mail flow and field-specific server errors.</td>
+          <td>Keep the release behavior regression-tested.</td>
+          <td>No external issue ID provided</td>
+        </tr>
+        <tr>
+          <td><code>README.md</code></td>
+          <td>Added an <code>Email Testing</code> section and corrected the consultation env-var contract.</td>
+          <td>Document configuration and local verification steps.</td>
+          <td>No external issue ID provided</td>
+        </tr>
+        <tr>
+          <td><code>CHANGELOG.md</code></td>
+          <td>Added a release entry for the current consultation-form work.</td>
+          <td>Track release history and rationale at the repo root.</td>
+          <td>No external issue ID provided</td>
+        </tr>
+        <tr>
+          <td><code>docs/architecture/contact-email-integration.svg</code></td>
+          <td>Added a diagram of the consultation form, API route, SMTP, and recipient integration.</td>
+          <td>Provide architecture-level release documentation.</td>
+          <td>No external issue ID provided</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="section">
+    <h2>Validation Summary</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Status</th>
+          <th>Evidence</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Lint</td>
+          <td class="ok">Passed</td>
+          <td><code>npm run lint</code></td>
+        </tr>
+        <tr>
+          <td>Unit + integration tests</td>
+          <td class="ok">Passed</td>
+          <td><code>npm test</code>: 19 files, 47 tests, 0 failures</td>
+        </tr>
+        <tr>
+          <td>Coverage gate</td>
+          <td class="ok">Passed</td>
+          <td>94.51% statements, 84.52% branches, 100% functions, 99.32% lines</td>
+        </tr>
+        <tr>
+          <td>Production rebuild</td>
+          <td class="ok">Passed</td>
+          <td><code>npm run rebuild</code> from the main repo root</td>
+        </tr>
+        <tr>
+          <td>Clean-checkout install/build</td>
+          <td class="warn">Partially validated</td>
+          <td><code>npm ci</code> passed in the sandbox clone; nested-clone build hit an environment-specific <code>lightningcss</code> native module issue</td>
+        </tr>
+        <tr>
+          <td>Staging smoke tests</td>
+          <td class="warn">Not available</td>
+          <td>No production-identical staging environment or URL was available from this local IDE session</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="section">
+    <h2>Architecture Artifact</h2>
+    <div class="card">
+      <p>The consultation email integration diagram is stored at <code>docs/architecture/contact-email-integration.svg</code>.</p>
+      <p>It shows the browser form, spam guardrails, API validation path, SMTP verification layer, TO recipient, and BCC recipient.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Outstanding External Dependencies</h2>
+    <ul>
+      <li>Live mailbox validation still requires real SMTP secrets.</li>
+      <li>Production-equivalent staging and SSL smoke tests require an actual deployed staging target.</li>
+      <li>CI verification can only be confirmed after the new commit is pushed.</li>
+    </ul>
+  </section>
+</body>
+</html>
